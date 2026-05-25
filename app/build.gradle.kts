@@ -4,15 +4,15 @@ plugins {
 
 android {
     namespace = "com.grupo6.subastar"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+
+    // ARREGLO 1: Sintaxis correcta y versión estable
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.grupo6.subastar"
         minSdk = 24
+
+        // ARREGLO 2: Alineado con el compileSdk
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -46,4 +46,7 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Seguridad para encriptar SharedPreferences
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 }
