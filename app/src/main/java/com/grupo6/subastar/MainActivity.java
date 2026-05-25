@@ -3,6 +3,7 @@ package com.grupo6.subastar;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
+import com.grupo6.subastar.model.Subasta;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,31 +18,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 1. Instanciamos Retrofit apuntando a Spring Boot
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080") // La IP del emulador hacia tu PC local
+                .baseUrl("http://10.0.2.2:8080") // La IP mágica hacia tu backend local
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         SubastarApi api = retrofit.create(SubastarApi.class);
 
-        // 2. Ejecutamos la petición en segundo plano
-        api.obtenerPaises().enqueue(new Callback<List<Pais>>() {
+        // Llamamos al endpoint pasándole null a todo para simular un usuario no logueado
+        api.obtenerSubastas(null, null, null, null).enqueue(new Callback<List<Subasta>>() {
             @Override
-            public void onResponse(Call<List<Pais>> call, Response<List<Pais>> response) {
+            public void onResponse(Call<List<Subasta>> call, Response<List<Subasta>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    for (Pais p : response.body()) {
-                        // Imprime el resultado en la consola de Android Studio
-                        Log.d("API_PRUEBA", "Llegó el país: " + p.getNombre());
+                    List<Subasta> lista = response.body();
+                    Log.d("API_SUBASTAS", "Se encontraron " + lista.size() + " subastas.");
+
+                    for (Subasta s : lista) {
+                        Log.d("API_SUBASTAS", "Subasta ID: " + s.getId() +
+                                " | Estado: " + s.getEstado() +
+                                " | Moneda: " + s.getMoneda());
                     }
                 } else {
-                    Log.e("API_PRUEBA", "Error en servidor: " + response.code());
+                    Log.e("API_SUBASTAS", "Error en servidor: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Pais>> call, Throwable t) {
-                Log.e("API_PRUEBA", "Explotó la red: " + t.getMessage());
+            public void onFailure(Call<List<Subasta>> call, Throwable t) {
+                Log.e("API_SUBASTAS", "Explotó la red: " + t.getMessage());
             }
         });
     }

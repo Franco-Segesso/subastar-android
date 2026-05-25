@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@color/fondo_sec_b"
+    app:strokeColor="@color/bordes"
+    app:strokeWidth="1dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/ivProductoFoto"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="#E0E0E0"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvProductoTitulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Pintura al Óleo"
+            android:textColor="@color/texto_ppal"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toEndOf="@id/ivProductoFoto"
+            app:layout_constraintTop_toTopOf="@id/ivProductoFoto" />
+
+        <TextView
+            android:id="@+id/tvProductoPrecioBase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Base: USD 2.000"
+            android:textColor="@color/texto_sec"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@id/tvProductoTitulo"
+            app:layout_constraintTop_toBottomOf="@id/tvProductoTitulo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
