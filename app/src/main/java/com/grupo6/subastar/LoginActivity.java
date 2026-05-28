@@ -1,6 +1,5 @@
 package com.grupo6.subastar;
 
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +16,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etClave;
     private Button btnLogin;
@@ -27,21 +26,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // ACA ESTÁ EL CAMBIO: Apuntamos al XML que renombramos
+        setContentView(R.layout.activity_login);
 
         // 1. Enlazamos las vistas del XML con Java
         etEmail = findViewById(R.id.etEmail);
         etClave = findViewById(R.id.etClave);
         btnLogin = findViewById(R.id.btnLogin);
 
-
-        // ... después de btnLogin = findViewById(R.id.btnLogin); ...
-
-        Button btnIrARegistro = findViewById(R.id.btnIrARegistro);
-        btnIrARegistro.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(MainActivity.this, RegistroActivity.class);
-            startActivity(intent);
-        });
+        // BORRAMOS EL BOTÓN DE REGISTRO PORQUE AHORA ESTÁ EN EL WELCOME
 
         // 2. Inicializamos nuestra "bóveda" de seguridad
         tokenManager = new TokenManager(this);
@@ -93,12 +86,12 @@ public class MainActivity extends AppCompatActivity {
 
                     // Saludamos al usuario con su nombre
                     String nombre = response.body().getCliente().getNombre();
-                    Toast.makeText(MainActivity.this, "¡Éxito! Bienvenido, " + nombre, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "¡Éxito! Bienvenido, " + nombre, Toast.LENGTH_LONG).show();
 
                     // Nota: A futuro, acá harías un Intent para saltar a la pantalla de Subastas
                 } else {
                     // ERROR HTTP 401 o 403
-                    Toast.makeText(MainActivity.this, "Credenciales incorrectas o usuario bloqueado", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Credenciales incorrectas o usuario bloqueado", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -108,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 btnLogin.setText("Iniciar Sesión");
 
                 // Si llegamos acá, el servidor está apagado o no hay internet en el emulador
-                Toast.makeText(MainActivity.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

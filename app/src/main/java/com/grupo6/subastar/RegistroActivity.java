@@ -51,8 +51,8 @@ public class RegistroActivity extends AppCompatActivity {
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etClave = findViewById(R.id.etClave);
 
-        Button btnFotoFrente = findViewById(R.id.btnFotoFrente);
-        Button btnFotoDorso = findViewById(R.id.btnFotoDorso);
+        android.widget.LinearLayout btnFotoFrente = findViewById(R.id.btnFotoFrente);
+        android.widget.LinearLayout btnFotoDorso = findViewById(R.id.btnFotoDorso);
         tvEstadoFrente = findViewById(R.id.tvEstadoFrente);
         tvEstadoDorso = findViewById(R.id.tvEstadoDorso);
         Button btnRegistrar = findViewById(R.id.btnRegistrar);
