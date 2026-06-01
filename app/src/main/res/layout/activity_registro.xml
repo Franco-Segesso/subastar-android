@@ -51,8 +51,14 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
         <EditText android:id="@+id/etEmail" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textEmailAddress" android:layout_marginBottom="16dp"/>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Contraseña" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
-        <EditText android:id="@+id/etClave" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textPassword" android:layout_marginBottom="16dp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fecha de Nacimiento (YYYY-MM-DD)" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/etFechaNacimiento" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="date" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Domicilio Legal (Calle, Altura, Depto)" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/etDireccion" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textPostalAddress" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="País de Origen" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+        <Spinner android:id="@+id/spPais" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:layout_marginBottom="16dp"/>
 
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Documento" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
         <EditText android:id="@+id/etDocumento" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="number" android:layout_marginBottom="24dp"/>

@@ -1,9 +1,11 @@
 package com.grupo6.subastar;
-import okhttp3.ResponseBody;
+
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,24 +15,32 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
+
 public class RegistroActivity extends AppCompatActivity {
 
     private byte[] bytesFrente = null;
     private byte[] bytesDorso = null;
     private TextView tvEstadoFrente, tvEstadoDorso;
-    private boolean isCargandoFrente = true; // Para saber qué botón se apretó
+    private boolean isCargandoFrente = true;
 
-    // Lanzador para abrir la galería de imágenes
+    // AHORA SÍ DECLARAMOS EL SPINNER Y LA LISTA DE PAÍSES
+    private Spinner spPais;
+    private List<Pais> listaPaises = new ArrayList<>();
+
     private final ActivityResultLauncher<String> selectorDeImagen = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             uri -> {
@@ -49,7 +59,9 @@ public class RegistroActivity extends AppCompatActivity {
         EditText etApellido = findViewById(R.id.etApellido);
         EditText etDoc = findViewById(R.id.etDocumento);
         EditText etEmail = findViewById(R.id.etEmail);
-        EditText etClave = findViewById(R.id.etClave);
+        EditText etDireccion = findViewById(R.id.etDireccion);
+        EditText etFecha = findViewById(R.id.etFechaNacimiento);
+        spPais = findViewById(R.id.spPais);
 
         android.widget.LinearLayout btnFotoFrente = findViewById(R.id.btnFotoFrente);
         android.widget.LinearLayout btnFotoDorso = findViewById(R.id.btnFotoDorso);
@@ -63,7 +75,27 @@ public class RegistroActivity extends AppCompatActivity {
                 .build();
         SubastarApi api = retrofit.create(SubastarApi.class);
 
-        // Eventos para abrir la galería
+        // LLAMADA AL BACKEND PARA CARGAR LOS PAÍSES EN EL DESPLEGABLE
+        api.getPaises().enqueue(new Callback<List<Pais>>() {
+            @Override
+            public void onResponse(Call<List<Pais>> call, Response<List<Pais>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    listaPaises = response.body();
+                    List<String> nombresPaises = new ArrayList<>();
+                    for (Pais p : listaPaises) {
+                        nombresPaises.add(p.getNombre());
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(RegistroActivity.this, android.R.layout.simple_spinner_dropdown_item, nombresPaises);
+                    spPais.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Pais>> call, Throwable t) {
+                Toast.makeText(RegistroActivity.this, "Error al cargar países", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         btnFotoFrente.setOnClickListener(v -> {
             isCargandoFrente = true;
             selectorDeImagen.launch("image/*");
@@ -80,42 +112,44 @@ public class RegistroActivity extends AppCompatActivity {
                 Toast.makeText(this, "Debe cargar foto del frente y dorso del DNI", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (listaPaises == null || listaPaises.isEmpty()) {
+                Toast.makeText(this, "Esperando países del servidor...", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            // Convertimos los textos simples en RequestBody (Lo que pide el form-data)
+            int idPaisSeleccionado = listaPaises.get(spPais.getSelectedItemPosition()).getNumero();
+
             RequestBody reqNombre = RequestBody.create(MediaType.parse("text/plain"), etNombre.getText().toString());
             RequestBody reqApellido = RequestBody.create(MediaType.parse("text/plain"), etApellido.getText().toString());
             RequestBody reqEmail = RequestBody.create(MediaType.parse("text/plain"), etEmail.getText().toString());
-            RequestBody reqClave = RequestBody.create(MediaType.parse("text/plain"), etClave.getText().toString());
             RequestBody reqDoc = RequestBody.create(MediaType.parse("text/plain"), etDoc.getText().toString());
+            RequestBody reqDir = RequestBody.create(MediaType.parse("text/plain"), etDireccion.getText().toString());
+            RequestBody reqPais = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(idPaisSeleccionado));
+            // Abajo de donde creás reqDir y reqPais, agregá esto:
+            RequestBody reqFecha = RequestBody.create(MediaType.parse("text/plain"), etFecha.getText().toString());
 
-            // Datos fijos para la prueba (Luego los podés pedir en la pantalla)
-            RequestBody reqDir = RequestBody.create(MediaType.parse("text/plain"), "Direccion desde App");
-            RequestBody reqFecha = RequestBody.create(MediaType.parse("text/plain"), "2000-01-01");
-            RequestBody reqPais = RequestBody.create(MediaType.parse("text/plain"), "1");
 
-            // Empaquetamos las fotos
+
             RequestBody bodyFrente = RequestBody.create(MediaType.parse("image/*"), bytesFrente);
-            MultipartBody.Part partFrente = MultipartBody.Part.createFormData("fotoFrente", "frente.jpg", bodyFrente);
+            MultipartBody.Part partFrente = MultipartBody.Part.createFormData("fotoDniFrente", "frente.jpg", bodyFrente);
 
             RequestBody bodyDorso = RequestBody.create(MediaType.parse("image/*"), bytesDorso);
-            MultipartBody.Part partDorso = MultipartBody.Part.createFormData("fotoDorso", "dorso.jpg", bodyDorso);
+            MultipartBody.Part partDorso = MultipartBody.Part.createFormData("fotoDniDorso", "dorso.jpg", bodyDorso);
 
-            // Deshabilitamos el botón para que no clickeen dos veces
             btnRegistrar.setEnabled(false);
             btnRegistrar.setText("Enviando...");
 
             // Disparamos la petición
-            // Disparamos la petición
-            api.registrar(reqNombre, reqApellido, reqEmail, reqClave, reqDoc, reqDir, reqFecha, reqPais, partFrente, partDorso)
+            api.registrar(reqNombre, reqApellido, reqEmail, reqDoc, reqDir, reqFecha, reqPais, partFrente, partDorso)
                     .enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
-                                Toast.makeText(RegistroActivity.this, "¡Registro Exitoso!", Toast.LENGTH_SHORT).show();
-                                finish(); // Cierra la pantalla y vuelve al Login
+                                Toast.makeText(RegistroActivity.this, "¡Datos enviados! En espera de validación.", Toast.LENGTH_LONG).show();
+                                finish();
                             } else {
                                 btnRegistrar.setEnabled(true);
-                                btnRegistrar.setText("Registrarse");
+                                btnRegistrar.setText("Registrarme");
                                 try {
                                     Toast.makeText(RegistroActivity.this, "Error: " + response.errorBody().string(), Toast.LENGTH_LONG).show();
                                 } catch (Exception e) {
@@ -127,14 +161,13 @@ public class RegistroActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                             btnRegistrar.setEnabled(true);
-                            btnRegistrar.setText("Registrarse");
-                            Toast.makeText(RegistroActivity.this, "Falla de red real: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                            btnRegistrar.setText("Registrarme");
+                            Toast.makeText(RegistroActivity.this, "Falla de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
         });
     }
 
-    // Método mágico que convierte la URI de Android en un arreglo de bytes listos para enviar
     private void procesarImagenSeleccionada(Uri uri) {
         try {
             InputStream is = getContentResolver().openInputStream(uri);
