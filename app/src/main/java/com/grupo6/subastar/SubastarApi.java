@@ -1,5 +1,6 @@
 package com.grupo6.subastar;
 
+import com.grupo6.subastar.model.ItemCatalogo;
 import com.grupo6.subastar.model.Subasta;
 import java.util.List;
 import retrofit2.Call;
@@ -17,12 +18,20 @@ public interface SubastarApi {
             @Header("Authorization") String token,
             @Query("estado") String estado,
             @Query("categoria") String categoria,
-            @Query("moneda") String moneda
+            @Query("moneda") String moneda,
+            @Query("fecha") String fecha
     );
 
     @GET("/v1/subastas/{id}")
     Call<Subasta> obtenerDetalleSubasta(
             @Path("id") Integer id,
+            @Header("Authorization") String token
+    );
+
+    @GET("/v1/subastas/{id}/items/{itemId}")
+    Call<ItemCatalogo> obtenerDetalleItem(
+            @Path("id") Integer id,
+            @Path("itemId") Integer itemId,
             @Header("Authorization") String token
     );
 }

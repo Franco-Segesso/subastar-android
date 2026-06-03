@@ -16,9 +16,14 @@ import java.util.List;
 public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapter.ProductoViewHolder> {
 
     private List<ItemCatalogo> items;
+    private int subastaId;
+    private String subastaEstado;
 
-    public ItemProductoAdapter(List<ItemCatalogo> items) {
+    // El constructor ahora recibe los datos de la subasta
+    public ItemProductoAdapter(List<ItemCatalogo> items, int subastaId, String subastaEstado) {
         this.items = items;
+        this.subastaId = subastaId;
+        this.subastaEstado = subastaEstado;
     }
 
     @NonNull
@@ -32,26 +37,30 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
         ItemCatalogo item = items.get(position);
 
-        // Seteamos textos
         holder.tvTitulo.setText(item.getProducto().getTipo());
 
-        // Validación de regla de negocio: si viene nulo, el usuario no está logueado
         if (item.getPrecioBase() != null) {
             holder.tvPrecio.setText("Base: USD " + item.getPrecioBase());
         } else {
             holder.tvPrecio.setText("Base: Oculto (Iniciá sesión)");
         }
 
-        // Cargar imagen con Glide
         List<Foto> fotos = item.getProducto().getFotos();
         if (fotos != null && !fotos.isEmpty()) {
-            String urlPrimeraFoto = fotos.get(0).getUrlFoto();
-
             Glide.with(holder.itemView.getContext())
-                    .load(urlPrimeraFoto)
-                    .placeholder(R.drawable.bg_chip_inactivo) // Un fondo mientras carga
+                    .load(fotos.get(0).getUrlFoto())
+                    .placeholder(R.drawable.bg_chip_inactivo)
                     .into(holder.ivFoto);
         }
+
+        // CORREGIDO: Usamos las variables directas del constructor en vez de navegar por el objeto item
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(v.getContext(), com.grupo6.subastar.DetalleItemActivity.class);
+            intent.putExtra("ITEM_ID", item.getId());
+            intent.putExtra("SUBASTA_ID", subastaId);
+            intent.putExtra("SUBASTA_ESTADO", subastaEstado);
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

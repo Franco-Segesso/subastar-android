@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         SubastarApi api = retrofit.create(SubastarApi.class);
 
         // Llamamos al endpoint pasándole null a todo para simular un usuario no logueado
-        api.obtenerSubastas(null, null, null, null).enqueue(new Callback<List<Subasta>>() {
+        api.obtenerSubastas(null, null, null, null, null).enqueue(new Callback<List<Subasta>>() {
             @Override
             public void onResponse(Call<List<Subasta>> call, Response<List<Subasta>> response) {
                 if (response.isSuccessful() && response.body() != null) {

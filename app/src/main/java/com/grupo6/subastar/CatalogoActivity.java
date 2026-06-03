@@ -73,11 +73,13 @@ public class CatalogoActivity extends AppCompatActivity {
                     tvMoneda.setText(subasta.getMoneda());
                     tvEstado.setText(subasta.getEstado().toUpperCase());
 
-                    // El próximo paso será poblar el RecyclerView con subasta.getCatalogo().getItems()
-                    Log.d("CATALOGO", "Subasta cargada correctamente: " + subasta.getUbicacion());
-
+                    // Le pasamos los datos directamente al instanciar el adapter
                     if (subasta.getCatalogo() != null && subasta.getCatalogo().getItems() != null) {
-                        ItemProductoAdapter adapter = new ItemProductoAdapter(subasta.getCatalogo().getItems());
+                        ItemProductoAdapter adapter = new ItemProductoAdapter(
+                                subasta.getCatalogo().getItems(),
+                                subasta.getId(),
+                                subasta.getEstado()
+                        );
                         recyclerView.setAdapter(adapter);
                     }
                 }

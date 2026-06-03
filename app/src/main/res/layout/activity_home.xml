@@ -67,6 +67,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/chipTodas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Todas"
@@ -79,6 +80,7 @@
                 android:layout_marginEnd="8dp"/>
 
             <TextView
+                android:id="@+id/chipEnVivo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="En vivo"
@@ -90,9 +92,58 @@
                 android:layout_marginEnd="8dp"/>
 
             <TextView
+                android:id="@+id/chipComun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Próximas"
+                android:text="Común"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/bg_chip_inactivo"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/chipEspecial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Especial"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/bg_chip_inactivo"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/chipPlata"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Plata"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/bg_chip_inactivo"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/chipOro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Oro"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/bg_chip_inactivo"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/chipPlatino"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Platino"
                 android:textColor="@color/texto_sec"
                 android:textSize="14sp"
                 android:paddingHorizontal="16dp"
@@ -223,6 +274,47 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/tvProximas"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/layoutFechaNav" />
+
+    <LinearLayout
+        android:id="@+id/layoutFechaNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingVertical="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnDiaAnterior"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_media_previous"
+            app:tint="@color/texto_sec"/>
+
+        <TextView
+            android:id="@+id/tvFechaActual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&lt; HOY (27/05/26)"
+            android:textAlignment="center"
+            android:textColor="@color/texto_sec"
+            android:textSize="14sp"
+            android:layout_marginHorizontal="16dp"/>
+
+        <ImageButton
+            android:id="@+id/btnDiaSiguiente"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_media_next"
+            app:tint="@color/texto_sec"
+            android:visibility="invisible"/>
+    </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
