@@ -153,110 +153,6 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardEnVivo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:cardBackgroundColor="@color/fondo_sec_a"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="0dp"
-        app:layout_constraintTop_toBottomOf="@id/scrollChips">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp">
-
-            <View
-                android:id="@+id/dotEnVivo"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:background="@color/error"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@+id/tvTagEnVivo"/>
-
-            <TextView
-                android:id="@+id/tvTagEnVivo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="EN VIVO"
-                android:textColor="@color/error"
-                android:textStyle="bold"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@id/dotEnVivo"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnIngresar"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="INGRESAR ->"
-                android:textColor="@color/secundario"
-                app:strokeColor="@color/secundario"
-                app:cornerRadius="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tvTituloDestacado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Arte Contemporáneo"
-                android:textColor="@color/texto_ppal"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTagEnVivo" />
-
-            <TextView
-                android:id="@+id/tvSubDetalle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="34 artículos - Categoría: PLATA - USD"
-                android:textColor="@color/secundario"
-                android:textSize="12sp"
-                android:layout_marginTop="4dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTituloDestacado" />
-
-            <View
-                android:id="@+id/divisor"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/bordes"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/tvSubDetalle"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                android:weightSum="3"
-                app:layout_constraintTop_toBottomOf="@id/divisor">
-
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ítem actual" android:textColor="@color/texto_sec" android:textSize="12sp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="#12/34" android:textColor="@color/texto_ppal" android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mejor oferta" android:textColor="@color/texto_sec" android:textSize="12sp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="USD 4.500" android:textColor="@color/exito" android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Postores" android:textColor="@color/texto_sec" android:textSize="12sp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="8" android:textColor="@color/texto_ppal" android:textStyle="bold"/>
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
     <TextView
         android:id="@+id/tvProximas"
         android:layout_width="wrap_content"
@@ -266,7 +162,7 @@
         android:textSize="12sp"
         android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardEnVivo" />
+        app:layout_constraintTop_toBottomOf="@id/scrollChips" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSubastas"

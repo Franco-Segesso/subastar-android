@@ -69,17 +69,17 @@ public class HomeActivity extends AppCompatActivity {
     private void actualizarTextoFecha() {
         if (fechaVisualizada.isEqual(LocalDate.now())) {
             tvFechaActual.setText("HOY");
-            btnDiaSiguiente.setVisibility(View.INVISIBLE); // No hay futuro en la app por ahora
         } else {
-            // Formatea a "LUN 25" (requiere que el emulador esté en español, o forzamos el Locale)
+            // Formatea a "LUN 25"
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE dd", new Locale("es", "AR"));
             String textoFecha = fechaVisualizada.format(formatter).toUpperCase();
 
             // Eliminar el punto que a veces agrega Java en los días acortados (ej: "LUN. 25")
             tvFechaActual.setText(textoFecha.replace(".", ""));
 
-            btnDiaSiguiente.setVisibility(View.VISIBLE);
+
         }
+        btnDiaSiguiente.setVisibility(View.VISIBLE);
     }
 
     private void configurarChips() {
