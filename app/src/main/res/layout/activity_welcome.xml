@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/bg_dark"
+    android:padding="32dp">
+
+    <ImageView
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:src="@drawable/logo_subastar"
+        android:layout_marginBottom="8dp"
+        android:scaleType="fitCenter"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="C A S A   D E   S U B A S T A S"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Plataforma oficial de subastas\nen línea y presenciales"
+        android:textColor="@color/text_gray"
+        android:textAlignment="center"
+        android:layout_marginBottom="64dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGoLogin"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="INICIAR SESIÓN"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:backgroundTint="@color/gold"
+        app:cornerRadius="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGoRegistro"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Registrarme"
+        android:textColor="@color/gold"
+        android:textStyle="bold"
+        app:backgroundTint="@android:color/transparent"
+        app:strokeColor="@color/gold"
+        app:strokeWidth="1dp"
+        app:cornerRadius="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/tvInvitado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="entrar como invitado"
+        android:textColor="@color/gold"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

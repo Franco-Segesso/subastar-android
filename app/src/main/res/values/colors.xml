@@ -11,4 +11,11 @@
     <color name="texto_sec">#A09890</color>
     <color name="exito">#3DBE8C</color>
     <color name="error">#E05252</color>
+
+    //colores a corregir
+    <color name="gold">#D4AF37</color>
+    <color name="bg_dark">#121212</color>
+    <color name="text_gray">#A0A0A0</color>
+    <color name="button_dark">#2D2D2D</color>
+    <color name="input_border">#E0E0E0</color>
 </resources>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear cuenta"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/gold"
+            android:layout_marginBottom="24dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nombre" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+                <EditText android:id="@+id/etNombre" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textPersonName"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apellido" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+                <EditText android:id="@+id/etApellido" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textPersonName"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/etEmail" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textEmailAddress" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fecha de Nacimiento (YYYY-MM-DD)" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/etFechaNacimiento" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="date" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Domicilio Legal (Calle, Altura, Depto)" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/etDireccion" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textPostalAddress" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="País de Origen" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+        <Spinner android:id="@+id/spPais" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Documento" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/etDocumento" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="number" android:layout_marginBottom="24dp"/>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#33FFFFFF" android:layout_marginBottom="24dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fotos del Documento" android:textColor="@color/gold" android:textStyle="bold" android:layout_marginBottom="12dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="32dp">
+
+            <LinearLayout
+                android:id="@+id/btnFotoFrente"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="100dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_input"
+                android:layout_marginEnd="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Frente" android:textColor="@color/black" android:textStyle="bold"/>
+                <TextView android:id="@+id/tvEstadoFrente" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📷" android:textSize="24sp" android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnFotoDorso"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="100dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_input"
+                android:layout_marginStart="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dorso" android:textColor="@color/black" android:textStyle="bold"/>
+                <TextView android:id="@+id/tvEstadoDorso" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📷" android:textSize="24sp" android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegistrar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Registrarme"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:backgroundTint="@color/gold"
+            app:cornerRadius="12dp"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
+</ScrollView>
