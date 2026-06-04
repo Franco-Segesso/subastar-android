@@ -3,6 +3,7 @@ package com.grupo6.subastar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,29 @@ public class HomeActivity extends AppCompatActivity {
         ImageView btnNotificaciones = findViewById(R.id.btnNotificaciones);
         TextView navMisPujas = findViewById(R.id.navMisPujas);
         TextView navConsignacion = findViewById(R.id.navConsignacion);
+        Button btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+
+
+
+        btnCerrarSesion.setOnClickListener(v -> {
+            // 1. Borramos el token de la memoria
+            TokenManager tokenManager = new TokenManager(HomeActivity.this);
+            tokenManager.clearToken();
+
+            // 2. Preparamos el viaje a la pantalla de Bienvenida
+            Intent intent = new Intent(HomeActivity.this, WelcomeActivity.class);
+
+            // 3. FLAGS MÁGICAS: Limpian el historial de pantallas.
+            // Así el usuario no puede volver al Home tocando "Atrás".
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            // 4. Viajamos
+            startActivity(intent);
+            finish();
+        });
+
+
+
 
         btnPerfil.setOnClickListener(v -> {
             // Verificamos si tiene la sesión iniciada leyendo el Token

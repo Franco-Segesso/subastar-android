@@ -6,4 +6,10 @@
     </style>
 
     <style name="Theme.Subastarandroid" parent="Base.Theme.Subastarandroid" />
+
+    <style name="Theme.SplashInicial" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/bg_dark</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.Subastarandroid</item>
+    </style>
 </resources>

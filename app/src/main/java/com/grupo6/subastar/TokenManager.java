@@ -44,6 +44,7 @@ public class TokenManager {
         return null;
     }
 
+    // Método para cerrar sesión borrando el token
     public void clearToken() {
         if (sharedPreferences != null) {
             sharedPreferences.edit().remove(KEY_TOKEN).apply();
