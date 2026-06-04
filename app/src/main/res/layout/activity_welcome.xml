@@ -62,6 +62,10 @@
         android:text="entrar como invitado"
         android:textColor="@color/gold"
         android:textStyle="bold"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground" />
 
 </LinearLayout>

@@ -66,11 +66,16 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (holder instanceof NormalViewHolder) {
             NormalViewHolder normalHolder = (NormalViewHolder) holder;
 
-            // Llená esto con los IDs reales de tu item_subasta.xml
-            normalHolder.tvTitulo.setText(subasta.getUbicacion());
+            // Llenamos los datos
+            normalHolder.tvTitulo.setText(subasta.getUbicacion() != null ? subasta.getUbicacion() : "Subasta Especial");
             normalHolder.tvFecha.setText(subasta.getFecha() + " - " + subasta.getHora());
 
-            // El clic va en toda la tarjeta
+            if (subasta.getCategoria() != null) {
+                normalHolder.tvCategoria.setText("CATEGORÍA: " + subasta.getCategoria().toUpperCase());
+            }
+
+            // Le asignamos el clic tanto al botón "VER" como a toda la tarjeta (mejor UX)
+            normalHolder.btnVer.setOnClickListener(v -> navegarAlCatalogo(v, subasta));
             normalHolder.itemView.setOnClickListener(v -> navegarAlCatalogo(v, subasta));
         }
     }
@@ -90,13 +95,16 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     // El ViewHolder para las subastas futuras/pasadas
     public static class NormalViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvFecha; // Ajustá estos tipos según tu item_subasta.xml
+        TextView tvTitulo, tvFecha, tvCategoria; // Ajustá estos tipos según tu item_subasta.xml
+        MaterialButton btnVer;
 
         public NormalViewHolder(@NonNull View itemView) {
             super(itemView);
             // Reemplazá con los IDs correctos de tu layout normal
             tvTitulo = itemView.findViewById(R.id.tvTituloSubasta);
             tvFecha = itemView.findViewById(R.id.tvFechaSubasta);
+            tvCategoria = itemView.findViewById(R.id.tvCategoriaSubasta);
+            btnVer = itemView.findViewById(R.id.btnVer);
         }
     }
 

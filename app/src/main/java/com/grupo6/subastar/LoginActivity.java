@@ -91,8 +91,16 @@ public class LoginActivity extends AppCompatActivity {
                     tokenManager.saveToken(token);
 
                     String nombre = response.body().getCliente().getNombre();
+
+                    //guardamos el nombre en la memoria del celular
+                    getSharedPreferences("SubastarPrefs", MODE_PRIVATE)
+                            .edit()
+                            .putString("USER_NAME", nombre)
+                            .apply();
+
                     Toast.makeText(LoginActivity.this, "¡Éxito! Bienvenido, " + nombre, Toast.LENGTH_LONG).show();
 
+                    //viajamos al home
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     // Limpiamos el historial para que si toca la flecha "Atrás", salga de la app en vez de volver al Login
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -1,7 +1,9 @@
 package com.grupo6.subastar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +33,7 @@ public class HomeActivity extends AppCompatActivity {
     private LocalDate fechaVisualizada = LocalDate.now();
     private TextView tvFechaActual;
     private ImageButton btnDiaAnterior, btnDiaSiguiente;
+    private TokenManager tokenManager;
 
 
     // Variables para mantener los filtros activos
@@ -41,7 +44,55 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_home);
+
+        tokenManager = new TokenManager(this);
+
+        TextView tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
+
+        String nombreGuardado = getSharedPreferences("SubastarPrefs", MODE_PRIVATE)
+                .getString("USER_NAME", "Invitado");
+
+        tvNombreUsuario.setText(nombreGuardado);
+
+
+        ImageView btnPerfil = findViewById(R.id.btnPerfil);
+        ImageView btnNotificaciones = findViewById(R.id.btnNotificaciones);
+        TextView navMisPujas = findViewById(R.id.navMisPujas);
+        TextView navConsignacion = findViewById(R.id.navConsignacion);
+
+        btnPerfil.setOnClickListener(v -> {
+            // Verificamos si tiene la sesión iniciada leyendo el Token
+            String tokenGuardado = tokenManager.getToken();
+
+            if (tokenGuardado == null) {
+                // NO TIENE SESIÓN INICIADA (Es invitado)
+                // Lo mandamos a la pantalla de Welcome para que pueda elegir Iniciar Sesión o Registrarse
+                Intent intent = new Intent(HomeActivity.this, WelcomeActivity.class);
+                startActivity(intent);
+                finish();
+
+            } else {
+                // SÍ TIENE SESIÓN INICIADA
+                // Le mostramos el mensaje porque la pantalla de Perfil aún no existe
+                Toast.makeText(HomeActivity.this, "Esa funcionalidad todavía no está disponible", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // --- LÓGICA DE NOTIFICACIONES ---
+        btnNotificaciones.setOnClickListener(v -> {
+            Toast.makeText(HomeActivity.this, "Esa funcionalidad todavía no está disponible", Toast.LENGTH_SHORT).show();
+        });
+
+        // --- LÓGICA DE NAVEGACIÓN INFERIOR ---
+        navMisPujas.setOnClickListener(v -> {
+            Toast.makeText(HomeActivity.this, "Esa funcionalidad todavía no está disponible", Toast.LENGTH_SHORT).show();
+        });
+
+        navConsignacion.setOnClickListener(v -> {
+            Toast.makeText(HomeActivity.this, "Esa funcionalidad todavía no está disponible", Toast.LENGTH_SHORT).show();
+        });
 
         recyclerView = findViewById(R.id.recyclerViewSubastas);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -86,6 +137,13 @@ public class HomeActivity extends AppCompatActivity {
         // 1. Mapeamos todos los chips de la vista
         TextView chipTodas = findViewById(R.id.chipTodas);
         TextView chipEnVivo = findViewById(R.id.chipEnVivo);
+
+        boolean isInvitado = tokenManager.getToken() == null;
+
+        if (isInvitado){
+            chipEnVivo.setVisibility(View.GONE);
+        }
+
         TextView chipComun = findViewById(R.id.chipComun);
         TextView chipEspecial = findViewById(R.id.chipEspecial);
         TextView chipPlata = findViewById(R.id.chipPlata);
@@ -146,14 +204,32 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Subasta>> call, Response<List<Subasta>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Subasta> subastas = response.body();
+                    List<Subasta> listaOriginal = response.body();
 
-                    adapter = new SubastaAdapter(subastas);
-                    recyclerView.setAdapter(adapter);
+                    // --- FILTRO PARA INVITADOS ---
+                    boolean isInvitado = tokenManager.getToken() == null;
 
-                    // Pequeño feedback visual si la lista viene vacía (como pasa con "En vivo")
-                    if (subastas.isEmpty()) {
-                        Toast.makeText(HomeActivity.this, "No hay subastas para este filtro", Toast.LENGTH_SHORT).show();
+                    if (isInvitado) {
+                        List<Subasta> listaFiltrada = new ArrayList<>();
+                        for (Subasta subasta : listaOriginal) {
+                            // Solo guardamos las que NO estén abiertas
+                            if (!"abierta".equalsIgnoreCase(subasta.getEstado())) {
+                                listaFiltrada.add(subasta);
+                            }
+                        }
+                        listaOriginal = listaFiltrada; // Reemplazamos la lista
+                    }
+                    // ------------------------------
+
+                    // Comprobamos si la lista quedó vacía después del filtro
+                    if (listaOriginal.isEmpty()) {
+                        Toast.makeText(HomeActivity.this, "No hay subastas disponibles para ver", Toast.LENGTH_SHORT).show();
+                        // Acá idealmente limpiarían el RecyclerView o mostrarían un Empty State
+                        recyclerView.setAdapter(new SubastaAdapter(new ArrayList<>()));
+                    } else {
+                        // Pasamos la lista limpia al Adapter
+                        adapter = new SubastaAdapter(listaOriginal);
+                        recyclerView.setAdapter(adapter);
                     }
                 }
             }

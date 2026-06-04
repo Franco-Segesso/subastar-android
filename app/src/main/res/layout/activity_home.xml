@@ -29,14 +29,29 @@
         app:layout_constraintTop_toBottomOf="@id/tvBienvenido" />
 
     <ImageView
-        android:id="@+id/ivPerfil"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@android:drawable/ic_menu_myplaces"
+        android:id="@+id/btnPerfil"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_circulo_dorado"
+        android:padding="8dp"
+        android:src="@drawable/ic_person"
         app:tint="@color/secundario"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/tvNombreUsuario"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Botón Notificaciones (Al lado del perfil) -->
+    <ImageView
+        android:id="@+id/btnNotificaciones"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_notifications"
+        app:tint="@color/secundario"
+        app:layout_constraintBottom_toBottomOf="@+id/btnPerfil"
+        app:layout_constraintEnd_toStartOf="@+id/btnPerfil"
+        app:layout_constraintTop_toTopOf="@+id/btnPerfil" />
 
     <EditText
         android:id="@+id/etBuscador"
@@ -209,6 +224,49 @@
             android:src="@android:drawable/ic_media_next"
             app:tint="@color/texto_sec"
             android:visibility="invisible"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingVertical="16dp"
+        android:background="@color/primario"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/navSubastas"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SUBASTAS"
+            android:textColor="@color/texto_ppal"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/navMisPujas"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="MIS PUJAS"
+            android:textColor="@color/texto_sec"
+            android:gravity="center"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/navConsignacion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CONSIGNACIÓN"
+            android:textColor="@color/texto_sec"
+            android:gravity="center"
+            android:textSize="12sp"/>
     </LinearLayout>
 
 
