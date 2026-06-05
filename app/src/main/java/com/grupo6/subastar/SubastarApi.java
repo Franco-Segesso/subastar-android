@@ -5,6 +5,12 @@ import com.grupo6.subastar.dto.LoginResponse;
 import com.grupo6.subastar.model.ItemCatalogo;
 import com.grupo6.subastar.model.Subasta;
 
+import com.grupo6.subastar.dto.MedioPagoDTO;
+import com.grupo6.subastar.dto.AgregarTarjetaRequest;
+import com.grupo6.subastar.dto.AgregarCuentaRequest;
+import com.grupo6.subastar.dto.AgregarChequeRequest;
+import retrofit2.http.DELETE;
+
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -67,4 +73,39 @@ public interface SubastarApi {
 
     @POST("v1/auth/activar")
     Call<ResponseBody> activarCuenta(@Body com.grupo6.subastar.dto.ActivarRequest request);
+
+    // MEDIOS DE PAGO
+    @GET("/v1/medios-pago/cliente/{clienteId}")
+    Call<List<MedioPagoDTO>> obtenerMediosPago(
+            @Path("clienteId") Integer clienteId,
+            @Header("Authorization") String token
+    );
+
+    @POST("/v1/medios-pago/tarjeta/{clienteId}")
+    Call<ResponseBody> agregarTarjeta(
+            @Path("clienteId") Integer clienteId,
+            @Header("Authorization") String token,
+            @Body AgregarTarjetaRequest request
+    );
+
+    @POST("/v1/medios-pago/cuenta/{clienteId}")
+    Call<ResponseBody> agregarCuenta(
+            @Path("clienteId") Integer clienteId,
+            @Header("Authorization") String token,
+            @Body AgregarCuentaRequest request
+    );
+
+    @POST("/v1/medios-pago/cheque/{clienteId}")
+    Call<ResponseBody> agregarCheque(
+            @Path("clienteId") Integer clienteId,
+            @Header("Authorization") String token,
+            @Body AgregarChequeRequest request
+    );
+
+    @DELETE("/v1/medios-pago/{id}")
+    Call<ResponseBody> darDeBajaMedioPago(
+            @Path("id") Integer id,
+            @Header("Authorization") String token
+    );
 }
+

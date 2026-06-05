@@ -98,9 +98,9 @@ public class HomeActivity extends AppCompatActivity {
                 finish();
 
             } else {
-                // SÍ TIENE SESIÓN INICIADA
-                // Le mostramos el mensaje porque la pantalla de Perfil aún no existe
-                Toast.makeText(HomeActivity.this, "Esa funcionalidad todavía no está disponible", Toast.LENGTH_SHORT).show();
+                // SÍ TIENE SESIÓN INICIADA — abrimos el Perfil
+                Intent intent = new Intent(HomeActivity.this, PerfilActivity.class);
+                startActivity(intent);
             }
         });
 
