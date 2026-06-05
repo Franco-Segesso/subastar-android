@@ -89,17 +89,17 @@
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ítem actual" android:textColor="@color/texto_sec" android:textSize="12sp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="#12/34" android:textColor="@color/texto_ppal" android:textStyle="bold"/>
+                <TextView android:id="@+id/tvItemActual" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="#1/1" android:textColor="@color/texto_ppal" android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mejor oferta" android:textColor="@color/texto_sec" android:textSize="12sp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="USD 4.500" android:textColor="@color/exito" android:textStyle="bold"/>
+                <TextView android:id="@+id/tvMejorOferta" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="USD 0" android:textColor="@color/exito" android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Postores" android:textColor="@color/texto_sec" android:textSize="12sp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="8" android:textColor="@color/texto_ppal" android:textStyle="bold"/>
+                <TextView android:id="@+id/tvPostores" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/texto_ppal" android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>
 
