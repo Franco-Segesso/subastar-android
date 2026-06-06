@@ -49,11 +49,12 @@
         android:id="@+id/tvActivarCuenta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tengo un código de activación"
-        android:textColor="@color/white"
+        android:text="Completar registro (Crear clave)"
+        android:textColor="@color/texto_ppal"
         android:textStyle="bold"
         android:textSize="15sp"
         android:layout_marginTop="24dp"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        android:background="?attr/selectableItemBackground"/>
 
 </LinearLayout>

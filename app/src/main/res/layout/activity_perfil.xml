@@ -1,87 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/primario"> <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp"
-    android:gravity="center_vertical">
+    android:background="@color/primario">
 
-    <ImageButton
-        android:id="@+id/btnVolver"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_media_previous"
-        app:tint="@color/texto_ppal"/> <TextView
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:text="Mi Perfil"
-    android:textColor="@color/texto_ppal" android:textSize="20sp"
-    android:textStyle="bold"
-    android:gravity="center"/>
-
-    <ImageButton
-        android:id="@+id/btnCerrarSesion"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_lock_power_off"
-        app:tint="@color/error"/> </LinearLayout>
-
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:paddingVertical="24dp">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_person"
-            android:background="@drawable/bg_circulo_dorado"
-            android:padding="16dp"
-            app:tint="@color/secundario"/> <TextView
-        android:id="@+id/tvNombreCompleto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:textColor="@color/texto_ppal" android:textSize="22sp"
-        android:textStyle="bold"/>
+        <ImageButton
+            android:id="@+id/btnVolver"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_media_previous"
+            app:tint="@color/texto_ppal"/>
 
         <TextView
-            android:id="@+id/tvEmail"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/texto_sec" android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/tvCategoria"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="4dp"
-            android:background="@drawable/bg_chip_activo"
-            android:textColor="@color/secundario" android:textSize="12sp"
+            android:layout_weight="1"
+            android:text="Mi Perfil"
+            android:textColor="@color/texto_ppal"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textAllCaps="true"/>
+            android:gravity="center"/>
 
+        <ImageButton
+            android:id="@+id/btnCerrarSesion"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_lock_power_off"
+            app:tint="@color/error"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="12dp"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="16dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="20dp">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@drawable/ic_person"
+                android:background="@drawable/bg_circulo_dorado"
+                android:padding="16dp"
+                app:tint="@color/secundario"/>
+
+            <TextView
+                android:id="@+id/tvCategoria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_chip_activo"
+                android:textColor="@color/secundario"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                tools:text="ORO"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvNombreCompleto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/texto_ppal"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                tools:text="Marco Gonzalez"/>
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp"
+                tools:text="marco.gonzalez@gmail.com"/>
+
+            <TextView
+                android:id="@+id/tvDireccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp"
+                tools:text="Mitre 124, Quilmes"/>
+
+            <TextView
+                android:id="@+id/tvPais"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"
+                tools:text="Argentina"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bordes"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginVertical="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="16dp"
         android:gravity="center_vertical">
 
         <TextView
@@ -89,7 +144,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Métodos de Pago"
-            android:textColor="@color/texto_ppal" android:textSize="16sp"
+            android:textColor="@color/texto_ppal"
+            android:textSize="18sp"
             android:textStyle="bold"/>
 
         <Button
@@ -97,17 +153,22 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="+ Agregar"
-            android:textColor="@color/primario" android:backgroundTint="@color/secundario" android:textSize="13sp"
-            android:textStyle="bold"/>
+            android:textColor="@color/primario"
+            android:backgroundTint="@color/secundario"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:paddingHorizontal="16dp"/>
 
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMediosPago"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="4dp"
+        android:layout_height="240dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_caja_lista"
+        android:padding="8dp"
         android:clipToPadding="false"/>
 
 </LinearLayout>

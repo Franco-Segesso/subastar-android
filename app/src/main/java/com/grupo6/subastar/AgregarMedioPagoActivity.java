@@ -96,8 +96,8 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
         spinnerPaisEmisor = findViewById(R.id.spinnerPaisEmisor);
 
         ArrayAdapter<String> adapterSiNo = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"no", "si"});
-        adapterSiNo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.layout.item_spinner, new String[]{"no", "si"});
+        adapterSiNo.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spinnerExtranjera.setAdapter(adapterSiNo);
 
         // Mostrar/ocultar campo País emisor según si es extranjera
@@ -129,8 +129,8 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
 
         // Spinner monedas
         ArrayAdapter<String> adapterMoneda = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"ARS", "USD"});
-        adapterMoneda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.layout.item_spinner, new String[]{"ARS", "USD"});
+        adapterMoneda.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spinnerMonedaCuenta.setAdapter(adapterMoneda);
         spinnerMonedaCheque.setAdapter(adapterMoneda);
 
@@ -193,8 +193,8 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                     for (Pais p : listaPaises) {
                         nombresTodos.add(p.getNombre());
                     }
-                    ArrayAdapter<String> adapterBanco = new ArrayAdapter<>(AgregarMedioPagoActivity.this, android.R.layout.simple_spinner_item, nombresTodos);
-                    adapterBanco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    ArrayAdapter<String> adapterBanco = new ArrayAdapter<>(AgregarMedioPagoActivity.this, R.layout.item_spinner, nombresTodos);
+                    adapterBanco.setDropDownViewResource(R.layout.item_spinner_dropdown);
                     spinnerPaisBanco.setAdapter(adapterBanco);
 
                     // 2. Armamos la lista SIN ARGENTINA para la Tarjeta Extranjera
@@ -204,8 +204,8 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                             nombresExtranjeros.add(p.getNombre());
                         }
                     }
-                    ArrayAdapter<String> adapterEmisor = new ArrayAdapter<>(AgregarMedioPagoActivity.this, android.R.layout.simple_spinner_item, nombresExtranjeros);
-                    adapterEmisor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    ArrayAdapter<String> adapterEmisor = new ArrayAdapter<>(AgregarMedioPagoActivity.this, R.layout.item_spinner, nombresExtranjeros);
+                    adapterEmisor.setDropDownViewResource(R.layout.item_spinner_dropdown);
                     spinnerPaisEmisor.setAdapter(adapterEmisor);
                 }
             }
