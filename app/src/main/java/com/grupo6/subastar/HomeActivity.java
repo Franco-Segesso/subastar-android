@@ -35,7 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView tvFechaActual;
     private ImageButton btnDiaAnterior, btnDiaSiguiente;
     private TokenManager tokenManager;
-
+    private TextView tvMensajeVacio;
     private TextView tvProximas;
 
 
@@ -127,6 +127,7 @@ public class HomeActivity extends AppCompatActivity {
         tvProximas = findViewById(R.id.tvProximas);
         btnDiaAnterior = findViewById(R.id.btnDiaAnterior);
         btnDiaSiguiente = findViewById(R.id.btnDiaSiguiente);
+        tvMensajeVacio = findViewById(R.id.tvMensajeVacio);
 
         btnDiaAnterior.setOnClickListener(v -> cambiarDia(-1));
         btnDiaSiguiente.setOnClickListener(v -> cambiarDia(1));
@@ -271,11 +272,13 @@ public class HomeActivity extends AppCompatActivity {
 
                     // Comprobamos si la lista quedó vacía después del filtro
                     if (listaOriginal.isEmpty()) {
-                        Toast.makeText(HomeActivity.this, "No hay subastas disponibles para ver", Toast.LENGTH_SHORT).show();
-                        // Acá idealmente limpiarían el RecyclerView o mostrarían un Empty State
-                        recyclerView.setAdapter(new SubastaAdapter(new ArrayList<>()));
+                        recyclerView.setVisibility(View.GONE); // Ocultamos la lista
+                        tvMensajeVacio.setText("No hay subastas programadas para este día.");
+                        tvMensajeVacio.setVisibility(View.VISIBLE); // Mostramos el mensaje
                     } else {
-                        // Pasamos la lista limpia al Adapter
+                        recyclerView.setVisibility(View.VISIBLE); // Mostramos la lista
+                        tvMensajeVacio.setVisibility(View.GONE); // Ocultamos el mensaje
+
                         adapter = new SubastaAdapter(listaOriginal);
                         recyclerView.setAdapter(adapter);
                     }
@@ -285,7 +288,11 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Subasta>> call, Throwable t) {
                 Log.e("HOME_SERVER_ERROR", t.getMessage());
-                Toast.makeText(HomeActivity.this, "Fallo en la conexión de red", Toast.LENGTH_SHORT).show();
+
+                // LÓGICA DE SIN INTERNET
+                recyclerView.setVisibility(View.GONE);
+                tvMensajeVacio.setText("No tienes conexión a internet, prueba abriendo de nuevo la app.");
+                tvMensajeVacio.setVisibility(View.VISIBLE);
             }
         });
     }
