@@ -16,7 +16,9 @@ public class Subasta {
     public String getMoneda() { return moneda; }
     public String getUbicacion() { return ubicacion; }
     public Catalogo getCatalogo() { return catalogo; }
-
+    private Double mejorOferta;
+    private Integer cantidadPostores;
+    private Integer itemActual;
     public String getFecha() {
         return fecha;
     }
@@ -24,4 +26,13 @@ public class Subasta {
     public String getHora() {
         return hora;
     }
+
+    public Double getMejorOferta() { return mejorOferta; }
+    public void setMejorOferta(Double mejorOferta) { this.mejorOferta = mejorOferta; }
+
+    public Integer getCantidadPostores() { return cantidadPostores; }
+    public void setCantidadPostores(Integer cantidadPostores) { this.cantidadPostores = cantidadPostores; }
+
+    public Integer getItemActual() { return itemActual; }
+    public void setItemActual(Integer itemActual) { this.itemActual = itemActual; }
 }

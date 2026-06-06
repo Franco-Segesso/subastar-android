@@ -28,20 +28,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvBienvenido" />
 
+    <!-- Botón Notificaciones (Al lado del perfil) -->
+
     <ImageView
         android:id="@+id/btnPerfil"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/bg_circulo_dorado"
         android:padding="8dp"
         android:src="@drawable/ic_person"
-        app:tint="@color/secundario"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/secundario" />
 
-    <!-- Botón Notificaciones (Al lado del perfil) -->
     <ImageView
         android:id="@+id/btnNotificaciones"
         android:layout_width="28dp"
@@ -187,16 +188,32 @@
         app:layout_constraintTop_toBottomOf="@id/tvProximas"
         app:layout_constraintBottom_toTopOf="@+id/layoutFechaNav" />
 
+    <TextView
+        android:id="@+id/tvMensajeVacio"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="No hay subastas programadas para este día."
+        android:textColor="@color/texto_sec"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvProximas"
+        app:layout_constraintBottom_toTopOf="@+id/layoutFechaNav" />
+
     <LinearLayout
         android:id="@+id/layoutFechaNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginBottom="40dp"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingVertical="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/btnDiaAnterior"
@@ -204,17 +221,17 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_media_previous"
-            app:tint="@color/texto_sec"/>
+            app:tint="@color/texto_sec" />
 
         <TextView
             android:id="@+id/tvFechaActual"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
             android:text="&lt; HOY (27/05/26)"
             android:textAlignment="center"
             android:textColor="@color/texto_sec"
-            android:textSize="14sp"
-            android:layout_marginHorizontal="16dp"/>
+            android:textSize="14sp" />
 
         <ImageButton
             android:id="@+id/btnDiaSiguiente"
@@ -222,8 +239,8 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_media_next"
-            app:tint="@color/texto_sec"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            app:tint="@color/texto_sec" />
     </LinearLayout>
 
     <LinearLayout

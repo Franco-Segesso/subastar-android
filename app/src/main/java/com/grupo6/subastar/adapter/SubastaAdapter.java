@@ -1,6 +1,7 @@
 package com.grupo6.subastar.adapter;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,17 +58,48 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof ActivaViewHolder) {
             ActivaViewHolder activaHolder = (ActivaViewHolder) holder;
 
-            activaHolder.tvTitulo.setText(subasta.getUbicacion());
+            if (subasta.getCatalogo() != null) {
+                activaHolder.tvTitulo.setText(subasta.getCatalogo().getDescripcion());
+            } else {
+                activaHolder.tvTitulo.setText("Subasta sin título");
+            }
             activaHolder.tvSubDetalle.setText("Categoría " + subasta.getCategoria().toUpperCase() + " • " + subasta.getMoneda());
+
+            int totalItems = 0;
+            if (subasta.getCatalogo() != null && subasta.getCatalogo().getItems() != null) {
+                totalItems = subasta.getCatalogo().getItems().size();
+            }
+            activaHolder.tvItemActual.setText(totalItems + " Lotes");
+
+            if (subasta.getMejorOferta() != null) {
+                // Hay oferta real (usuario logueado)
+                activaHolder.tvMejorOferta.setText(subasta.getMoneda() + " " + subasta.getMejorOferta());
+                // Opcional: Asegurarte de que se vea verde
+                activaHolder.tvMejorOferta.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.exito));
+            } else {
+                // Es invitado, el backend mandó null
+                activaHolder.tvMejorOferta.setText("Oculto");
+                activaHolder.tvMejorOferta.setTextColor(android.graphics.Color.GRAY);
+            }
+
+            int postores = subasta.getCantidadPostores() != null ? subasta.getCantidadPostores() : 0;
+            activaHolder.tvPostores.setText(String.valueOf(postores));
 
             // El clic va en el botón de ingresar
             activaHolder.btnIngresar.setOnClickListener(v -> navegarAlCatalogo(v, subasta));
+
+
 
         } else if (holder instanceof NormalViewHolder) {
             NormalViewHolder normalHolder = (NormalViewHolder) holder;
 
             // Llenamos los datos
-            normalHolder.tvTitulo.setText(subasta.getUbicacion() != null ? subasta.getUbicacion() : "Subasta Especial");
+            if (subasta.getCatalogo() != null) {
+                normalHolder.tvTitulo.setText(subasta.getCatalogo().getDescripcion());
+            } else {
+                normalHolder.tvTitulo.setText("Subasta sin título");
+            }
+
             normalHolder.tvFecha.setText(subasta.getFecha() + " - " + subasta.getHora());
 
             if (subasta.getCategoria() != null) {
@@ -110,7 +142,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     // El ViewHolder para la subasta en vivo
     public static class ActivaViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvSubDetalle;
+        TextView tvTitulo, tvSubDetalle, tvItemActual, tvMejorOferta, tvPostores;
         MaterialButton btnIngresar;
 
         public ActivaViewHolder(@NonNull View itemView) {
@@ -118,6 +150,10 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvTitulo = itemView.findViewById(R.id.tvTituloDestacado);
             tvSubDetalle = itemView.findViewById(R.id.tvSubDetalle);
             btnIngresar = itemView.findViewById(R.id.btnIngresar);
+
+            tvItemActual = itemView.findViewById(R.id.tvItemActual);
+            tvMejorOferta = itemView.findViewById(R.id.tvMejorOferta);
+            tvPostores = itemView.findViewById(R.id.tvPostores);
         }
     }
 }

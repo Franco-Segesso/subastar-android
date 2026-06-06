@@ -35,6 +35,8 @@ public class HomeActivity extends AppCompatActivity {
     private TextView tvFechaActual;
     private ImageButton btnDiaAnterior, btnDiaSiguiente;
     private TokenManager tokenManager;
+    private TextView tvMensajeVacio;
+    private TextView tvProximas;
 
 
     // Variables para mantener los filtros activos
@@ -107,8 +109,10 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         tvFechaActual = findViewById(R.id.tvFechaActual);
+        tvProximas = findViewById(R.id.tvProximas);
         btnDiaAnterior = findViewById(R.id.btnDiaAnterior);
         btnDiaSiguiente = findViewById(R.id.btnDiaSiguiente);
+        tvMensajeVacio = findViewById(R.id.tvMensajeVacio);
 
         btnDiaAnterior.setOnClickListener(v -> cambiarDia(-1));
         btnDiaSiguiente.setOnClickListener(v -> cambiarDia(1));
@@ -129,6 +133,11 @@ public class HomeActivity extends AppCompatActivity {
     private void actualizarTextoFecha() {
         if (fechaVisualizada.isEqual(LocalDate.now())) {
             tvFechaActual.setText("HOY");
+
+            if (tvProximas != null){
+                tvProximas.setText("SUBASTAS DEL DÍA");
+            }
+
         } else {
             // Formatea a "LUN 25"
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE dd", new Locale("es", "AR"));
@@ -137,7 +146,15 @@ public class HomeActivity extends AppCompatActivity {
             // Eliminar el punto que a veces agrega Java en los días acortados (ej: "LUN. 25")
             tvFechaActual.setText(textoFecha.replace(".", ""));
 
-
+            if (tvProximas != null) {
+                if (fechaVisualizada.isBefore(LocalDate.now())) {
+                    // Si el día que estamos viendo ya pasó
+                    tvProximas.setText("SUBASTAS PASADAS");
+                } else {
+                    // Si el día que estamos viendo es en el futuro
+                    tvProximas.setText("PRÓXIMAS SUBASTAS");
+                }
+            }
         }
         btnDiaSiguiente.setVisibility(View.VISIBLE);
     }
@@ -208,14 +225,23 @@ public class HomeActivity extends AppCompatActivity {
 
         String fechaBackend = fechaVisualizada.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
+        // Recuperamos el token. En caso que no tenga uno, entrará como invitado.
+        String tokenGuardado = tokenManager.getToken();
+        String tokenHeader = null;
+
+        // Si el usuario está logueado, armamos el header de autorización
+        if (tokenGuardado != null) {
+            tokenHeader = "Bearer " + tokenGuardado;
+        }
+
         // Le pasamos el estado y la categoría dinámicamente
-        api.obtenerSubastas(null, estado, categoria, null, fechaBackend).enqueue(new Callback<List<Subasta>>() {
+        api.obtenerSubastas(tokenHeader, estado, categoria, null, fechaBackend).enqueue(new Callback<List<Subasta>>() {
             @Override
             public void onResponse(Call<List<Subasta>> call, Response<List<Subasta>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Subasta> listaOriginal = response.body();
 
-                    // --- FILTRO PARA INVITADOS ---
+                    // FILTRO PARA INVITADOS
                     boolean isInvitado = tokenManager.getToken() == null;
 
                     if (isInvitado) {
@@ -228,15 +254,16 @@ public class HomeActivity extends AppCompatActivity {
                         }
                         listaOriginal = listaFiltrada; // Reemplazamos la lista
                     }
-                    // ------------------------------
 
                     // Comprobamos si la lista quedó vacía después del filtro
                     if (listaOriginal.isEmpty()) {
-                        Toast.makeText(HomeActivity.this, "No hay subastas disponibles para ver", Toast.LENGTH_SHORT).show();
-                        // Acá idealmente limpiarían el RecyclerView o mostrarían un Empty State
-                        recyclerView.setAdapter(new SubastaAdapter(new ArrayList<>()));
+                        recyclerView.setVisibility(View.GONE); // Ocultamos la lista
+                        tvMensajeVacio.setText("No hay subastas programadas para este día.");
+                        tvMensajeVacio.setVisibility(View.VISIBLE); // Mostramos el mensaje
                     } else {
-                        // Pasamos la lista limpia al Adapter
+                        recyclerView.setVisibility(View.VISIBLE); // Mostramos la lista
+                        tvMensajeVacio.setVisibility(View.GONE); // Ocultamos el mensaje
+
                         adapter = new SubastaAdapter(listaOriginal);
                         recyclerView.setAdapter(adapter);
                     }
@@ -246,7 +273,11 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Subasta>> call, Throwable t) {
                 Log.e("HOME_SERVER_ERROR", t.getMessage());
-                Toast.makeText(HomeActivity.this, "Fallo en la conexión de red", Toast.LENGTH_SHORT).show();
+
+                // LÓGICA DE SIN INTERNET
+                recyclerView.setVisibility(View.GONE);
+                tvMensajeVacio.setText("No tienes conexión a internet, prueba abriendo de nuevo la app.");
+                tvMensajeVacio.setVisibility(View.VISIBLE);
             }
         });
     }

@@ -22,11 +22,14 @@ public class CatalogoActivity extends AppCompatActivity {
     private TextView tvTitulo, tvCat, tvMoneda, tvEstado;
     private RecyclerView recyclerView;
     private Integer subastaId;
+    private TokenManager tokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalogo);
+
+        tokenManager = new TokenManager(this);
 
         // Bindear vistas
         tvTitulo = findViewById(R.id.tvCatalogoTitulo);
@@ -60,8 +63,16 @@ public class CatalogoActivity extends AppCompatActivity {
 
         SubastarApi api = retrofit.create(SubastarApi.class);
 
+        String tokenGuardado = tokenManager.getToken();
+        String tokenHeader = null;
+
+        // Si el usuario está logueado, armamos el header de autorización
+        if (tokenGuardado != null) {
+            tokenHeader = "Bearer " + tokenGuardado;
+        }
+
         // Simulamos usuario no logueado pasando null en el token
-        api.obtenerDetalleSubasta(id, null).enqueue(new Callback<Subasta>() {
+        api.obtenerDetalleSubasta(id, tokenHeader).enqueue(new Callback<Subasta>() {
             @Override
             public void onResponse(Call<Subasta> call, Response<Subasta> response) {
                 if (response.isSuccessful() && response.body() != null) {

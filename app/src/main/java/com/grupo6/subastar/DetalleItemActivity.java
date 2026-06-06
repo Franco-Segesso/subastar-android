@@ -1,6 +1,7 @@
 package com.grupo6.subastar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -8,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
+import com.google.gson.Gson;
 import com.grupo6.subastar.model.ItemCatalogo;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,10 +24,14 @@ public class DetalleItemActivity extends AppCompatActivity {
     private TextView tvTitulo, tvPrecio, tvDescripcion, tvCategoria, tvDuenio;
     private MaterialButton btnPujar;
 
+    private TokenManager tokenManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalle_item);
+
+        tokenManager = new TokenManager(this);
 
         ivImagen = findViewById(R.id.ivDetalleImagen);
         tvTitulo = findViewById(R.id.tvDetalleTitulo);
@@ -58,7 +64,15 @@ public class DetalleItemActivity extends AppCompatActivity {
 
         SubastarApi api = retrofit.create(SubastarApi.class);
 
-        api.obtenerDetalleItem(subastaId, itemId, null).enqueue(new Callback<ItemCatalogo>() {
+        String tokenGuardado = tokenManager.getToken();
+        String tokenHeader = null;
+
+        // Si el usuario está logueado, armamos el header de autorización
+        if (tokenGuardado != null) {
+            tokenHeader = "Bearer " + tokenGuardado;
+        }
+
+        api.obtenerDetalleItem(subastaId, itemId, tokenHeader).enqueue(new Callback<ItemCatalogo>() {
             @Override
             public void onResponse(Call<ItemCatalogo> call, Response<ItemCatalogo> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -68,8 +82,15 @@ public class DetalleItemActivity extends AppCompatActivity {
                     tvDescripcion.setText(item.getProducto().getHistoria());
                     tvCategoria.setText("ARTE - ÍTEM #" + item.getId());
 
+                    if (item.getProducto() != null && item.getProducto().getNombreDuenioReal() != null) {
+                        tvDuenio.setText(item.getProducto().getNombreDuenioReal());
+                    } else {
+                        tvDuenio.setText("Dueño Anónimo");
+                    }
+
                     if (item.getPrecioBase() != null) {
                         tvPrecio.setText("USD " + item.getPrecioBase());
+                        tvPrecio.setVisibility(View.VISIBLE);
                     } else {
                         tvPrecio.setText("Iniciá sesión");
                     }
