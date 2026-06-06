@@ -51,6 +51,24 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_medio_pago);
 
+        // 1. Recibimos la bandera para saber si lo forzamos o no
+        boolean esObligatorio = getIntent().getBooleanExtra("esObligatorio", false);
+
+        if (esObligatorio) {
+            // Le explicamos al usuario por qué está acá
+            Toast.makeText(this, "Para participar, es obligatorio registrar al menos un medio de pago.", Toast.LENGTH_LONG).show();
+
+            // 2. BLOQUEAMOS EL BOTÓN FÍSICO "ATRÁS" DEL CELULAR ANDROID
+            getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    // En vez de salir de la pantalla, le repetimos el aviso
+                    Toast.makeText(AgregarMedioPagoActivity.this, "No puedes salir sin registrar un medio de pago.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
         tokenManager = new TokenManager(this);
         clienteId = getIntent().getIntExtra("clienteId", -1);
 
@@ -148,7 +166,13 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
 
         // Volver
         ImageButton btnVolver = findViewById(R.id.btnVolverAgregar);
-        btnVolver.setOnClickListener(v -> finish());
+        btnVolver.setOnClickListener(v -> {
+            if (esObligatorio) {
+                  Toast.makeText(AgregarMedioPagoActivity.this, "No puedes salir sin registrar un medio de pago.", Toast.LENGTH_SHORT).show();
+            } else {
+                    finish(); // Si no es obligatorio, sale normalmente
+                }
+             });
 
         // Guardar
         Button btnGuardar = findViewById(R.id.btnGuardar);

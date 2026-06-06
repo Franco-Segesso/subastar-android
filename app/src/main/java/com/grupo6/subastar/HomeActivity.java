@@ -66,13 +66,6 @@ public class HomeActivity extends AppCompatActivity {
         TextView navConsignacion = findViewById(R.id.navConsignacion);
 
 
-
-
-
-
-
-
-
         btnPerfil.setOnClickListener(v -> {
             // Verificamos si tiene la sesión iniciada leyendo el Token
             String tokenGuardado = tokenManager.getToken();
@@ -279,6 +272,45 @@ public class HomeActivity extends AppCompatActivity {
                 tvMensajeVacio.setText("No tienes conexión a internet, prueba abriendo de nuevo la app.");
                 tvMensajeVacio.setVisibility(View.VISIBLE);
             }
+        });
+    }
+
+    // 1. Agregá esto dentro de tu clase HomeActivity
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Solo verificamos si el usuario tiene sesión iniciada
+        if (tokenManager != null && tokenManager.getToken() != null) {
+            verificarMediosPagoObligatorio();
+        }
+    }
+
+    private void verificarMediosPagoObligatorio() {
+        int idCliente = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getInt("USER_ID", -1);
+        String token = "Bearer " + tokenManager.getToken();
+
+        // Inicializamos la API
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8080/")
+                .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
+                .build();
+        SubastarApi api = retrofit.create(SubastarApi.class);
+
+        api.obtenerMediosPago(idCliente, token).enqueue(new retrofit2.Callback<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>>() {
+            @Override
+            public void onResponse(retrofit2.Call<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>> call, retrofit2.Response<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // SI LA LISTA ESTÁ VACÍA -> Lo mandamos obligatoriamente
+                    if (response.body().isEmpty()) {
+                        android.content.Intent intent = new android.content.Intent(HomeActivity.this, AgregarMedioPagoActivity.class);
+                        intent.putExtra("clienteId", idCliente);
+                        intent.putExtra("esObligatorio", true); // <--- ESTO ES LA CLAVE
+                        startActivity(intent);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(retrofit2.Call<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>> call, Throwable t) {}
         });
     }
 }
