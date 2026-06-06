@@ -4,40 +4,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#1A1A1A">
+    android:background="@color/primario"> <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical">
 
-    <!-- HEADER -->
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+    <ImageButton
+        android:id="@+id/btnVolverAgregar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_previous"
+        app:tint="@color/texto_ppal"/> <TextView
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:text="Agregar Método de Pago"
+    android:textColor="@color/texto_ppal" android:textSize="18sp"
+    android:textStyle="bold"
+    android:gravity="center"/>
 
-        <ImageButton
-            android:id="@+id/btnVolverAgregar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_media_previous"
-            app:tint="#FFFFFF"/>
+    <View android:layout_width="40dp" android:layout_height="40dp"/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Agregar Método de Pago"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
+</LinearLayout>
 
-        <View android:layout_width="40dp" android:layout_height="40dp"/>
-
-
-    </LinearLayout>
-
-    <!-- SELECTOR DE TIPO -->
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,8 +48,7 @@
             android:textSize="13sp"
             android:textStyle="bold"
             android:background="@drawable/bg_chip_activo"
-            android:textColor="#C8A951"
-            android:layout_marginEnd="6dp"/>
+            android:textColor="@color/secundario" android:layout_marginEnd="6dp"/>
 
         <TextView
             android:id="@+id/tabCuenta"
@@ -69,8 +60,7 @@
             android:textSize="13sp"
             android:textStyle="bold"
             android:background="@drawable/bg_chip_inactivo"
-            android:textColor="#AAAAAA"
-            android:layout_marginHorizontal="3dp"/>
+            android:textColor="@color/texto_sec" android:layout_marginHorizontal="3dp"/>
 
         <TextView
             android:id="@+id/tabCheque"
@@ -82,8 +72,7 @@
             android:textSize="13sp"
             android:textStyle="bold"
             android:background="@drawable/bg_chip_inactivo"
-            android:textColor="#AAAAAA"
-            android:layout_marginStart="6dp"/>
+            android:textColor="@color/texto_sec" android:layout_marginStart="6dp"/>
 
     </LinearLayout>
 
@@ -98,7 +87,6 @@
             android:orientation="vertical"
             android:paddingHorizontal="16dp">
 
-            <!-- FORMULARIO TARJETA -->
             <LinearLayout
                 android:id="@+id/formTarjeta"
                 android:layout_width="match_parent"
@@ -107,7 +95,7 @@
                 android:visibility="visible">
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Titular de la tarjeta" android:textColor="#AAAAAA"
+                    android:text="Titular de la tarjeta" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etTitular" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -116,7 +104,7 @@
                     android:hint="Nombre como aparece en la tarjeta" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Número de tarjeta" android:textColor="#AAAAAA"
+                    android:text="Número de tarjeta" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etNumeroTarjeta" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -125,7 +113,7 @@
                     android:layout_marginBottom="16dp" android:hint="Ej: 4500123456789012" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Código de seguridad (CVV)" android:textColor="#AAAAAA"
+                    android:text="Código de seguridad (CVV)" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etCvv" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -134,7 +122,7 @@
                     android:layout_marginBottom="16dp" android:hint="Ej: 123" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Vencimiento (MM/AA)" android:textColor="#AAAAAA"
+                    android:text="Vencimiento (MM/AA)" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etVencimiento" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -143,7 +131,7 @@
                     android:layout_marginBottom="16dp" android:hint="12/27" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="¿Es extranjera?" android:textColor="#AAAAAA"
+                    android:text="¿Es extranjera?" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <Spinner android:id="@+id/spinnerExtranjera" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -151,7 +139,7 @@
 
                 <TextView android:id="@+id/labelPaisEmisor" android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="País emisor"
-                    android:textColor="#AAAAAA" android:textSize="13sp"
+                    android:textColor="@color/texto_sec" android:textSize="13sp"
                     android:layout_marginBottom="4dp" android:visibility="gone"/>
                 <Spinner android:id="@+id/spinnerPaisEmisor" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -159,7 +147,6 @@
 
             </LinearLayout>
 
-            <!-- FORMULARIO CUENTA -->
             <LinearLayout
                 android:id="@+id/formCuenta"
                 android:layout_width="match_parent"
@@ -168,7 +155,7 @@
                 android:visibility="gone">
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="CBU / IBAN" android:textColor="#AAAAAA"
+                    android:text="CBU / IBAN" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etCbuIban" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -177,7 +164,7 @@
                     android:hint="0000000000000000000000" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Alias (opcional)" android:textColor="#AAAAAA"
+                    android:text="Alias (opcional)" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etAlias" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -186,7 +173,7 @@
                     android:hint="mi.alias.banco" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Banco" android:textColor="#AAAAAA"
+                    android:text="Banco" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etBancoCuenta" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -195,14 +182,14 @@
                     android:hint="Ej: Banco Nación" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="País del banco" android:textColor="#AAAAAA"
+                    android:text="País del banco" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <Spinner android:id="@+id/spinnerPaisBanco" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
                     android:layout_marginBottom="16dp"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Moneda" android:textColor="#AAAAAA"
+                    android:text="Moneda" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <Spinner android:id="@+id/spinnerMonedaCuenta" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -210,7 +197,6 @@
 
             </LinearLayout>
 
-            <!-- FORMULARIO CHEQUE -->
             <LinearLayout
                 android:id="@+id/formCheque"
                 android:layout_width="match_parent"
@@ -219,7 +205,7 @@
                 android:visibility="gone">
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Número de cheque" android:textColor="#AAAAAA"
+                    android:text="Número de cheque" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etNroCheque" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -228,7 +214,7 @@
                     android:hint="Ej: 00123456" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Banco" android:textColor="#AAAAAA"
+                    android:text="Banco" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etBancoCheque" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -237,14 +223,14 @@
                     android:hint="Ej: Banco Galicia" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Moneda" android:textColor="#AAAAAA"
+                    android:text="Moneda" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <Spinner android:id="@+id/spinnerMonedaCheque" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
                     android:layout_marginBottom="16dp"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Monto garantía" android:textColor="#AAAAAA"
+                    android:text="Monto garantía" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etMontoGarantia" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -253,7 +239,7 @@
                     android:hint="Ej: 50000.00" android:textColorHint="#666666"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Fecha de entrega (YYYY-MM-DD)" android:textColor="#AAAAAA"
+                    android:text="Fecha de entrega (YYYY-MM-DD)" android:textColor="@color/texto_sec"
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etFechaEntrega" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
@@ -269,16 +255,13 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- BOTÓN GUARDAR -->
     <Button
         android:id="@+id/btnGuardar"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_margin="16dp"
         android:text="Guardar"
-        android:textColor="#1A1A1A"
-        android:backgroundTint="#C8A951"
-        android:textStyle="bold"
+        android:textColor="@color/primario" android:backgroundTint="@color/secundario" android:textStyle="bold"
         android:textSize="16sp"/>
 
 </LinearLayout>

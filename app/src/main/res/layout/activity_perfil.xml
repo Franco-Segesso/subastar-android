@@ -45,17 +45,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="16dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_caja_lista"
+        android:padding="20dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_marginEnd="20dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
 
             <ImageView
                 android:layout_width="72dp"
@@ -63,90 +64,147 @@
                 android:src="@drawable/ic_person"
                 android:background="@drawable/bg_circulo_dorado"
                 android:padding="16dp"
-                app:tint="@color/secundario"/>
+                app:tint="@color/secundario"
+                android:layout_marginEnd="16dp"/>
 
-            <TextView
-                android:id="@+id/tvCategoria"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:background="@drawable/bg_chip_activo"
-                android:textColor="@color/secundario"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                tools:text="ORO"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvNombreCompleto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto_ppal"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="Marcos Gonzalez"/>
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="8dp"
+                    tools:text="marcos@gmail.com"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvCategoria"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="CAT. PLATA"
+                        android:textSize="10sp"
+                        android:textColor="@color/secundario"
+                        android:background="@drawable/bg_chip_activo"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        android:layout_marginEnd="8dp"/>
+
+                    <TextView
+                        android:id="@+id/tvAdmitido"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="APROBADO"
+                        android:textSize="10sp"
+                        android:textColor="#4CAF50"
+                        android:background="@drawable/bg_chip_inactivo"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"/>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginBottom="12dp"/>
+
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
+            android:orientation="horizontal">
             <TextView
-                android:id="@+id/tvNombreCompleto"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/texto_ppal"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="6dp"
-                tools:text="Marco Gonzalez"/>
-
-            <TextView
-                android:id="@+id/tvEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Domicilio legal"
                 android:textColor="@color/texto_sec"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp"
-                tools:text="marco.gonzalez@gmail.com"/>
-
+                android:textSize="14sp"/>
             <TextView
                 android:id="@+id/tvDireccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/texto_sec"
+                android:textColor="@color/texto_ppal"
                 android:textSize="14sp"
-                android:layout_marginBottom="4dp"
-                tools:text="Mitre 124, Quilmes"/>
+                tools:text="Av. Corrientes 1234, CABA"/>
+        </LinearLayout>
 
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginVertical="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="País de Origen"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"/>
             <TextView
                 android:id="@+id/tvPais"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/texto_sec"
+                android:textColor="@color/texto_ppal"
                 android:textSize="14sp"
                 tools:text="Argentina"/>
         </LinearLayout>
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/bordes"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginVertical="16dp"/>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginVertical="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="DNI/Documento"
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/tvDocumento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/texto_ppal"
+                android:textSize="14sp"
+                tools:text="40552465"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingHorizontal="24dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="12dp"
         android:gravity="center_vertical">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Métodos de Pago"
-            android:textColor="@color/texto_ppal"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:text="MEDIOS DE PAGO"
+            android:textColor="@color/texto_sec"
+            android:textSize="12sp"
+            android:textAllCaps="true"/>
 
         <Button
             android:id="@+id/btnAgregarMedioPago"
@@ -158,7 +216,6 @@
             android:textSize="13sp"
             android:textStyle="bold"
             android:paddingHorizontal="16dp"/>
-
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

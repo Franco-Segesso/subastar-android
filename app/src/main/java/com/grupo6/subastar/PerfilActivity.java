@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.grupo6.subastar.adapter.MedioPagoAdapter;
-import com.grupo6.subastar.dto.ClienteDTO;
 import com.grupo6.subastar.dto.MedioPagoDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PerfilActivity extends AppCompatActivity {
 
-    private TextView tvNombreCompleto, tvEmail, tvCategoria;
+    // 1. Declaramos todas las vistas, incluyendo las nuevas de dirección, país y DNI
+    private TextView tvNombreCompleto, tvEmail, tvCategoria, tvDireccion, tvPais, tvDocumento;
     private RecyclerView recyclerMediosPago;
     private MedioPagoAdapter adapter;
     private List<MedioPagoDTO> listaMedios = new ArrayList<>();
@@ -40,10 +40,13 @@ public class PerfilActivity extends AppCompatActivity {
 
         tokenManager = new TokenManager(this);
 
-        // Referencias a vistas
+        // 2. Enlazamos las vistas con los IDs de tu XML
         tvNombreCompleto = findViewById(R.id.tvNombreCompleto);
         tvEmail          = findViewById(R.id.tvEmail);
         tvCategoria      = findViewById(R.id.tvCategoria);
+        tvDireccion      = findViewById(R.id.tvDireccion);
+        tvPais           = findViewById(R.id.tvPais);
+        tvDocumento      = findViewById(R.id.tvDocumento);
         recyclerMediosPago = findViewById(R.id.recyclerMediosPago);
 
         recyclerMediosPago.setLayoutManager(new LinearLayoutManager(this));
@@ -62,13 +65,8 @@ public class PerfilActivity extends AppCompatActivity {
         // Botón Cerrar Sesión
         ImageButton btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnCerrarSesion.setOnClickListener(v -> {
-            // 1. Borramos el token
             tokenManager.clearToken();
-
-            // 2. Limpiamos los datos del usuario de la memoria del celular
             getSharedPreferences("SubastarPrefs", MODE_PRIVATE).edit().clear().apply();
-
-            // 3. Volvemos al Welcome y limpiamos el historial para no poder volver con la flecha
             Intent intent = new Intent(PerfilActivity.this, WelcomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -82,15 +80,22 @@ public class PerfilActivity extends AppCompatActivity {
                 .build();
         api = retrofit.create(SubastarApi.class);
 
-        // Cargar datos del usuario desde SharedPreferences
+        // 3. Obtenemos TODOS los datos desde SharedPreferences (guardados en el Login)
         String nombre    = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_NAME", "");
         String email     = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_EMAIL", "");
         String categoria = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_CATEGORIA", "");
+        String direccion = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_DIRECCION", "-");
+        String pais      = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_PAIS", "-");
+        String documento = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_DOCUMENTO", "-");
         clienteId        = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getInt("USER_ID", -1);
 
+        // 4. Se los inyectamos a los TextView de la pantalla
         tvNombreCompleto.setText(nombre);
         tvEmail.setText(email);
         tvCategoria.setText(categoria.isEmpty() ? "Sin categoría" : categoria);
+        tvDireccion.setText(direccion);
+        tvPais.setText(pais);
+        tvDocumento.setText(documento);
 
         cargarMediosPago();
     }
@@ -98,7 +103,6 @@ public class PerfilActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Si volvemos de AgregarMedioPagoActivity con éxito, recargamos la lista
         if (requestCode == 100 && resultCode == RESULT_OK) {
             cargarMediosPago();
         }

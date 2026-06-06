@@ -103,6 +103,9 @@ public class LoginActivity extends AppCompatActivity {
                             .putString("USER_NAME", nombreCompleto)
                             .putString("USER_EMAIL", clienteLogueado.getEmail())
                             .putString("USER_CATEGORIA", clienteLogueado.getCategoria())
+                            .putString("USER_DOCUMENTO", clienteLogueado.getDocumento())
+                            .putString("USER_DIRECCION", clienteLogueado.getDireccion())
+                            .putString("USER_PAIS", clienteLogueado.getPais())
                             .apply();
 
                     Toast.makeText(LoginActivity.this, "¡Éxito! Bienvenido, " + clienteLogueado.getNombre(), Toast.LENGTH_LONG).show();
