@@ -32,6 +32,7 @@
 
         <activity android:name=".LoginActivity" android:exported="false" />
         <activity android:name=".RegistroActivity" android:exported="false" />
+        <activity android:name=".RegistroExitosoActivity" android:exported="false" />
         <activity android:name=".ActivarActivity" />
 
         <activity

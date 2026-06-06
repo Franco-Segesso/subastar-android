@@ -52,7 +52,7 @@
         <EditText android:id="@+id/etEmail" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textEmailAddress" android:layout_marginBottom="16dp"/>
 
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fecha de Nacimiento (YYYY-MM-DD)" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
-        <EditText android:id="@+id/etFechaNacimiento" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="date" android:layout_marginBottom="16dp"/>
+        <EditText android:id="@+id/etFechaNacimiento" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="date" android:layout_marginBottom="16dp" android:focusable="false" android:clickable="true"/>
 
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Domicilio Legal (Calle, Altura, Depto)" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
         <EditText android:id="@+id/etDireccion" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textPostalAddress" android:layout_marginBottom="16dp"/>

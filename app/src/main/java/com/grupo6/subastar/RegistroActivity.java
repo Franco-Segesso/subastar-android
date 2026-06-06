@@ -1,5 +1,6 @@
 package com.grupo6.subastar;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -27,6 +28,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.util.Calendar;
+import android.app.DatePickerDialog;
 
 
 
@@ -61,6 +65,36 @@ public class RegistroActivity extends AppCompatActivity {
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etDireccion = findViewById(R.id.etDireccion);
         EditText etFecha = findViewById(R.id.etFechaNacimiento);
+        // Configuramos el evento de clic para el campo de fecha
+        etFecha.setOnClickListener(v -> {
+            // 1. Obtenemos la fecha actual para que el calendario arranque en el día de hoy
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // 2. Creamos el diálogo del calendario
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    RegistroActivity.this,
+                    (view, yearSeleccionado, monthOfYear, dayOfMonth) -> {
+                        // El mes en Java empieza en 0 (Enero es 0), así que le sumamos 1
+                        int mesReal = monthOfYear + 1;
+
+                        // Formateamos para que siempre tenga 2 dígitos (ej: "1" pasa a ser "01")
+                        // Esto garantiza el formato YYYY-MM-DD para tu backend
+                        String fechaFormateada = String.format("%04d-%02d-%02d", yearSeleccionado, mesReal, dayOfMonth);
+
+                        // Ponemos la fecha lista en la pantalla
+                        etFecha.setText(fechaFormateada);
+                    },
+                    year, month, day);
+
+            // 3. Detalle profesional: Bloqueamos las fechas del futuro (nadie puede nacer mañana)
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+            // 4. Mostramos el calendario
+            datePickerDialog.show();
+        });
         spPais = findViewById(R.id.spPais);
 
         android.widget.LinearLayout btnFotoFrente = findViewById(R.id.btnFotoFrente);
@@ -145,8 +179,10 @@ public class RegistroActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
-                                Toast.makeText(RegistroActivity.this, "¡Datos enviados! En espera de validación.", Toast.LENGTH_LONG).show();
-                                finish();
+                                // En vez de mostrar un Toast, abrimos la nueva pantalla de éxito
+                                Intent intent = new Intent(RegistroActivity.this, RegistroExitosoActivity.class);
+                                startActivity(intent);
+                                finish(); // Cerramos RegistroActivity
                             } else {
                                 btnRegistrar.setEnabled(true);
                                 btnRegistrar.setText("Registrarme");

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="@color/bg_dark">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="✅"
+        android:textSize="72sp"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Registro exitoso!"
+        android:textColor="@color/secundario"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="La primera parte de tu registro se ha completado correctamente.\n\nEstamos validando tu información. Una vez aprobada, vas a recibir un correo electrónico con los pasos para realizar la segunda parte del registro y activar tu cuenta."
+        android:textColor="@color/texto_ppal"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="40dp"/>
+
+    <Button
+        android:id="@+id/btnEntendido"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Entendido"
+        android:backgroundTint="@color/secundario"
+        android:textColor="@color/primario"
+        android:textStyle="bold"/>
+
+</LinearLayout>
