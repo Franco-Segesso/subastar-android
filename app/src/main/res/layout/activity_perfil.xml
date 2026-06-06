@@ -4,45 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#1A1A1A">
+    android:background="@color/primario"> <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical">
 
-    <!-- HEADER -->
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+    <ImageButton
+        android:id="@+id/btnVolver"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_previous"
+        app:tint="@color/texto_ppal"/> <TextView
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:text="Mi Perfil"
+    android:textColor="@color/texto_ppal" android:textSize="20sp"
+    android:textStyle="bold"
+    android:gravity="center"/>
 
-        <ImageButton
-            android:id="@+id/btnVolver"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_media_previous"
-            app:tint="#FFFFFF"/>
+    <ImageButton
+        android:id="@+id/btnCerrarSesion"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_lock_power_off"
+        app:tint="@color/error"/> </LinearLayout>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Mi Perfil"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
-
-        <ImageButton
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_lock_power_off"
-            app:tint="#D32F2F"/>
-
-    </LinearLayout>
-
-    <!-- AVATAR + DATOS USUARIO -->
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,24 +47,20 @@
             android:src="@drawable/ic_person"
             android:background="@drawable/bg_circulo_dorado"
             android:padding="16dp"
-            app:tint="#C8A951"/>
-
-        <TextView
-            android:id="@+id/tvNombreCompleto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold"/>
+            app:tint="@color/secundario"/> <TextView
+        android:id="@+id/tvNombreCompleto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/texto_ppal" android:textSize="22sp"
+        android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tvEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="#AAAAAA"
-            android:textSize="14sp"/>
+            android:textColor="@color/texto_sec" android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/tvCategoria"
@@ -83,14 +70,12 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="4dp"
             android:background="@drawable/bg_chip_activo"
-            android:textColor="#C8A951"
-            android:textSize="12sp"
+            android:textColor="@color/secundario" android:textSize="12sp"
             android:textStyle="bold"
             android:textAllCaps="true"/>
 
     </LinearLayout>
 
-    <!-- TÍTULO SECCIÓN -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -104,8 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Métodos de Pago"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textColor="@color/texto_ppal" android:textSize="16sp"
             android:textStyle="bold"/>
 
         <Button
@@ -113,16 +97,11 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="+ Agregar"
-            android:textColor="#1A1A1A"
-            android:backgroundTint="#C8A951"
-            android:textSize="13sp"
+            android:textColor="@color/primario" android:backgroundTint="@color/secundario" android:textSize="13sp"
             android:textStyle="bold"/>
 
     </LinearLayout>
 
-
-
-    <!-- LISTA MEDIOS DE PAGO -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMediosPago"
         android:layout_width="match_parent"
@@ -130,18 +109,5 @@
         android:layout_weight="1"
         android:paddingTop="4dp"
         android:clipToPadding="false"/>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMediosPago"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="4dp"
-        android:clipToPadding="false"/>
-
-
-
-
 
 </LinearLayout>
