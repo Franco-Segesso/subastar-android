@@ -3,6 +3,7 @@ package com.grupo6.subastar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +57,22 @@ public class PerfilActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AgregarMedioPagoActivity.class);
             intent.putExtra("clienteId", clienteId);
             startActivityForResult(intent, 100);
+        });
+
+        // Botón Cerrar Sesión
+        ImageButton btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        btnCerrarSesion.setOnClickListener(v -> {
+            // 1. Borramos el token
+            tokenManager.clearToken();
+
+            // 2. Limpiamos los datos del usuario de la memoria del celular
+            getSharedPreferences("SubastarPrefs", MODE_PRIVATE).edit().clear().apply();
+
+            // 3. Volvemos al Welcome y limpiamos el historial para no poder volver con la flecha
+            Intent intent = new Intent(PerfilActivity.this, WelcomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         });
 
         // Construir Retrofit

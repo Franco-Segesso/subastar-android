@@ -32,9 +32,13 @@
             android:textStyle="bold"
             android:gravity="center"/>
 
-        <View
+        <ImageButton
+            android:id="@+id/btnCerrarSesion"
             android:layout_width="40dp"
-            android:layout_height="40dp"/>
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_lock_power_off"
+            app:tint="#D32F2F"/>
 
     </LinearLayout>
 
@@ -116,6 +120,8 @@
 
     </LinearLayout>
 
+
+
     <!-- LISTA MEDIOS DE PAGO -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMediosPago"
@@ -124,5 +130,18 @@
         android:layout_weight="1"
         android:paddingTop="4dp"
         android:clipToPadding="false"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerMediosPago"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="4dp"
+        android:clipToPadding="false"/>
+
+
+
+
 
 </LinearLayout>

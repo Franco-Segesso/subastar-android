@@ -32,13 +32,15 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
     private TokenManager tokenManager;
 
     // Campos tarjeta
-    private EditText etTitular, etUltimosDigitos, etVencimiento, etPaisEmisor;
-    private Spinner spinnerExtranjera;
+    private EditText etTitular, etNumeroTarjeta, etCvv, etVencimiento;
+    private Spinner spinnerExtranjera, spinnerPaisEmisor;
     private View labelPaisEmisor;
 
     // Campos cuenta
-    private EditText etCbuIban, etAlias, etBancoCuenta, etPaisBanco;
-    private Spinner spinnerMonedaCuenta;
+    private EditText etCbuIban, etAlias, etBancoCuenta;
+    private Spinner spinnerMonedaCuenta, spinnerPaisBanco;
+
+    private java.util.List<Pais> listaPaises = new java.util.ArrayList<>();
 
     // Campos cheque
     private EditText etNroCheque, etBancoCheque, etMontoGarantia, etFechaEntrega;
@@ -68,11 +70,12 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
 
         // Campos tarjeta
         etTitular        = findViewById(R.id.etTitular);
-        etUltimosDigitos = findViewById(R.id.etUltimosDigitos);
+        etNumeroTarjeta  = findViewById(R.id.etNumeroTarjeta);
+        etCvv            = findViewById(R.id.etCvv);
         etVencimiento    = findViewById(R.id.etVencimiento);
-        etPaisEmisor     = findViewById(R.id.etPaisEmisor);
         labelPaisEmisor  = findViewById(R.id.labelPaisEmisor);
         spinnerExtranjera = findViewById(R.id.spinnerExtranjera);
+        spinnerPaisEmisor = findViewById(R.id.spinnerPaisEmisor);
 
         ArrayAdapter<String> adapterSiNo = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, new String[]{"no", "si"});
@@ -83,34 +86,60 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
         spinnerExtranjera.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                boolean esExtranjera = position == 1; // "si" está en posición 1
+                boolean esExtranjera = position == 1; // "si"
                 labelPaisEmisor.setVisibility(esExtranjera ? View.VISIBLE : View.GONE);
-                etPaisEmisor.setVisibility(esExtranjera ? View.VISIBLE : View.GONE);
+                spinnerPaisEmisor.setVisibility(esExtranjera ? View.VISIBLE : View.GONE);
             }
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) {}
         });
 
+
         // Campos cuenta
-        etCbuIban         = findViewById(R.id.etCbuIban);
-        etAlias           = findViewById(R.id.etAlias);
-        etBancoCuenta     = findViewById(R.id.etBancoCuenta);
-        etPaisBanco       = findViewById(R.id.etPaisBanco);
+        etCbuIban           = findViewById(R.id.etCbuIban);
+        etAlias             = findViewById(R.id.etAlias);
+        etBancoCuenta       = findViewById(R.id.etBancoCuenta);
+        spinnerPaisBanco    = findViewById(R.id.spinnerPaisBanco);
         spinnerMonedaCuenta = findViewById(R.id.spinnerMonedaCuenta);
 
         // Campos cheque
-        etNroCheque       = findViewById(R.id.etNroCheque);
-        etBancoCheque     = findViewById(R.id.etBancoCheque);
-        etMontoGarantia   = findViewById(R.id.etMontoGarantia);
-        etFechaEntrega    = findViewById(R.id.etFechaEntrega);
+        etNroCheque         = findViewById(R.id.etNroCheque);
+        etBancoCheque       = findViewById(R.id.etBancoCheque);
+        etMontoGarantia     = findViewById(R.id.etMontoGarantia);
+        etFechaEntrega      = findViewById(R.id.etFechaEntrega);
         spinnerMonedaCheque = findViewById(R.id.spinnerMonedaCheque);
 
         // Spinner monedas
         ArrayAdapter<String> adapterMoneda = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"ARS", "USD", "EUR"});
+                android.R.layout.simple_spinner_item, new String[]{"ARS", "USD"});
         adapterMoneda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMonedaCuenta.setAdapter(adapterMoneda);
         spinnerMonedaCheque.setAdapter(adapterMoneda);
+
+        // Configuramos el calendario para la fecha del cheque
+        etFechaEntrega.setOnClickListener(v -> {
+            final java.util.Calendar c = java.util.Calendar.getInstance();
+            int year = c.get(java.util.Calendar.YEAR);
+            int month = c.get(java.util.Calendar.MONTH);
+            int day = c.get(java.util.Calendar.DAY_OF_MONTH);
+
+            android.app.DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(
+                    AgregarMedioPagoActivity.this,
+                    (view, yearSeleccionado, monthOfYear, dayOfMonth) -> {
+                        // Le sumamos 1 al mes porque Enero es 0
+                        int mesReal = monthOfYear + 1;
+
+                        // Formateamos como YYYY-MM-DD
+                        String fechaFormateada = String.format("%04d-%02d-%02d", yearSeleccionado, mesReal, dayOfMonth);
+                        etFechaEntrega.setText(fechaFormateada);
+                    },
+                    year, month, day);
+
+            // Bloqueamos las fechas del pasado (opcional)
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+
+            datePickerDialog.show();
+        });
 
         // Tabs
         tabTarjeta.setOnClickListener(v -> seleccionarTab("tarjeta"));
@@ -124,6 +153,44 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
         // Guardar
         Button btnGuardar = findViewById(R.id.btnGuardar);
         btnGuardar.setOnClickListener(v -> guardar());
+
+        cargarPaises();
+    }
+
+    private void cargarPaises() {
+        api.getPaises().enqueue(new Callback<java.util.List<Pais>>() {
+            @Override
+            public void onResponse(Call<java.util.List<Pais>> call, Response<java.util.List<Pais>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    listaPaises = response.body();
+
+                    // 1. Armamos la lista con TODOS los países para la Cuenta Bancaria
+                    java.util.List<String> nombresTodos = new java.util.ArrayList<>();
+                    for (Pais p : listaPaises) {
+                        nombresTodos.add(p.getNombre());
+                    }
+                    ArrayAdapter<String> adapterBanco = new ArrayAdapter<>(AgregarMedioPagoActivity.this, android.R.layout.simple_spinner_item, nombresTodos);
+                    adapterBanco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerPaisBanco.setAdapter(adapterBanco);
+
+                    // 2. Armamos la lista SIN ARGENTINA para la Tarjeta Extranjera
+                    java.util.List<String> nombresExtranjeros = new java.util.ArrayList<>();
+                    for (Pais p : listaPaises) {
+                        if (!p.getNombre().equalsIgnoreCase("Argentina")) {
+                            nombresExtranjeros.add(p.getNombre());
+                        }
+                    }
+                    ArrayAdapter<String> adapterEmisor = new ArrayAdapter<>(AgregarMedioPagoActivity.this, android.R.layout.simple_spinner_item, nombresExtranjeros);
+                    adapterEmisor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerPaisEmisor.setAdapter(adapterEmisor);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<java.util.List<Pais>> call, Throwable t) {
+                Toast.makeText(AgregarMedioPagoActivity.this, "No se pudieron cargar los países", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void seleccionarTab(String tipo) {
@@ -153,28 +220,52 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
 
         if (tipoSeleccionado.equals("tarjeta")) {
             String titular  = etTitular.getText().toString().trim();
-            String digitos  = etUltimosDigitos.getText().toString().trim();
+            String numeroCompleto = etNumeroTarjeta.getText().toString().trim();
+            String cvv      = etCvv.getText().toString().trim();
             String vence    = etVencimiento.getText().toString().trim();
             String extran   = spinnerExtranjera.getSelectedItem().toString();
-            String pais     = etPaisEmisor.getText().toString().trim();
 
-            if (titular.isEmpty() || digitos.isEmpty() || vence.isEmpty()) {
+            // Leemos el país seleccionado desde el Spinner
+            String pais = spinnerPaisEmisor.getSelectedItem() != null ? spinnerPaisEmisor.getSelectedItem().toString() : "";
+
+            if (titular.isEmpty() || numeroCompleto.isEmpty() || cvv.isEmpty() || vence.isEmpty()) {
                 Toast.makeText(this, "Completá todos los campos obligatorios", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            AgregarTarjetaRequest req = new AgregarTarjetaRequest(digitos, vence, titular, extran,
+            // VALIDACIONES ESTRICTAS DE TARJETA
+            if (numeroCompleto.length() < 15 || numeroCompleto.length() > 16) {
+                etNumeroTarjeta.setError("Debe tener 15 o 16 dígitos");
+                etNumeroTarjeta.requestFocus();
+                return;
+            }
+            if (cvv.length() < 3) {
+                etCvv.setError("CVV inválido");
+                etCvv.requestFocus();
+                return;
+            }
+            if (!vence.matches("^(0[1-9]|1[0-2])/?([0-9]{2})$")) {
+                etVencimiento.setError("Formato inválido (MM/AA)");
+                etVencimiento.requestFocus();
+                return;
+            }
+            if (esTarjetaVencida(vence)) {
+                etVencimiento.setError("La tarjeta está vencida");
+                etVencimiento.requestFocus();
+                return;
+            }
+
+            // MAGIA: Extraemos solo los últimos 4 dígitos para mandarlos al servidor y descartamos el CVV
+            String digitosFinales = numeroCompleto.substring(numeroCompleto.length() - 4);
+
+            AgregarTarjetaRequest req = new AgregarTarjetaRequest(digitosFinales, vence, titular, extran,
                     extran.equals("si") ? pais : null);
 
             api.agregarTarjeta(clienteId, token, req).enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    manejarRespuesta(response);
-                }
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) { manejarRespuesta(response); }
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(AgregarMedioPagoActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
-                }
+                public void onFailure(Call<ResponseBody> call, Throwable t) { Toast.makeText(AgregarMedioPagoActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show(); }
             });
 
         } else if (tipoSeleccionado.equals("cuenta")) {
@@ -182,24 +273,32 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
             String banco = etBancoCuenta.getText().toString().trim();
             String moneda = spinnerMonedaCuenta.getSelectedItem().toString();
 
+            // Leemos el país seleccionado desde el Spinner nuevo
+            String pais = "";
+            if (spinnerPaisBanco.getSelectedItem() != null) {
+                pais = spinnerPaisBanco.getSelectedItem().toString();
+            }
+
             if (cbu.isEmpty() || banco.isEmpty()) {
                 Toast.makeText(this, "CBU/IBAN y Banco son obligatorios", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            if (cbu.length() < 10) {
+                etCbuIban.setError("El CBU/IBAN ingresado es muy corto");
+                etCbuIban.requestFocus();
+                return;
+            }
+
+            // ACÁ ESTABA EL ERROR: Usamos la variable 'pais' en vez de etPaisBanco.getText()
             AgregarCuentaRequest req = new AgregarCuentaRequest(cbu,
-                    etAlias.getText().toString().trim(), banco,
-                    etPaisBanco.getText().toString().trim(), moneda);
+                    etAlias.getText().toString().trim(), banco, pais, moneda);
 
             api.agregarCuenta(clienteId, token, req).enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    manejarRespuesta(response);
-                }
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) { manejarRespuesta(response); }
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(AgregarMedioPagoActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
-                }
+                public void onFailure(Call<ResponseBody> call, Throwable t) { Toast.makeText(AgregarMedioPagoActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show(); }
             });
 
         } else {
@@ -214,19 +313,60 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                 return;
             }
 
+            // VALIDACIONES DE CHEQUE
+            try {
+                double montoValidado = Double.parseDouble(monto);
+                if (montoValidado <= 0) {
+                    etMontoGarantia.setError("El monto debe ser mayor a 0");
+                    etMontoGarantia.requestFocus();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                etMontoGarantia.setError("Ingresá un número válido");
+                etMontoGarantia.requestFocus();
+                return;
+            }
+
+            if (!fecha.matches("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")) {
+                etFechaEntrega.setError("Formato inválido (YYYY-MM-DD)");
+                etFechaEntrega.requestFocus();
+                return;
+            }
+
             AgregarChequeRequest req = new AgregarChequeRequest(nro, banco, moneda,
                     new BigDecimal(monto), fecha);
 
             api.agregarCheque(clienteId, token, req).enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    manejarRespuesta(response);
-                }
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) { manejarRespuesta(response); }
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(AgregarMedioPagoActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
-                }
+                public void onFailure(Call<ResponseBody> call, Throwable t) { Toast.makeText(AgregarMedioPagoActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show(); }
             });
+        }
+    }
+    // Método auxiliar para verificar que la tarjeta no esté vencida
+    private boolean esTarjetaVencida(String vencimiento) {
+        try {
+            String[] partes = vencimiento.split("/");
+            if (partes.length != 2) return true;
+
+            int mes = Integer.parseInt(partes[0]);
+            int anio = Integer.parseInt(partes[1]) + 2000; // Asumimos que "24" es "2024"
+
+            java.util.Calendar c = java.util.Calendar.getInstance();
+            int mesActual = c.get(java.util.Calendar.MONTH) + 1; // En Java, Enero es 0
+            int anioActual = c.get(java.util.Calendar.YEAR);
+
+            if (anio < anioActual) {
+                return true; // Año vencido
+            }
+            if (anio == anioActual && mes < mesActual) {
+                return true; // Mismo año, pero mes viejo
+            }
+
+            return false; // Tarjeta válida
+        } catch (Exception e) {
+            return true; // Si falló el cálculo, asumimos inválido
         }
     }
 
