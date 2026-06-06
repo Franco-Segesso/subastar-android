@@ -111,7 +111,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etTitular" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="textPersonName" android:layout_marginBottom="16dp"
                     android:hint="Nombre como aparece en la tarjeta" android:textColorHint="#666666"/>
 
@@ -120,7 +120,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etUltimosDigitos" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="number" android:maxLength="4"
                     android:layout_marginBottom="16dp" android:hint="1234" android:textColorHint="#666666"/>
 
@@ -129,7 +129,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etVencimiento" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:maxLength="5"
                     android:layout_marginBottom="16dp" android:hint="12/27" android:textColorHint="#666666"/>
 
@@ -146,7 +146,7 @@
                     android:layout_marginBottom="4dp" android:visibility="gone"/>
                 <EditText android:id="@+id/etPaisEmisor" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:layout_marginBottom="16dp"
                     android:hint="Ej: Estados Unidos" android:textColorHint="#666666"
                     android:visibility="gone"/>
@@ -166,7 +166,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etCbuIban" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:layout_marginBottom="16dp"
                     android:hint="0000000000000000000000" android:textColorHint="#666666"/>
 
@@ -175,7 +175,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etAlias" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:layout_marginBottom="16dp"
                     android:hint="mi.alias.banco" android:textColorHint="#666666"/>
 
@@ -184,7 +184,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etBancoCuenta" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:layout_marginBottom="16dp"
                     android:hint="Ej: Banco Nación" android:textColorHint="#666666"/>
 
@@ -193,7 +193,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etPaisBanco" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:layout_marginBottom="16dp"
                     android:hint="Ej: Argentina" android:textColorHint="#666666"/>
 
@@ -219,7 +219,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etNroCheque" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:layout_marginBottom="16dp"
                     android:hint="Ej: 00123456" android:textColorHint="#666666"/>
 
@@ -228,7 +228,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etBancoCheque" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:layout_marginBottom="16dp"
                     android:hint="Ej: Banco Galicia" android:textColorHint="#666666"/>
 
@@ -244,7 +244,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etMontoGarantia" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="numberDecimal" android:layout_marginBottom="16dp"
                     android:hint="Ej: 50000.00" android:textColorHint="#666666"/>
 
@@ -253,7 +253,7 @@
                     android:textSize="13sp" android:layout_marginBottom="4dp"/>
                 <EditText android:id="@+id/etFechaEntrega" android:layout_width="match_parent"
                     android:layout_height="48dp" android:background="@drawable/bg_input"
-                    android:textColor="#FFFFFF" android:paddingHorizontal="12dp"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
                     android:inputType="text" android:layout_marginBottom="16dp"
                     android:hint="2025-12-31" android:textColorHint="#666666"/>
 

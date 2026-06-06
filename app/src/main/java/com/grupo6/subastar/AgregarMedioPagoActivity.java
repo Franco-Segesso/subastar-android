@@ -53,7 +53,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
         clienteId = getIntent().getIntExtra("clienteId", -1);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         api = retrofit.create(SubastarApi.class);
@@ -236,7 +236,14 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
             setResult(RESULT_OK);
             finish();
         } else {
-            Toast.makeText(this, "Error al guardar. Revisá los datos.", Toast.LENGTH_SHORT).show();
+            // ACÁ ESTÁ LA MAGIA DEL PASO B: Leer el error exacto del servidor
+            try {
+                String errorBackend = response.errorBody() != null ? response.errorBody().string() : "Error desconocido";
+                Toast.makeText(this, "Error del servidor: " + errorBackend, Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error al guardar. Revisá los datos.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
