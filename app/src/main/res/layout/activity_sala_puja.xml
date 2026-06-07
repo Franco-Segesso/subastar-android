@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primario">
+
+    <!-- HEADER -->
+    <ImageView
+        android:id="@+id/btnVolver"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:tint="@color/texto_ppal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/headerTitles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toTopOf="@+id/btnVolver"
+        app:layout_constraintBottom_toBottomOf="@+id/btnVolver"
+        app:layout_constraintStart_toEndOf="@+id/btnVolver">
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sala de puja - Ítem #3"
+            android:textColor="@color/texto_ppal"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvHeaderSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subasta - Lun 23 Mar 17:00 hs"
+            android:textColor="@color/texto_sec"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toTopOf="@+id/headerTitles"
+        app:layout_constraintBottom_toBottomOf="@+id/headerTitles"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/bg_circulo_dorado"
+            android:backgroundTint="@color/error"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EN VIVO"
+            android:textColor="@color/error"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bordes"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/headerTitles"/>
+
+    <!-- BLOQUE DE INFORMACIÓN DEL ÍTEM -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvItemImage"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="@color/fondo_sec_b"
+        app:cardElevation="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/divider1"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/ivItemImagen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tvBase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="Base: USD 2.000"
+        android:textColor="@color/texto_sec"
+        android:textSize="12sp"
+        app:layout_constraintTop_toTopOf="@+id/cvItemImage"
+        app:layout_constraintStart_toEndOf="@+id/cvItemImage"/>
+
+    <TextView
+        android:id="@+id/tvOfertaActual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="USD 4.900"
+        android:textColor="@color/texto_ppal"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/tvBase"
+        app:layout_constraintStart_toStartOf="@+id/tvBase"/>
+
+    <TextView
+        android:id="@+id/tvMejorOfertaLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mejor oferta actual"
+        android:textColor="@color/texto_ppal"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@+id/tvOfertaActual"
+        app:layout_constraintStart_toStartOf="@+id/tvBase"/>
+
+    <TextView
+        android:id="@+id/tvFinalizaLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Finaliza en:"
+        android:textColor="@color/texto_ppal"
+        android:textSize="12sp"
+        app:layout_constraintTop_toTopOf="@+id/cvItemImage"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvTemporizador"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:59"
+        android:textColor="@color/texto_ppal"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/tvFinalizaLabel"
+        app:layout_constraintEnd_toEndOf="@+id/tvFinalizaLabel"/>
+
+    <!-- BANNER DE ESTADO -->
+    <TextView
+        android:id="@+id/tvBannerEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_banner_estado"
+        android:text="¡Actualmente eres el mayor postor de esta subasta!"
+        android:textColor="@color/texto_ppal"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:paddingVertical="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/cvItemImage"/>
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bordes"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvBannerEstado"/>
+
+    <!-- HISTORIAL DE PUJAS -->
+    <TextView
+        android:id="@+id/tvLabelHistorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="HISTORIAL DE PUJAS"
+        android:textColor="@color/texto_sec"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHistorialPujas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@+id/tvLabelHistorial"
+        app:layout_constraintBottom_toTopOf="@+id/divider3"
+        tools:listitem="@layout/item_puja_historial"/>
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bordes"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutInputPuja"/>
+
+    <!-- BOTTOM BAR (Input y Botón) -->
+    <LinearLayout
+        android:id="@+id/layoutInputPuja"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <EditText
+            android:id="@+id/etMontoPuja"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_input_redondeado"
+            android:hint=""
+            android:inputType="numberDecimal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
+            android:textColor="@color/texto_ppal"
+            android:textColorHint="@color/texto_sec"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPujar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PUJAR ->"
+            android:textColor="@color/primario"
+            android:textStyle="bold"
+            app:backgroundTint="@color/secundario"
+            app:cornerRadius="24dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="14dp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

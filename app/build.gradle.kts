@@ -51,4 +51,10 @@ dependencies {
     // Seguridad para encriptar SharedPreferences
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    // STOMP para WebSockets
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    // RxJava para manejar la suscripción reactiva a los mensajes del socket
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 }

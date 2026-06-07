@@ -45,6 +45,10 @@
         <activity
             android:name=".DetalleItemActivity"
             android:exported="false" />
+        <activity
+            android:name=".SalaPujaActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
     </application>
 

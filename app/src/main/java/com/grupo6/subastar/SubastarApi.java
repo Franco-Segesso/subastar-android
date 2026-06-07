@@ -67,4 +67,27 @@ public interface SubastarApi {
 
     @POST("v1/auth/activar")
     Call<ResponseBody> activarCuenta(@Body com.grupo6.subastar.dto.ActivarRequest request);
+
+
+    @POST("v1/subastas/{id}/ingresar") // Ajustá el prefijo de la URL según tu backend
+    Call<Void> ingresarSubasta(@Header("Authorization") String token, @Path("id") Integer id);
+
+    @POST("v1/subastas/{id}/salir")
+    Call<Void> salirSubasta(@Header("Authorization") String token, @Path("id") Integer id);
+
+    @POST("v1/subastas/{id}/pujas")
+    Call<Object> registrarPuja(
+            @Header("Authorization") String token,
+            @Path("id") Integer id,
+            @Body com.grupo6.subastar.dto.PujaRequest request
+    );
+
+    @POST("v1/subastas/{id}/items/{itemId}/cerrar")
+    Call<com.grupo6.subastar.dto.CierreSubastaDTO> cerrarSubasta(
+            @Header("Authorization") String token,
+            @Path("id") Integer id,
+            @Path("itemId") Integer itemId
+    );
+
+
 }

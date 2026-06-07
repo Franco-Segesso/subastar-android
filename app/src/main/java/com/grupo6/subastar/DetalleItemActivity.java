@@ -47,14 +47,32 @@ public class DetalleItemActivity extends AppCompatActivity {
         int itemId = getIntent().getIntExtra("ITEM_ID", -1);
         int subastaId = getIntent().getIntExtra("SUBASTA_ID", -1);
         String estado = getIntent().getStringExtra("SUBASTA_ESTADO");
+        String nombreItem = getIntent().getStringExtra("ITEM_TITULO");
+        Double baseItem = getIntent().getDoubleExtra("ITEM_BASE", 0);
 
         // Regla: Solo mostramos el botón si la subasta está abierta
         if ("abierta".equalsIgnoreCase(estado)) {
             btnPujar.setVisibility(View.VISIBLE);
+
+            btnPujar.setOnClickListener(v -> {
+                // Creamos el "puente" hacia la nueva Activity
+                android.content.Intent intent = new android.content.Intent(DetalleItemActivity.this, SalaPujaActivity.class);
+
+                // Le pasamos los datos exactos que espera recibir el onCreate() de SalaPujaActivity
+                intent.putExtra("SUBASTA_ID", subastaId);
+                intent.putExtra("ITEM_ID", itemId);
+
+                // Opcional: pasar textos para la cabecera (reemplazá con los datos reales de tu objeto ítem)
+                intent.putExtra("ITEM_TITULO", nombreItem);
+                intent.putExtra("ITEM_BASE", baseItem);
+
+                startActivity(intent);
+            });
         }
 
         cargarDatosBackend(subastaId, itemId);
     }
+
 
     private void cargarDatosBackend(int subastaId, int itemId) {
         Retrofit retrofit = new Retrofit.Builder()

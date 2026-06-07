@@ -59,6 +59,8 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
             intent.putExtra("ITEM_ID", item.getId());
             intent.putExtra("SUBASTA_ID", subastaId);
             intent.putExtra("SUBASTA_ESTADO", subastaEstado);
+            intent.putExtra("ITEM_TITULO", item.getProducto().getTipo());
+            intent.putExtra("ITEM_BASE", item.getPrecioBase());
             v.getContext().startActivity(intent);
         });
     }
