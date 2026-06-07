@@ -25,6 +25,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import android.view.View;
 import android.widget.ImageButton;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompClient;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -37,6 +42,8 @@ public class HomeActivity extends AppCompatActivity {
     private TokenManager tokenManager;
     private TextView tvMensajeVacio;
     private TextView tvProximas;
+    private StompClient stompClient;
+    private CompositeDisposable compositeDisposable;
 
 
     // Variables para mantener los filtros activos
@@ -137,6 +144,41 @@ public class HomeActivity extends AppCompatActivity {
 
         // Al arrancar, simulamos un clic en "Todas" para traer la lista inicial
         ejecutarConsultaBackend(null, null);
+        conectarWebSocketHome();
+    }
+
+    private void conectarWebSocketHome() {
+        if (stompClient != null && stompClient.isConnected()) return;
+
+        compositeDisposable = new CompositeDisposable();
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/v1/subastar-ws/websocket");
+
+        compositeDisposable.add(stompClient.lifecycle()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(lifecycleEvent -> {
+                    switch (lifecycleEvent.getType()) {
+                        case OPENED:
+                            suscribirseAEstadosSubastas();
+                            break;
+                        case ERROR:
+                            Log.e("HOME_STOMP", "Error WebSocket", lifecycleEvent.getException());
+                            break;
+                        case CLOSED:
+                            Log.d("HOME_STOMP", "Conexion cerrada");
+                            break;
+                    }
+                }));
+
+        stompClient.connect();
+    }
+
+    private void suscribirseAEstadosSubastas() {
+        compositeDisposable.add(stompClient.topic("/topic/subastas/estado-general")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(stompMessage -> ejecutarConsultaBackend(estadoActual, categoriaActual, true),
+                        error -> Log.e("HOME_STOMP", "Error en topic estado-general", error)));
     }
 
     private void cambiarDia(int dias) {
@@ -231,6 +273,10 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void ejecutarConsultaBackend(String estado, String categoria) {
+        ejecutarConsultaBackend(estado, categoria, false);
+    }
+
+    private void ejecutarConsultaBackend(String estado, String categoria, boolean preservarScroll) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -279,8 +325,26 @@ public class HomeActivity extends AppCompatActivity {
                         recyclerView.setVisibility(View.VISIBLE); // Mostramos la lista
                         tvMensajeVacio.setVisibility(View.GONE); // Ocultamos el mensaje
 
+                        int posicionScroll = RecyclerView.NO_POSITION;
+                        int offsetScroll = 0;
+                        if (preservarScroll && recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+                            LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                            posicionScroll = layoutManager.findFirstVisibleItemPosition();
+                            View itemVisible = layoutManager.findViewByPosition(posicionScroll);
+                            if (itemVisible != null) {
+                                offsetScroll = itemVisible.getTop() - recyclerView.getPaddingTop();
+                            }
+                        }
+
                         adapter = new SubastaAdapter(listaOriginal);
                         recyclerView.setAdapter(adapter);
+
+                        if (posicionScroll != RecyclerView.NO_POSITION && recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+                            int posicionFinal = Math.min(posicionScroll, adapter.getItemCount() - 1);
+                            int offsetFinal = offsetScroll;
+                            recyclerView.post(() -> ((LinearLayoutManager) recyclerView.getLayoutManager())
+                                    .scrollToPositionWithOffset(posicionFinal, offsetFinal));
+                        }
                     }
                 }
             }
@@ -295,5 +359,12 @@ public class HomeActivity extends AppCompatActivity {
                 tvMensajeVacio.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (compositeDisposable != null) compositeDisposable.dispose();
+        if (stompClient != null && stompClient.isConnected()) stompClient.disconnect();
     }
 }

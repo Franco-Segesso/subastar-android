@@ -1,6 +1,7 @@
 package com.grupo6.subastar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -8,13 +9,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.grupo6.subastar.adapter.ItemProductoAdapter;
+import com.grupo6.subastar.dto.EstadoPujaDTO;
 import com.grupo6.subastar.model.Subasta;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompClient;
 
 public class CatalogoActivity extends AppCompatActivity {
 
@@ -22,6 +30,11 @@ public class CatalogoActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Integer subastaId;
     private TokenManager tokenManager;
+    private ItemProductoAdapter adapter;
+    private StompClient stompClient;
+    private CompositeDisposable compositeDisposable;
+    private Gson gson;
+    private boolean refrescandoPorCierre = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +42,7 @@ public class CatalogoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_catalogo);
 
         tokenManager = new TokenManager(this);
+        gson = new Gson();
 
         // Bindear vistas
         tvTitulo = findViewById(R.id.tvCatalogoTitulo);
@@ -51,6 +65,8 @@ public class CatalogoActivity extends AppCompatActivity {
             finish();
         }
 
+        conectarWebSocketCatalogo();
+
         // Eliminamos el cargarDetalleSubasta(subastaId) de acá porque el onResume
         // se encarga de llamarlo automáticamente ni bien la pantalla carga.
     }
@@ -63,6 +79,55 @@ public class CatalogoActivity extends AppCompatActivity {
         if (subastaId != null && subastaId != -1) {
             cargarDetalleSubasta(subastaId);
         }
+    }
+
+    private void conectarWebSocketCatalogo() {
+        if (subastaId == null || subastaId <= 0) return;
+        if (stompClient != null && stompClient.isConnected()) return;
+
+        compositeDisposable = new CompositeDisposable();
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/v1/subastar-ws/websocket");
+
+        compositeDisposable.add(stompClient.lifecycle()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(lifecycleEvent -> {
+                    switch (lifecycleEvent.getType()) {
+                        case OPENED:
+                            suscribirseATopicosCatalogo();
+                            break;
+                        case ERROR:
+                            Log.e("CATALOGO_STOMP", "Error WebSocket", lifecycleEvent.getException());
+                            break;
+                        case CLOSED:
+                            Log.d("CATALOGO_STOMP", "Conexion cerrada");
+                            break;
+                    }
+                }));
+
+        stompClient.connect();
+    }
+
+    private void suscribirseATopicosCatalogo() {
+        compositeDisposable.add(stompClient.topic("/topic/subastas/" + subastaId + "/estado")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(stompMessage -> {
+                    if (refrescandoPorCierre) return;
+                    EstadoPujaDTO estado = gson.fromJson(stompMessage.getPayload(), EstadoPujaDTO.class);
+                    if (estado != null && estado.getItemId() != null && adapter != null && !estado.isCerrado()) {
+                        adapter.actualizarItemActivo(estado.getItemId());
+                    }
+                }, error -> Log.e("CATALOGO_STOMP", "Error en topic estado", error)));
+
+        compositeDisposable.add(stompClient.topic("/topic/subastas/" + subastaId + "/cierre")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(stompMessage -> {
+                            refrescandoPorCierre = true;
+                            recyclerView.postDelayed(() -> cargarDetalleSubasta(subastaId), 800);
+                        },
+                        error -> Log.e("CATALOGO_STOMP", "Error en topic cierre", error)));
     }
 
     private void cargarDetalleSubasta(Integer id) {
@@ -95,7 +160,7 @@ public class CatalogoActivity extends AppCompatActivity {
 
                     // Le pasamos los datos directamente al instanciar el adapter
                     if (subasta.getCatalogo() != null && subasta.getCatalogo().getItems() != null) {
-                        ItemProductoAdapter adapter = new ItemProductoAdapter(
+                        adapter = new ItemProductoAdapter(
                                 subasta.getCatalogo().getItems(),
                                 CatalogoActivity.this,
                                 subasta.getId()
@@ -103,13 +168,22 @@ public class CatalogoActivity extends AppCompatActivity {
                         // Aseguramos que la lista se repinte por completo al volver de la sala
                         recyclerView.setAdapter(adapter);
                     }
+                    refrescandoPorCierre = false;
                 }
             }
 
             @Override
             public void onFailure(Call<Subasta> call, Throwable t) {
+                refrescandoPorCierre = false;
                 Toast.makeText(CatalogoActivity.this, "Error de red", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (compositeDisposable != null) compositeDisposable.dispose();
+        if (stompClient != null && stompClient.isConnected()) stompClient.disconnect();
     }
 }

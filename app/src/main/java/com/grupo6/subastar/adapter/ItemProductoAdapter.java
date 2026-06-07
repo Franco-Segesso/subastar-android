@@ -39,6 +39,12 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
         notifyDataSetChanged();
     }
 
+    public void actualizarItemActivo(Integer itemId) {
+        if (itemId == null) return;
+        this.idPrimerItemActivo = itemId;
+        notifyDataSetChanged();
+    }
+
     // El corazón de la secuencia: el primer ítem con estado "no" es el que está en vivo
     private void calcularItemActivo() {
         idPrimerItemActivo = -1;
