@@ -36,7 +36,7 @@
         android:id="@+id/btnVolverPerfil"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Volver a Mi Perfil"
+        android:text="Volver a Home"
         android:backgroundTint="@color/secundario"
         android:textColor="@color/primario"
         android:textStyle="bold"/>
