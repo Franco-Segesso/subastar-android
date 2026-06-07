@@ -1,5 +1,9 @@
 package com.grupo6.subastar.adapter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,61 +11,116 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.grupo6.subastar.DetalleItemActivity;
 import com.grupo6.subastar.R;
 import com.grupo6.subastar.model.ItemCatalogo;
-import com.grupo6.subastar.model.Foto;
+
 import java.util.List;
 
-public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapter.ProductoViewHolder> {
+public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapter.ViewHolder> {
 
     private List<ItemCatalogo> items;
-    private int subastaId;
-    private String subastaEstado;
+    private Context context;
+    private Integer subastaId;
+    private Integer idPrimerItemActivo = -1;
 
-    // El constructor ahora recibe los datos de la subasta
-    public ItemProductoAdapter(List<ItemCatalogo> items, int subastaId, String subastaEstado) {
+    public ItemProductoAdapter(List<ItemCatalogo> items, Context context, Integer subastaId) {
         this.items = items;
+        this.context = context;
         this.subastaId = subastaId;
-        this.subastaEstado = subastaEstado;
+        calcularItemActivo();
+    }
+
+    public void updateData(List<ItemCatalogo> nuevosItems) {
+        this.items = nuevosItems;
+        calcularItemActivo(); // Recalculamos quién está en vivo cada vez que se actualiza la lista
+        notifyDataSetChanged();
+    }
+
+    // El corazón de la secuencia: el primer ítem con estado "no" es el que está en vivo
+    private void calcularItemActivo() {
+        idPrimerItemActivo = -1;
+        for (ItemCatalogo item : items) {
+            if ("no".equalsIgnoreCase(item.getSubastado())) {
+                idPrimerItemActivo = item.getId();
+                break;
+            }
+        }
     }
 
     @NonNull
     @Override
-    public ProductoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_producto, parent, false);
-        return new ProductoViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_producto, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ItemCatalogo item = items.get(position);
 
-        holder.tvTitulo.setText(item.getProducto().getTipo());
+        String titulo = item.getProducto() != null ? item.getProducto().getTipo() + " - Ítem #" + item.getId() : "Ítem #" + item.getId();
+        holder.tvTitulo.setText(titulo);
 
-        if (item.getPrecioBase() != null) {
-            holder.tvPrecio.setText("Base: USD " + item.getPrecioBase());
+        if (item.getProducto() != null && item.getProducto().getFotos() != null && !item.getProducto().getFotos().isEmpty()) {
+            Glide.with(context).load(item.getProducto().getFotos().get(0).getUrlFoto()).centerCrop().into(holder.ivImagen);
         } else {
-            holder.tvPrecio.setText("Base: Oculto (Iniciá sesión)");
+            holder.ivImagen.setImageResource(R.color.primario);
         }
 
-        List<Foto> fotos = item.getProducto().getFotos();
-        if (fotos != null && !fotos.isEmpty()) {
-            Glide.with(holder.itemView.getContext())
-                    .load(fotos.get(0).getUrlFoto())
-                    .placeholder(R.drawable.bg_chip_inactivo)
-                    .into(holder.ivFoto);
+        // --- MÁQUINA DE ESTADOS VISUALES ---
+        if ("si".equalsIgnoreCase(item.getSubastado())) {
+            // 1. ESTADO: VENDIDO (Ítems Anteriores)
+            holder.itemView.setAlpha(0.5f); // Opacamos la tarjeta
+
+            holder.tvEstado.setText("VENDIDO");
+            holder.tvEstado.setTextColor(context.getResources().getColor(R.color.texto_ppal));
+            holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(Color.DKGRAY));
+
+            holder.tvPrecio.setVisibility(View.VISIBLE);
+            holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_sec));
+
+            // Usamos el precio final real de la venta
+            Double precioMostrar = item.getPrecioFinal() != null ? item.getPrecioFinal() : item.getPrecioBase();
+            holder.tvPrecio.setText(String.format("Vendido a: USD %.2f", precioMostrar));
+
+        } else if (item.getId().equals(idPrimerItemActivo)) {
+            // 2. ESTADO: EN VIVO (El Ítem Actual)
+            holder.itemView.setAlpha(1.0f); // Tarjeta al 100% de brillo
+
+            holder.tvEstado.setText("EN VIVO");
+            holder.tvEstado.setTextColor(context.getResources().getColor(R.color.primario));
+            holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.secundario)));
+
+            holder.tvPrecio.setVisibility(View.VISIBLE);
+            holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_ppal));
+            holder.tvPrecio.setText(String.format("Base: USD %.2f", item.getPrecioBase()));
+
+        } else {
+            // 3. ESTADO: PRÓXIMAMENTE (Ítems Futuros)
+            holder.itemView.setAlpha(1.0f);
+
+            holder.tvEstado.setText("PRÓXIMAMENTE");
+            holder.tvEstado.setTextColor(context.getResources().getColor(R.color.texto_sec));
+            holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+
+            // Los ítems que vienen después no dicen nada
+            holder.tvPrecio.setVisibility(View.GONE);
         }
 
-        // CORREGIDO: Usamos las variables directas del constructor en vez de navegar por el objeto item
+        // Bloqueamos el clic si ya está vendido
+        holder.itemView.setEnabled(!"si".equalsIgnoreCase(item.getSubastado()));
+
         holder.itemView.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(v.getContext(), com.grupo6.subastar.DetalleItemActivity.class);
+            android.content.Intent intent = new android.content.Intent(context, DetalleItemActivity.class);
             intent.putExtra("ITEM_ID", item.getId());
             intent.putExtra("SUBASTA_ID", subastaId);
-            intent.putExtra("SUBASTA_ESTADO", subastaEstado);
-            intent.putExtra("ITEM_TITULO", item.getProducto().getTipo());
+            intent.putExtra("SUBASTA_ESTADO", "abierta");
+            intent.putExtra("ITEM_TITULO", titulo);
             intent.putExtra("ITEM_BASE", item.getPrecioBase());
-            v.getContext().startActivity(intent);
+            context.startActivity(intent);
         });
     }
 
@@ -70,15 +129,16 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
         return items != null ? items.size() : 0;
     }
 
-    public static class ProductoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvPrecio;
-        ImageView ivFoto;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView ivImagen;
+        TextView tvTitulo, tvPrecio, tvEstado;
 
-        public ProductoViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitulo = itemView.findViewById(R.id.tvProductoTitulo);
-            tvPrecio = itemView.findViewById(R.id.tvProductoPrecioBase);
-            ivFoto = itemView.findViewById(R.id.ivProductoFoto);
+            ivImagen = itemView.findViewById(R.id.ivProducto);
+            tvTitulo = itemView.findViewById(R.id.tvTituloProducto);
+            tvPrecio = itemView.findViewById(R.id.tvPrecioProducto);
+            tvEstado = itemView.findViewById(R.id.tvEstadoProducto);
         }
     }
 }

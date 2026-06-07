@@ -1,53 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cvProductoContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
     app:cardBackgroundColor="@color/fondo_sec_b"
-    app:strokeColor="@color/bordes"
-    app:strokeWidth="1dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="0dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <ImageView
-            android:id="@+id/ivProductoFoto"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="#E0E0E0"
+            android:id="@+id/ivProducto"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@color/primario"
             android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvProductoTitulo"
+            android:id="@+id/tvTituloProducto"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Pintura al Óleo"
-            android:textColor="@color/texto_ppal"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:layout_marginStart="16dp"
-            app:layout_constraintStart_toEndOf="@id/ivProductoFoto"
-            app:layout_constraintTop_toTopOf="@id/ivProductoFoto" />
+            android:textColor="@color/texto_ppal"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivProducto"
+            app:layout_constraintTop_toTopOf="@id/ivProducto"
+            tools:text="Arte Contemporáneo - Ítem #3" />
 
         <TextView
-            android:id="@+id/tvProductoPrecioBase"
+            android:id="@+id/tvPrecioProducto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/secundario"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/tvTituloProducto"
+            app:layout_constraintTop_toBottomOf="@id/tvTituloProducto"
+            tools:text="USD 4.900" />
+
+        <TextView
+            android:id="@+id/tvEstadoProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Base: USD 2.000"
-            android:textColor="@color/texto_sec"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintStart_toStartOf="@id/tvProductoTitulo"
-            app:layout_constraintTop_toBottomOf="@id/tvProductoTitulo" />
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_chip_activo"
+            android:textColor="@color/primario"
+            app:layout_constraintBottom_toBottomOf="@id/ivProducto"
+            app:layout_constraintStart_toStartOf="@id/tvTituloProducto"
+            tools:text="EN VIVO" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

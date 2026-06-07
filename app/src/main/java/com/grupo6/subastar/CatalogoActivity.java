@@ -1,7 +1,6 @@
 package com.grupo6.subastar;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,11 +46,22 @@ public class CatalogoActivity extends AppCompatActivity {
         // Capturar ID que mandó el HomeActivity
         subastaId = getIntent().getIntExtra("SUBASTA_ID", -1);
 
-        if (subastaId != -1) {
-            cargarDetalleSubasta(subastaId);
-        } else {
+        if (subastaId == -1) {
             Toast.makeText(this, "Error: No se encontró la subasta", Toast.LENGTH_SHORT).show();
             finish();
+        }
+
+        // Eliminamos el cargarDetalleSubasta(subastaId) de acá porque el onResume
+        // se encarga de llamarlo automáticamente ni bien la pantalla carga.
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Cada vez que el usuario vuelve a esta pantalla (por ejemplo, saliendo de la sala de puja)
+        // recargamos los datos desde el backend usando el ID capturado.
+        if (subastaId != null && subastaId != -1) {
+            cargarDetalleSubasta(subastaId);
         }
     }
 
@@ -71,7 +81,6 @@ public class CatalogoActivity extends AppCompatActivity {
             tokenHeader = "Bearer " + tokenGuardado;
         }
 
-        // Simulamos usuario no logueado pasando null en el token
         api.obtenerDetalleSubasta(id, tokenHeader).enqueue(new Callback<Subasta>() {
             @Override
             public void onResponse(Call<Subasta> call, Response<Subasta> response) {
@@ -88,9 +97,10 @@ public class CatalogoActivity extends AppCompatActivity {
                     if (subasta.getCatalogo() != null && subasta.getCatalogo().getItems() != null) {
                         ItemProductoAdapter adapter = new ItemProductoAdapter(
                                 subasta.getCatalogo().getItems(),
-                                subasta.getId(),
-                                subasta.getEstado()
+                                CatalogoActivity.this,
+                                subasta.getId()
                         );
+                        // Aseguramos que la lista se repinte por completo al volver de la sala
                         recyclerView.setAdapter(adapter);
                     }
                 }

@@ -57,6 +57,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     private String tokenJwt;
     private SubastarApi api;
 
+    private boolean modalMostrado = false;
     private TokenManager tokenManager;
 
     @Override
@@ -204,7 +205,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void conectarWebSocket() {
-        String wsUrl = "ws://10.0.2.2:8080/subastar-ws/websocket";
+        String wsUrl = "ws://10.0.2.2:8080/v1/subastar-ws/websocket";
         mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, wsUrl);
 
         List<StompHeader> headers = new ArrayList<>();
@@ -290,13 +291,23 @@ public class SalaPujaActivity extends AppCompatActivity {
         btnPujar.setEnabled(false);
         api.cerrarSubasta(tokenJwt, subastaId, itemId).enqueue(new Callback<CierreSubastaDTO>() {
             @Override
-            public void onResponse(Call<CierreSubastaDTO> call, Response<CierreSubastaDTO> response) { }
+            public void onResponse(Call<CierreSubastaDTO> call, Response<CierreSubastaDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    mostrarModalResultado(response.body());
+                }
+            }
             @Override
-            public void onFailure(Call<CierreSubastaDTO> call, Throwable t) { }
+            public void onFailure(Call<CierreSubastaDTO> call, Throwable t) {
+                Toast.makeText(SalaPujaActivity.this, "Error al cerrar la subasta", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         });
     }
 
     private void mostrarModalResultado(CierreSubastaDTO cierre) {
+        if (modalMostrado) return;
+        modalMostrado = true;
+
         if (countDownTimer != null) countDownTimer.cancel();
         if (mStompClient != null && mStompClient.isConnected()) mStompClient.disconnect();
 

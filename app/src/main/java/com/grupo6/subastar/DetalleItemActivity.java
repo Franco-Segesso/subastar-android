@@ -118,6 +118,15 @@ public class DetalleItemActivity extends AppCompatActivity {
                                 .load(item.getProducto().getFotos().get(0).getUrlFoto())
                                 .into(ivImagen);
                     }
+                    if ("si".equalsIgnoreCase(item.getSubastado())) {
+                        btnPujar.setEnabled(false);
+                        btnPujar.setText("Subasta Finalizada");
+                        btnPujar.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.GRAY));
+                    }else {
+                        // Nos aseguramos de que el botón esté habilitado para los pendientes
+                        btnPujar.setEnabled(true);
+                        btnPujar.setText("Participar en la puja");
+                    }
                 }
             }
 
