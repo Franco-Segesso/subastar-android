@@ -131,12 +131,26 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     private void confirmarEliminar(MedioPagoDTO item) {
-        new AlertDialog.Builder(this)
-                .setTitle("Eliminar método de pago")
-                .setMessage("¿Estás seguro que querés eliminar este método de pago?")
-                .setPositiveButton("Eliminar", (dialog, which) -> eliminarMedioPago(item))
-                .setNegativeButton("Cancelar", null)
-                .show();
+        // Creamos el Dialog vacío
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        // Le inyectamos el layout que creaste recién
+        dialog.setContentView(R.layout.dialog_eliminar_medio);
+
+        // El fondo del "window" debe ser transparente para que el CardView redondeado brille por sí solo
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        android.widget.Button btnCancelar = dialog.findViewById(R.id.btnCancelarEliminar);
+        android.widget.Button btnConfirmar = dialog.findViewById(R.id.btnConfirmarEliminar);
+
+        btnCancelar.setOnClickListener(v -> dialog.dismiss());
+
+        btnConfirmar.setOnClickListener(v -> {
+            eliminarMedioPago(item); // Ejecuta el POST a la API
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     private void eliminarMedioPago(MedioPagoDTO item) {
@@ -146,7 +160,7 @@ public class PerfilActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(PerfilActivity.this, "Método de pago eliminado", Toast.LENGTH_SHORT).show();
+                    mostrarDialogoExito("El medio de pago fue eliminado correctamente.");
                     cargarMediosPago();
                 } else {
                     Toast.makeText(PerfilActivity.this, "No se pudo eliminar", Toast.LENGTH_SHORT).show();
@@ -158,5 +172,24 @@ public class PerfilActivity extends AppCompatActivity {
                 Toast.makeText(PerfilActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void mostrarDialogoExito(String mensaje) {
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_exito);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        android.widget.TextView tvMensaje = dialog.findViewById(R.id.tvMensajeExito);
+        tvMensaje.setText(mensaje);
+
+        android.widget.Button btnAceptar = dialog.findViewById(R.id.btnAceptarExito);
+        btnAceptar.setOnClickListener(v -> {
+            dialog.dismiss();
+            // Refrescamos la lista DESPUÉS de que el usuario clickea "Aceptar"
+            // (Asegurate de llamar acá a tu método que recarga los medios de pago, ej: cargarMediosDePago() )
+        });
+
+        dialog.show();
     }
 }

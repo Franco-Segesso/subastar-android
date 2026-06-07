@@ -1,5 +1,6 @@
 package com.grupo6.subastar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -364,7 +365,9 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) { manejarRespuesta(response); }
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) { Toast.makeText(AgregarMedioPagoActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show(); }
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    mostrarDialogoError("No tienes conexión a internet o el servidor no responde.");
+                }
             });
         }
     }
@@ -397,16 +400,29 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
     private void manejarRespuesta(Response<?> response) {
         if (response.isSuccessful()) {
             // Lanzamos la pantalla de éxito
-            android.content.Intent intent = new android.content.Intent(AgregarMedioPagoActivity.this, MedioPagoExitosoActivity.class);
-            startActivityForResult(intent, 100);
+            Intent intent = new Intent(AgregarMedioPagoActivity.this, MedioPagoExitosoActivity.class);
+            startActivity(intent);
+            finish();
         } else {
+            String mensajeError = "Ocurrió un error al procesar la solicitud.";
             try {
-                String errorBackend = response.errorBody() != null ? response.errorBody().string() : "Error desconocido";
-                Toast.makeText(this, "Error del servidor: " + errorBackend, Toast.LENGTH_LONG).show();
+                if (response.errorBody() != null) {
+                    String errorJsonStr = response.errorBody().string();
+                    org.json.JSONObject errorJson = new org.json.JSONObject(errorJsonStr);
+
+                    // Capturamos el mensaje exacto que escupe nuestro Exception en Spring Boot
+                    if (errorJson.has("message")) {
+                        mensajeError = errorJson.getString("message");
+                    } else if (errorJson.has("error")) {
+                        mensajeError = errorJson.getString("error");
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Error al guardar. Revisá los datos.", Toast.LENGTH_SHORT).show();
             }
+
+            // Llamamos al modal rojo que creamos antes
+            mostrarDialogoError(mensajeError);
         }
     }
 
@@ -418,5 +434,20 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
             setResult(RESULT_OK); // Le avisamos al Perfil que todo salió bien
             finish(); // Cerramos el formulario
         }
+    }
+
+    private void mostrarDialogoError(String mensaje) {
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_error);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        android.widget.TextView tvMensaje = dialog.findViewById(R.id.tvMensajeError);
+        tvMensaje.setText(mensaje);
+
+        android.widget.Button btnEntendido = dialog.findViewById(R.id.btnEntendidoError);
+        btnEntendido.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 }
