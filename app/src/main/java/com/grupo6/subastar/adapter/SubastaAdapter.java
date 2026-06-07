@@ -156,4 +156,10 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvPostores = itemView.findViewById(R.id.tvPostores);
         }
     }
+
+    // Metodo para actualizar la lista desde el buscador
+    public void actualizarLista(List<Subasta> subastasFiltradas) {
+        this.subastas = subastasFiltradas;
+        notifyDataSetChanged(); // Le avisa a Android que redibuje las tarjetas
+    }
 }
