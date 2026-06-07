@@ -2,6 +2,7 @@ package com.grupo6.subastar;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,8 +42,8 @@ public class CatalogoActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Botón volver
-        ImageView btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish()); // Cierra esta pantalla y vuelve al Home
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
+        btnVolver.setOnClickListener(v -> finish()); // Cierra esta pantalla y vuelve al Home
 
         // Capturar ID que mandó el HomeActivity
         subastaId = getIntent().getIntExtra("SUBASTA_ID", -1);

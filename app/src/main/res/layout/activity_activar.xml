@@ -4,35 +4,78 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@color/bg_dark">
+    android:background="@color/primario">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Completar Registro"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="@color/gold"
-        android:layout_marginBottom="24dp"/>
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
-    <EditText android:id="@+id/etEmailActivar" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textEmailAddress" android:layout_marginBottom="16dp"/>
+        <ImageButton
+            android:id="@+id/btnVolver"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/texto_ppal"/>
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nueva Clave Personal" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
-    <EditText android:id="@+id/etClaveNueva" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textPassword" android:layout_marginBottom="16dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Completar Registro"
+            android:textColor="@color/texto_ppal"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Confirmar Clave" android:textColor="@color/white" android:layout_marginBottom="4dp"/>
-    <EditText android:id="@+id/etClaveConfirmar" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:paddingHorizontal="12dp" android:inputType="textPassword" android:layout_marginBottom="32dp"/>
+        <View android:layout_width="40dp" android:layout_height="40dp"/>
+    </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnActivarCuenta"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Generar Clave y Activar"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:backgroundTint="@color/gold"
-        app:cornerRadius="12dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Creá tu clave de acceso"
+                android:textSize="14sp"
+                android:textColor="@color/secundario"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email" android:textColor="@color/texto_sec" android:textSize="13sp" android:layout_marginBottom="4dp"/>
+            <EditText android:id="@+id/etEmailActivar" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:textColor="#1A1A1A" android:paddingHorizontal="12dp" android:inputType="textEmailAddress" android:layout_marginBottom="16dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nueva Clave Personal" android:textColor="@color/texto_sec" android:textSize="13sp" android:layout_marginBottom="4dp"/>
+            <EditText android:id="@+id/etClaveNueva" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:textColor="#1A1A1A" android:paddingHorizontal="12dp" android:inputType="textPassword" android:layout_marginBottom="16dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Confirmar Clave" android:textColor="@color/texto_sec" android:textSize="13sp" android:layout_marginBottom="4dp"/>
+            <EditText android:id="@+id/etClaveConfirmar" android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/bg_input" android:textColor="#1A1A1A" android:paddingHorizontal="12dp" android:inputType="textPassword" android:layout_marginBottom="32dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnActivarCuenta"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Generar Clave y Activar"
+                android:textColor="@color/primario"
+                android:textStyle="bold"
+                app:backgroundTint="@color/secundario"
+                app:cornerRadius="12dp"/>
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

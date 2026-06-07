@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¡Registro exitoso!"
+        android:text="¡Método de Pago Agregado!"
         android:textColor="@color/secundario"
         android:textSize="26sp"
         android:textStyle="bold"
@@ -25,18 +25,18 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="La primera parte de tu registro se ha completado correctamente.\n\nEstamos validando tu información. Una vez aprobada, vas a recibir un correo electrónico con los pasos para realizar la segunda parte del registro y activar tu cuenta."
-        android:textColor="@color/texto_ppal"
+        android:text="Tu nuevo medio de pago se registró correctamente.\n\nYa lo tenés disponible en tu perfil para usarlo como garantía y participar en las pujas del catálogo."
+        android:textColor="@color/texto_sec"
         android:textSize="16sp"
         android:gravity="center"
         android:lineSpacingExtra="4dp"
         android:layout_marginBottom="40dp"/>
 
     <Button
-        android:id="@+id/btnEntendido"
+        android:id="@+id/btnVolverPerfil"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Entendido"
+        android:text="Volver a Mi Perfil"
         android:backgroundTint="@color/secundario"
         android:textColor="@color/primario"
         android:textStyle="bold"/>

@@ -165,7 +165,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
         tabCheque.setOnClickListener(v -> seleccionarTab("cheque"));
 
         // Volver
-        ImageButton btnVolver = findViewById(R.id.btnVolverAgregar);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
         btnVolver.setOnClickListener(v -> {
             if (esObligatorio) {
                   Toast.makeText(AgregarMedioPagoActivity.this, "No puedes salir sin registrar un medio de pago.", Toast.LENGTH_SHORT).show();
@@ -396,11 +396,10 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
 
     private void manejarRespuesta(Response<?> response) {
         if (response.isSuccessful()) {
-            Toast.makeText(this, "Método de pago agregado correctamente", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
-            finish();
+            // Lanzamos la pantalla de éxito
+            android.content.Intent intent = new android.content.Intent(AgregarMedioPagoActivity.this, MedioPagoExitosoActivity.class);
+            startActivityForResult(intent, 100);
         } else {
-            // ACÁ ESTÁ LA MAGIA DEL PASO B: Leer el error exacto del servidor
             try {
                 String errorBackend = response.errorBody() != null ? response.errorBody().string() : "Error desconocido";
                 Toast.makeText(this, "Error del servidor: " + errorBackend, Toast.LENGTH_LONG).show();
@@ -408,6 +407,16 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(this, "Error al guardar. Revisá los datos.", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Si el resultado viene de la pantalla de éxito (código 100)
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            setResult(RESULT_OK); // Le avisamos al Perfil que todo salió bien
+            finish(); // Cerramos el formulario
         }
     }
 }

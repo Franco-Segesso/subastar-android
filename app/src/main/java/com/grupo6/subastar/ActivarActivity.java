@@ -3,6 +3,7 @@ package com.grupo6.subastar;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +27,11 @@ public class ActivarActivity extends AppCompatActivity {
         EditText etClaveNueva = findViewById(R.id.etClaveNueva);
         EditText etClaveConfirmar = findViewById(R.id.etClaveConfirmar);
         Button btnActivar = findViewById(R.id.btnActivarCuenta);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
+
+
+        // Enlazar flecha de retroceso
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080/")

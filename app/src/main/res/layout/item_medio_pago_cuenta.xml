@@ -72,11 +72,10 @@
 
         <ImageButton
             android:id="@+id/btnEliminarCuenta"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_delete"
-            app:tint="#FF5555"/>
+            android:src="@drawable/ic_cancel"  app:tint="@color/error"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

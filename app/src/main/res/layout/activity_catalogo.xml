@@ -9,27 +9,29 @@
     android:padding="24dp"
     tools:context=".CatalogoActivity">
 
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@android:drawable/ic_menu_revert"
+    <ImageButton
+        android:id="@+id/btnVolver"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_arrow_back"
         app:tint="@color/texto_ppal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvCatalogoTitulo"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Cargando..."
         android:textColor="@color/texto_ppal"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginStart="16dp"
-        app:layout_constraintStart_toEndOf="@id/btnBack"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/btnBack"/>
+        app:layout_constraintStart_toEndOf="@id/btnVolver"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnVolver"
+        app:layout_constraintBottom_toBottomOf="@id/btnVolver"/>
 
     <LinearLayout
         android:id="@+id/layoutInfoSubasta"
@@ -38,7 +40,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="24dp"
         android:weightSum="3"
-        app:layout_constraintTop_toBottomOf="@id/tvCatalogoTitulo">
+        app:layout_constraintTop_toBottomOf="@id/btnVolver">
 
         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Categoría" android:textColor="@color/texto_sec" android:textSize="12sp"/>

@@ -20,7 +20,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_media_previous"
+            android:src="@drawable/ic_arrow_back"
             app:tint="@color/texto_ppal"/>
 
         <TextView
@@ -38,8 +38,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_lock_power_off"
-            app:tint="@color/error"/>
+            android:src="@drawable/ic_logout"  app:tint="@color/error"/>
     </LinearLayout>
 
     <LinearLayout
@@ -104,19 +103,8 @@
                         android:textColor="@color/secundario"
                         android:background="@drawable/bg_chip_activo"
                         android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
-                        android:layout_marginEnd="8dp"/>
-
-                    <TextView
-                        android:id="@+id/tvAdmitido"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="APROBADO"
-                        android:textSize="10sp"
-                        android:textColor="#4CAF50"
-                        android:background="@drawable/bg_chip_inactivo"
-                        android:paddingHorizontal="8dp"
                         android:paddingVertical="4dp"/>
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,10 @@ public class LoginActivity extends AppCompatActivity {
         etClave = findViewById(R.id.etClave);
         btnLogin = findViewById(R.id.btnLogin);
         tvActivarCuenta = findViewById(R.id.tvActivarCuenta); // Enlazamos el texto nuevo
+        TextView tvIrARegistro = findViewById(R.id.tvIrARegistro);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
+
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
         // 2. Inicializamos nuestra "bóveda" de seguridad
         tokenManager = new TokenManager(this);
@@ -54,6 +59,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 realizarLogin();
             }
+        });
+
+        // Darle la acción de ir a RegistroActivity al hacer clic
+        tvIrARegistro.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegistroActivity.class);
+            startActivity(intent);
         });
 
         // 5. NUEVO: Capturamos el clic para ir a Activar Cuenta
