@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
@@ -153,7 +154,8 @@ public class DetalleItemActivity extends AppCompatActivity {
         } else {
             btnPujar.setEnabled(true);
             btnPujar.setText("Participar en la puja");
-            btnPujar.setBackgroundTintList(null);
+            btnPujar.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.secundario)));
         }
     }
 }
