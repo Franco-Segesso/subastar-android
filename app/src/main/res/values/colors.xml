@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
     <color name="primario">#0C0C0F</color>
     <color name="secundario">#C9A84C</color>
     <color name="fondo_sec_a">#2A1F02</color>
@@ -9,13 +10,9 @@
     <color name="bordes">#333340</color>
     <color name="texto_ppal">#F0EBE1</color>
     <color name="texto_sec">#A09890</color>
+
     <color name="exito">#3DBE8C</color>
     <color name="error">#E05252</color>
+    <color name="informacion">#4E9FC8</color>
 
-    //colores a corregir
-    <color name="gold">#D4AF37</color>
-    <color name="bg_dark">#121212</color>
-    <color name="text_gray">#A0A0A0</color>
-    <color name="button_dark">#2D2D2D</color>
-    <color name="input_border">#E0E0E0</color>
-</resources>
+    <color name="gold">#C9A84C</color> <color name="bg_dark">#0C0C0F</color> <color name="text_gray">#A09890</color> <color name="button_dark">#141417</color> <color name="input_border">#333340</color> </resources>

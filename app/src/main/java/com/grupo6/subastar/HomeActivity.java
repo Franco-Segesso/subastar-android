@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +45,8 @@ public class HomeActivity extends AppCompatActivity {
     private TextView tvProximas;
     private StompClient stompClient;
     private CompositeDisposable compositeDisposable;
-
+    private EditText etBuscador;
+    private List<Subasta> subastasDelDia = new ArrayList<>();
 
     // Variables para mantener los filtros activos
     private String estadoActual = null;
@@ -71,27 +73,6 @@ public class HomeActivity extends AppCompatActivity {
         ImageView btnNotificaciones = findViewById(R.id.btnNotificaciones);
         TextView navMisPujas = findViewById(R.id.navMisPujas);
         TextView navConsignacion = findViewById(R.id.navConsignacion);
-        Button btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
-
-
-
-        btnCerrarSesion.setOnClickListener(v -> {
-            // 1. Borramos el token de la memoria
-            TokenManager tokenManager = new TokenManager(HomeActivity.this);
-            tokenManager.clearToken();
-
-            // 2. Preparamos el viaje a la pantalla de Bienvenida
-            Intent intent = new Intent(HomeActivity.this, WelcomeActivity.class);
-
-            // 3. FLAGS MÁGICAS: Limpian el historial de pantallas.
-            // Así el usuario no puede volver al Home tocando "Atrás".
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            // 4. Viajamos
-            startActivity(intent);
-            finish();
-        });
-
 
 
 
@@ -107,9 +88,9 @@ public class HomeActivity extends AppCompatActivity {
                 finish();
 
             } else {
-                // SÍ TIENE SESIÓN INICIADA
-                // Le mostramos el mensaje porque la pantalla de Perfil aún no existe
-                Toast.makeText(HomeActivity.this, "Esa funcionalidad todavía no está disponible", Toast.LENGTH_SHORT).show();
+                // SÍ TIENE SESIÓN INICIADA — abrimos el Perfil
+                Intent intent = new Intent(HomeActivity.this, PerfilActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -135,6 +116,36 @@ public class HomeActivity extends AppCompatActivity {
         btnDiaAnterior = findViewById(R.id.btnDiaAnterior);
         btnDiaSiguiente = findViewById(R.id.btnDiaSiguiente);
         tvMensajeVacio = findViewById(R.id.tvMensajeVacio);
+        etBuscador = findViewById(R.id.etBuscador);
+
+        // 1. Escuchar cada letra que el usuario escribe en tiempo real
+        etBuscador.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Cada vez que cambia el texto, filtramos
+                filtrarBuscador(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        // 2. Manejar la acción de la "Lupita" en el teclado
+        etBuscador.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                // Ocultar el teclado al darle a la lupa
+                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+                v.clearFocus(); // Quitar el cursor titilante
+                return true;
+            }
+            return false;
+        });
 
         btnDiaAnterior.setOnClickListener(v -> cambiarDia(-1));
         btnDiaSiguiente.setOnClickListener(v -> cambiarDia(1));
@@ -188,6 +199,10 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void actualizarTextoFecha() {
+        if (etBuscador != null) {
+            etBuscador.setText("");
+        }
+
         if (fechaVisualizada.isEqual(LocalDate.now())) {
             tvFechaActual.setText("HOY");
 
@@ -316,6 +331,22 @@ public class HomeActivity extends AppCompatActivity {
                         listaOriginal = listaFiltrada; // Reemplazamos la lista
                     }
 
+                    subastasDelDia.clear();
+                    subastasDelDia.addAll(listaOriginal);
+
+                    // 1. Si el día de por sí no tiene subastas
+                    if (subastasDelDia.isEmpty()) {
+                        recyclerView.setVisibility(View.GONE);
+                        tvMensajeVacio.setText("No hay subastas programadas para este día.");
+                        tvMensajeVacio.setVisibility(View.VISIBLE);
+                    } else {
+                        // 2. Si el día TIENE subastas, forzamos a que pasen por el filtro
+                        // (Por si el usuario escribió algo justo mientras cargaba la pantalla)
+                        if (etBuscador != null) {
+                            filtrarBuscador(etBuscador.getText().toString());
+                        }
+                    }
+
                     // Comprobamos si la lista quedó vacía después del filtro
                     if (listaOriginal.isEmpty()) {
                         recyclerView.setVisibility(View.GONE); // Ocultamos la lista
@@ -361,6 +392,87 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    // 1. Agregá esto dentro de tu clase HomeActivity
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Solo verificamos si el usuario tiene sesión iniciada
+        if (tokenManager != null && tokenManager.getToken() != null) {
+            verificarMediosPagoObligatorio();
+        }
+    }
+
+    private void verificarMediosPagoObligatorio() {
+        int idCliente = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getInt("USER_ID", -1);
+        String token = "Bearer " + tokenManager.getToken();
+
+        // Inicializamos la API
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8080/")
+                .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
+                .build();
+        SubastarApi api = retrofit.create(SubastarApi.class);
+
+        api.obtenerMediosPago(idCliente, token).enqueue(new retrofit2.Callback<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>>() {
+            @Override
+            public void onResponse(retrofit2.Call<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>> call, retrofit2.Response<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // SI LA LISTA ESTÁ VACÍA -> Lo mandamos obligatoriamente
+                    if (response.body().isEmpty()) {
+                        android.content.Intent intent = new android.content.Intent(HomeActivity.this, AgregarMedioPagoActivity.class);
+                        intent.putExtra("clienteId", idCliente);
+                        intent.putExtra("esObligatorio", true); // <--- ESTO ES LA CLAVE
+                        startActivity(intent);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(retrofit2.Call<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>> call, Throwable t) {}
+        });
+    }
+
+    private void filtrarBuscador(String textoBusqueda) {
+        List<Subasta> listaFiltrada = new ArrayList<>();
+
+        // Si el buscador está vacío, mostramos la lista original del día
+        if (textoBusqueda == null || textoBusqueda.trim().isEmpty()) {
+            listaFiltrada.addAll(subastasDelDia);
+        } else {
+            String texto = textoBusqueda.toLowerCase().trim();
+
+            // Recorremos la copia maestra
+            for (Subasta s : subastasDelDia) {
+                boolean coincideTitulo = s.getCatalogo() != null
+                        && s.getCatalogo().getDescripcion() != null
+                        && s.getCatalogo().getDescripcion().toLowerCase().contains(texto);
+
+                boolean coincideCategoria = s.getCategoria() != null
+                        && s.getCategoria().toLowerCase().contains(texto);
+
+                // Si coincide el nombre o la categoría, lo agregamos a la pantalla
+                if (coincideTitulo || coincideCategoria) {
+                    listaFiltrada.add(s);
+                }
+            }
+        }
+
+        // Actualizamos la vista dependiendo de si encontramos algo o no
+        if (listaFiltrada.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            tvMensajeVacio.setText("No se encontraron resultados para tu búsqueda."); // <-- Texto específico
+            tvMensajeVacio.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            tvMensajeVacio.setVisibility(View.GONE);
+
+            if (adapter != null) {
+                adapter.actualizarLista(listaFiltrada);
+            } else {
+                adapter = new SubastaAdapter(listaFiltrada);
+                recyclerView.setAdapter(adapter);
+            }
+        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

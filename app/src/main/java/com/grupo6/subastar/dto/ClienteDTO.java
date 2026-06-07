@@ -8,10 +8,18 @@ public class ClienteDTO {
     private String categoria;
     private String admitido;
 
+    private String documento;
+    private String direccion;
+    private String pais;
+
     public Integer getIdentificador() { return identificador; }
     public String getNombre() { return nombre; }
     public String getApellido() { return apellido; }
     public String getEmail() { return email; }
     public String getCategoria() { return categoria; }
     public String getAdmitido() { return admitido; }
+
+    public String getDocumento() { return documento; }
+    public String getDireccion() { return direccion; }
+    public String getPais() { return pais; }
 }

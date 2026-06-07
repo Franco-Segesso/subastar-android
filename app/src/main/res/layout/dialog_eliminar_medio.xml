@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardBackgroundColor="@color/fondo_sec_b"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
+            android:src="@android:drawable/ic_dialog_alert"
+            app:tint="@color/error" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿Eliminar método de pago?"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/texto_ppal"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Esta acción no se puede deshacer. ¿Estás seguro de que querés continuar?"
+            android:textSize="16sp"
+            android:textColor="@color/texto_sec"
+            android:textAlignment="center"
+            android:layout_marginBottom="24dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btnCancelarEliminar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/bordes"
+                android:textColor="@color/texto_ppal"
+                android:text="Cancelar"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btnConfirmarEliminar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/error"
+                android:textColor="@color/white"
+                android:text="Eliminar"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,9 @@ public class RegistroActivity extends AppCompatActivity {
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etDireccion = findViewById(R.id.etDireccion);
         EditText etFecha = findViewById(R.id.etFechaNacimiento);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
+
         // Configuramos el evento de clic para el campo de fecha
         etFecha.setOnClickListener(v -> {
             // 1. Obtenemos la fecha actual para que el calendario arranque en el día de hoy

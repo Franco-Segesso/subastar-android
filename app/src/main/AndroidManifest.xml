@@ -50,6 +50,11 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".PerfilActivity" />
+        <activity android:name=".AgregarMedioPagoActivity" />
+
+        <activity android:name=".MedioPagoExitosoActivity" android:exported="false" />
+
     </application>
 
 </manifest>

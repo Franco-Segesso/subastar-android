@@ -67,7 +67,11 @@
         android:drawableEnd="@android:drawable/ic_menu_search"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvNombreUsuario" />
+        app:layout_constraintTop_toBottomOf="@id/tvNombreUsuario"
+
+        android:inputType="text"
+        android:maxLines="1"
+        android:imeOptions="actionSearch" />
 
     <HorizontalScrollView
         android:id="@+id/scrollChips"
@@ -286,12 +290,7 @@
             android:textSize="12sp"/>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnCerrarSesion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cerrar Sesión"
-        android:backgroundTint="@color/error" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

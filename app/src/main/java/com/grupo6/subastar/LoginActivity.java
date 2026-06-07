@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,10 @@ public class LoginActivity extends AppCompatActivity {
         etClave = findViewById(R.id.etClave);
         btnLogin = findViewById(R.id.btnLogin);
         tvActivarCuenta = findViewById(R.id.tvActivarCuenta); // Enlazamos el texto nuevo
+        TextView tvIrARegistro = findViewById(R.id.tvIrARegistro);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
+
+        findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
         // 2. Inicializamos nuestra "bóveda" de seguridad
         tokenManager = new TokenManager(this);
@@ -54,6 +59,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 realizarLogin();
             }
+        });
+
+        // Darle la acción de ir a RegistroActivity al hacer clic
+        tvIrARegistro.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegistroActivity.class);
+            startActivity(intent);
         });
 
         // 5. NUEVO: Capturamos el clic para ir a Activar Cuenta
@@ -94,20 +105,29 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
 
-                    tokenManager.saveClienteId(response.body().getCliente().getIdentificador());
-                    String nombre = response.body().getCliente().getNombre();
+                    // 1. Obtenemos el objeto cliente completo desde la respuesta
+                    com.grupo6.subastar.dto.ClienteDTO clienteLogueado = response.body().getCliente();
+                    tokenManager.saveClienteId(clienteLogueado.getIdentificador());
 
-                    //guardamos el nombre en la memoria del celular
+                    // Armamos el nombre y apellido juntos
+                    String nombreCompleto = clienteLogueado.getNombre() + " " + clienteLogueado.getApellido();
+
+                    // 2. Guardamos TODOS los datos en la memoria del celular
                     getSharedPreferences("SubastarPrefs", MODE_PRIVATE)
                             .edit()
-                            .putString("USER_NAME", nombre)
+                            .putInt("USER_ID", clienteLogueado.getIdentificador())
+                            .putString("USER_NAME", nombreCompleto)
+                            .putString("USER_EMAIL", clienteLogueado.getEmail())
+                            .putString("USER_CATEGORIA", clienteLogueado.getCategoria())
+                            .putString("USER_DOCUMENTO", clienteLogueado.getDocumento())
+                            .putString("USER_DIRECCION", clienteLogueado.getDireccion())
+                            .putString("USER_PAIS", clienteLogueado.getPais())
                             .apply();
 
-                    Toast.makeText(LoginActivity.this, "¡Éxito! Bienvenido, " + nombre, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "¡Éxito! Bienvenido, " + clienteLogueado.getNombre(), Toast.LENGTH_LONG).show();
 
                     //viajamos al home
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    // Limpiamos el historial para que si toca la flecha "Atrás", salga de la app en vez de volver al Login
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();

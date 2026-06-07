@@ -1,59 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="@color/bg_dark"
-    android:padding="32dp">
+    android:background="@color/bg_dark">
 
-    <ImageView
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:src="@drawable/logo_subastar"
-        android:layout_marginBottom="42dp"
-        android:scaleType="fitCenter"/>
+    <ImageButton
+        android:id="@+id/btnVolver"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_arrow_back"
+        app:tint="@color/texto_ppal"/>
 
-    <EditText
-        android:id="@+id/etEmail"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:hint="Email (ej: franco@subastar.com)"
-        android:inputType="textEmailAddress"
-        android:background="@drawable/bg_input"
-        android:paddingHorizontal="16dp"
-        android:layout_marginBottom="16dp"/>
-
-    <EditText
-        android:id="@+id/etClave"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:background="@drawable/bg_input"
-        android:paddingHorizontal="16dp"
-        android:layout_marginBottom="32dp"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="INICIAR SESIÓN"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:backgroundTint="@color/gold"
-        app:cornerRadius="12dp"/>
-
-    <TextView
-        android:id="@+id/tvActivarCuenta"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tengo un código de activación"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:textSize="15sp"
-        android:layout_marginTop="24dp"
-        android:padding="8dp"/>
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
 
-</LinearLayout>
+        <ImageView
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@drawable/logo_subastar"
+            android:layout_marginBottom="42dp"
+            android:scaleType="fitCenter"/>
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:hint="Email (ej: franco@subastar.com)"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/bg_input"
+            android:paddingHorizontal="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/etClave"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:background="@drawable/bg_input"
+            android:paddingHorizontal="16dp"
+            android:layout_marginBottom="32dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="INICIAR SESIÓN"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:backgroundTint="@color/gold"
+            app:cornerRadius="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿No tenés cuenta? "
+                android:textColor="@color/texto_sec"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tvIrARegistro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registrate"
+                android:textColor="@color/secundario"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:padding="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvActivarCuenta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Completar registro (Crear clave)"
+            android:textColor="@color/texto_ppal"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="24dp"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackground"/>
+
+    </LinearLayout>
+</RelativeLayout>

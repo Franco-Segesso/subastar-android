@@ -3,6 +3,7 @@ package com.grupo6.subastar;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +27,10 @@ public class ActivarActivity extends AppCompatActivity {
         EditText etClaveNueva = findViewById(R.id.etClaveNueva);
         EditText etClaveConfirmar = findViewById(R.id.etClaveConfirmar);
         Button btnActivar = findViewById(R.id.btnActivarCuenta);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
+
+        // Enlazar flecha de retroceso
+        btnVolver.setOnClickListener(v -> finish());
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080/")
@@ -38,10 +43,22 @@ public class ActivarActivity extends AppCompatActivity {
             String clave = etClaveNueva.getText().toString();
             String confirmar = etClaveConfirmar.getText().toString();
 
+            // 1. Validar que no estén vacíos
             if (email.isEmpty() || clave.isEmpty()) {
                 Toast.makeText(this, "Complete los campos obligatorios", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            // 2. VALIDACIÓN DE SEGURIDAD (REGEX)
+            // Regla: Mínimo 8 caracteres, 1 número, 1 minúscula, 1 mayúscula, 1 símbolo.
+            String patronPassword = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._-]).{8,}$";
+
+            if (!clave.matches(patronPassword)) {
+                Toast.makeText(this, "La clave debe tener mín. 8 caracteres, una mayúscula, una minúscula, un número y un símbolo especial (!@#$...).", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            // 3. Validar que coincidan
             if (!clave.equals(confirmar)) {
                 Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
                 return;

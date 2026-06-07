@@ -14,8 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:navigationIconTint="@color/texto_ppal"
+            app:navigationIcon="@drawable/ic_arrow_back"  app:navigationIconTint="@color/texto_ppal"
             app:title="Ítem Detalle"
             app:titleTextColor="@color/texto_ppal" />
     </com.google.android.material.appbar.AppBarLayout>
