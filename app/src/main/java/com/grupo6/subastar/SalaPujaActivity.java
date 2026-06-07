@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -74,6 +75,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     private boolean modalResultadoMostrado = false;
     private boolean saliendo = false;
     private boolean itemActivo = false;
+    private boolean soyMayorPostor = false;
     private TokenManager tokenManager;
 
     @Override
@@ -115,6 +117,7 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         configurarRecyclerView();
         configurarBotones();
+        configurarNavegacionAtras();
         ingresarSalaBackend();
     }
 
@@ -324,12 +327,14 @@ public class SalaPujaActivity extends AppCompatActivity {
         if (!esEsteItem) {
             detenerTickerVisual();
             habilitarPuja(false);
+            soyMayorPostor = false;
             tvBannerEstado.setText("Este item no es el item activo de la subasta.");
             tvBannerEstado.setVisibility(View.VISIBLE);
         } else if (estado.isCerrado()) {
             detenerTickerVisual();
             tvTemporizador.setText("00:00");
             habilitarPuja(false);
+            soyMayorPostor = false;
             tvBannerEstado.setText("Item cerrado. Esperando resultado...");
             tvBannerEstado.setVisibility(View.VISIBLE);
         } else {
@@ -341,9 +346,11 @@ public class SalaPujaActivity extends AppCompatActivity {
         if (puja == null) return;
         tvOfertaActual.setText(String.format("USD %.2f", puja.getImporte()));
         if (esMiPuja(puja)) {
+            soyMayorPostor = true;
             tvBannerEstado.setText("Actualmente eres el mayor postor de esta subasta!");
             tvBannerEstado.setVisibility(View.VISIBLE);
         } else {
+            soyMayorPostor = false;
             tvBannerEstado.setVisibility(View.GONE);
         }
     }
@@ -396,6 +403,7 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         modalResultadoMostrado = true;
         habilitarPuja(false);
+        soyMayorPostor = false;
         detenerTickerVisual();
 
         if (mStompClient != null && mStompClient.isConnected()) mStompClient.disconnect();
@@ -451,6 +459,10 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void salirYFinalizar() {
+        if (soyMayorPostor) {
+            mostrarModalMayorPostor();
+            return;
+        }
         salirDeSala(false);
     }
 
@@ -462,10 +474,9 @@ public class SalaPujaActivity extends AppCompatActivity {
         if (saliendo) return;
         saliendo = true;
 
-        if (mStompClient != null && mStompClient.isConnected()) mStompClient.disconnect();
-        detenerTickerVisual();
-
         if (api == null || tokenJwt == null || subastaId == null) {
+            if (mStompClient != null && mStompClient.isConnected()) mStompClient.disconnect();
+            detenerTickerVisual();
             finalizarSalida(navegarAlCatalogo);
             return;
         }
@@ -473,14 +484,43 @@ public class SalaPujaActivity extends AppCompatActivity {
         api.salirSubasta(tokenJwt, subastaId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                finalizarSalida(navegarAlCatalogo);
+                if (response.isSuccessful()) {
+                    if (mStompClient != null && mStompClient.isConnected()) mStompClient.disconnect();
+                    detenerTickerVisual();
+                    finalizarSalida(navegarAlCatalogo);
+                } else if (response.code() == 409) {
+                    saliendo = false;
+                    mostrarModalMayorPostor();
+                } else {
+                    if (mStompClient != null && mStompClient.isConnected()) mStompClient.disconnect();
+                    detenerTickerVisual();
+                    finalizarSalida(navegarAlCatalogo);
+                }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                finalizarSalida(navegarAlCatalogo);
+                saliendo = false;
+                Toast.makeText(SalaPujaActivity.this, "No se pudo salir de la sala. Intenta nuevamente.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void configurarNavegacionAtras() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                salirYFinalizar();
+            }
+        });
+    }
+
+    private void mostrarModalMayorPostor() {
+        new AlertDialog.Builder(this)
+                .setTitle("No podes salir todavia")
+                .setMessage("Actualmente sos el mayor postor de este item. Para mantener la puja activa, tenes que esperar a que alguien te supere o a que finalice la subasta del item.")
+                .setPositiveButton("Entendido", null)
+                .show();
     }
 
     private void finalizarSalida(boolean navegarAlCatalogo) {

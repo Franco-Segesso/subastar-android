@@ -164,7 +164,8 @@ public class CatalogoActivity extends AppCompatActivity {
                         adapter = new ItemProductoAdapter(
                                 subasta.getCatalogo().getItems(),
                                 CatalogoActivity.this,
-                                subasta.getId()
+                                subasta.getId(),
+                                subasta.getEstado()
                         );
                         // Aseguramos que la lista se repinte por completo al volver de la sala
                         recyclerView.setAdapter(adapter);

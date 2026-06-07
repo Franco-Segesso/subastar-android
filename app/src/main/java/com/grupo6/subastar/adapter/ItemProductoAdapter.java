@@ -24,12 +24,14 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     private List<ItemCatalogo> items;
     private Context context;
     private Integer subastaId;
+    private String estadoSubasta;
     private Integer idPrimerItemActivo = -1;
 
-    public ItemProductoAdapter(List<ItemCatalogo> items, Context context, Integer subastaId) {
+    public ItemProductoAdapter(List<ItemCatalogo> items, Context context, Integer subastaId, String estadoSubasta) {
         this.items = items;
         this.context = context;
         this.subastaId = subastaId;
+        this.estadoSubasta = estadoSubasta;
         calcularItemActivo();
     }
 
@@ -40,6 +42,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     }
 
     public void actualizarItemActivo(Integer itemId) {
+        if (!esSubastaAbierta()) return;
         if (itemId == null) return;
         this.idPrimerItemActivo = itemId;
         notifyDataSetChanged();
@@ -48,12 +51,17 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     // El corazón de la secuencia: el primer ítem con estado "no" es el que está en vivo
     private void calcularItemActivo() {
         idPrimerItemActivo = -1;
+        if (!esSubastaAbierta()) return;
         for (ItemCatalogo item : items) {
             if ("no".equalsIgnoreCase(item.getSubastado())) {
                 idPrimerItemActivo = item.getId();
                 break;
             }
         }
+    }
+
+    private boolean esSubastaAbierta() {
+        return "abierta".equalsIgnoreCase(estadoSubasta);
     }
 
     @NonNull
@@ -92,7 +100,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
             Double precioMostrar = item.getPrecioFinal() != null ? item.getPrecioFinal() : item.getPrecioBase();
             holder.tvPrecio.setText(String.format("Vendido a: USD %.2f", precioMostrar));
 
-        } else if (item.getId().equals(idPrimerItemActivo)) {
+        } else if (esSubastaAbierta() && item.getId().equals(idPrimerItemActivo)) {
             // 2. ESTADO: EN VIVO (El Ítem Actual)
             holder.itemView.setAlpha(1.0f); // Tarjeta al 100% de brillo
 
@@ -123,7 +131,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
             android.content.Intent intent = new android.content.Intent(context, DetalleItemActivity.class);
             intent.putExtra("ITEM_ID", item.getId());
             intent.putExtra("SUBASTA_ID", subastaId);
-            intent.putExtra("SUBASTA_ESTADO", "abierta");
+            intent.putExtra("SUBASTA_ESTADO", estadoSubasta);
             intent.putExtra("ITEM_TITULO", titulo);
             intent.putExtra("ITEM_BASE", item.getPrecioBase());
             context.startActivity(intent);
