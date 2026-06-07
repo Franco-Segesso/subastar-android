@@ -2,6 +2,7 @@ package com.grupo6.subastar;
 
 import com.grupo6.subastar.dto.LoginRequest;
 import com.grupo6.subastar.dto.LoginResponse;
+import com.grupo6.subastar.dto.PujaMensajeDTO;
 import com.grupo6.subastar.model.ItemCatalogo;
 import com.grupo6.subastar.model.Subasta;
 
@@ -76,14 +77,14 @@ public interface SubastarApi {
     Call<Void> salirSubasta(@Header("Authorization") String token, @Path("id") Integer id);
 
     @POST("v1/subastas/{id}/pujas")
-    Call<Object> registrarPuja(
+    Call<PujaMensajeDTO> registrarPuja(
             @Header("Authorization") String token,
             @Path("id") Integer id,
             @Body com.grupo6.subastar.dto.PujaRequest request
     );
 
-    @POST("v1/subastas/{id}/items/{itemId}/cerrar")
-    Call<com.grupo6.subastar.dto.CierreSubastaDTO> cerrarSubasta(
+    @GET("v1/subastas/{id}/pujas/{itemId}")
+    Call<List<PujaMensajeDTO>> obtenerHistorialPujas(
             @Header("Authorization") String token,
             @Path("id") Integer id,
             @Path("itemId") Integer itemId

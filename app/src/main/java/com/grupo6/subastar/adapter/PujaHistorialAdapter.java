@@ -4,27 +4,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.grupo6.subastar.R;
 import com.grupo6.subastar.dto.PujaMensajeDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class PujaHistorialAdapter extends RecyclerView.Adapter<PujaHistorialAdapter.ViewHolder> {
 
     private final List<PujaMensajeDTO> pujas = new ArrayList<>();
-    private final Integer miClienteId; // Para saber si yo soy el que va ganando
 
     public PujaHistorialAdapter(Integer miClienteId) {
-        this.miClienteId = miClienteId;
     }
 
-    // Método para agregar una nueva puja al tope de la lista
+    public void setPujas(List<PujaMensajeDTO> nuevasPujas) {
+        pujas.clear();
+        if (nuevasPujas != null) {
+            pujas.addAll(nuevasPujas);
+        }
+        notifyDataSetChanged();
+    }
+
     public void agregarPuja(PujaMensajeDTO nuevaPuja) {
+        if (nuevaPuja == null) return;
         pujas.add(0, nuevaPuja);
         notifyItemInserted(0);
-        // Notificamos al anterior "ganador" que ahora fue superado
         if (pujas.size() > 1) notifyItemChanged(1);
     }
 
@@ -38,20 +46,17 @@ public class PujaHistorialAdapter extends RecyclerView.Adapter<PujaHistorialAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PujaMensajeDTO puja = pujas.get(position);
+        PujaMensajeDTO.ClienteDTO cliente = puja.getAsistente() != null ? puja.getAsistente().getCliente() : null;
 
         holder.tvMontoPuja.setText(String.format("USD %.2f", puja.getImporte()));
+        holder.tvNombrePostor.setText(cliente != null ? cliente.getNombreCompleto() : "Postor");
+        holder.tvHoraPuja.setText(formatearHora(puja.getFechaHora()));
 
-        // Simulación de nombre y hora (debes ajustarlo según cómo te llegue del JSON)
-        holder.tvNombrePostor.setText("Postor #" + puja.getAsistente().getCliente().getIdentificador());
-        holder.tvHoraPuja.setText("Reciente");
-
-        // Lógica visual: Solo el primero de la lista está "Ganando"
+        holder.tvEstadoPuja.setVisibility(View.VISIBLE);
         if (position == 0) {
-            holder.tvEstadoPuja.setVisibility(View.VISIBLE);
             holder.tvEstadoPuja.setText("Mayor");
             holder.tvEstadoPuja.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.exito));
         } else {
-            holder.tvEstadoPuja.setVisibility(View.VISIBLE);
             holder.tvEstadoPuja.setText("Superado");
             holder.tvEstadoPuja.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.texto_sec));
         }
@@ -60,6 +65,13 @@ public class PujaHistorialAdapter extends RecyclerView.Adapter<PujaHistorialAdap
     @Override
     public int getItemCount() {
         return pujas.size();
+    }
+
+    private String formatearHora(String fechaHora) {
+        if (fechaHora == null) return "Reciente";
+        int inicioHora = fechaHora.indexOf('T');
+        if (inicioHora < 0 || inicioHora + 6 > fechaHora.length()) return "Reciente";
+        return fechaHora.substring(inicioHora + 1, inicioHora + 6);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

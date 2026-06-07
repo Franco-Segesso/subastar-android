@@ -9,6 +9,7 @@ public class TokenManager {
 
     private static final String PREFS_NAME = "subastar_secure_prefs";
     private static final String KEY_TOKEN = "jwt_token";
+    private static final String KEY_CLIENTE_ID = "cliente_id";
     private SharedPreferences sharedPreferences;
 
     public TokenManager(Context context) {
@@ -44,10 +45,26 @@ public class TokenManager {
         return null;
     }
 
+    public void saveClienteId(Integer clienteId) {
+        if (sharedPreferences != null && clienteId != null) {
+            sharedPreferences.edit().putInt(KEY_CLIENTE_ID, clienteId).apply();
+        }
+    }
+
+    public Integer getClienteId() {
+        if (sharedPreferences != null && sharedPreferences.contains(KEY_CLIENTE_ID)) {
+            return sharedPreferences.getInt(KEY_CLIENTE_ID, -1);
+        }
+        return null;
+    }
+
     // Método para cerrar sesión borrando el token
     public void clearToken() {
         if (sharedPreferences != null) {
-            sharedPreferences.edit().remove(KEY_TOKEN).apply();
+            sharedPreferences.edit()
+                    .remove(KEY_TOKEN)
+                    .remove(KEY_CLIENTE_ID)
+                    .apply();
         }
     }
 }

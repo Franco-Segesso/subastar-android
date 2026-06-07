@@ -89,7 +89,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     String token = response.body().getToken();
                     tokenManager.saveToken(token);
+                    if (response.body().getCliente() == null) {
+                        Toast.makeText(LoginActivity.this, "Login incompleto: falta informacion del cliente", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
+                    tokenManager.saveClienteId(response.body().getCliente().getIdentificador());
                     String nombre = response.body().getCliente().getNombre();
 
                     //guardamos el nombre en la memoria del celular
