@@ -82,10 +82,14 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
             Glide.with(context)
                     .load(item.getProducto().getFotos().get(0).getUrlFoto())
                     .centerCrop()
-                    .placeholder(R.drawable.logo_subastar) // Imagen de espera mientras descarga la URL
+                    .placeholder(R.drawable.logo_subastar) // Imagen de espera
+                    .error(R.drawable.logo_subastar)       // Imagen si la URL está rota
                     .into(holder.ivImagen);
         } else {
-            holder.ivImagen.setImageResource(R.color.primario); // Opcional: o podés poner el logo_subastar acá también
+            // ACÁ ESTABA EL PROBLEMA: Reemplazamos R.color.primario por tu logo
+            holder.ivImagen.setImageResource(R.drawable.logo_subastar);
+            // Opcional: aseguramos que el logo se centre bien en la tarjeta
+            holder.ivImagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
 
         // --- MÁQUINA DE ESTADOS VISUALES ---

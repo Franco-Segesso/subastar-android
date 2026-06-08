@@ -21,7 +21,9 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 public class DetalleItemActivity extends AppCompatActivity {
 
-    private ImageView ivImagen;
+    // Borrar: private ImageView ivImagen;
+    private androidx.viewpager2.widget.ViewPager2 vpImagenes;
+    private TextView tvContadorFotos;
     private TextView tvTitulo, tvPrecio, tvDescripcion, tvCategoria, tvDuenio;
     private MaterialButton btnPujar;
 
@@ -34,7 +36,9 @@ public class DetalleItemActivity extends AppCompatActivity {
 
         tokenManager = new TokenManager(this);
 
-        ivImagen = findViewById(R.id.ivDetalleImagen);
+
+        vpImagenes = findViewById(R.id.vpImagenes);
+        tvContadorFotos = findViewById(R.id.tvContadorFotos);
         tvTitulo = findViewById(R.id.tvDetalleTitulo);
         tvPrecio = findViewById(R.id.tvDetallePrecio);
         tvDescripcion = findViewById(R.id.tvDetalleDescripcion);
@@ -117,14 +121,34 @@ public class DetalleItemActivity extends AppCompatActivity {
                         tvPrecio.setText("Iniciá sesión");
                     }
 
+                    // CARRUSEL DE IMÁGENES
                     if (item.getProducto().getFotos() != null && !item.getProducto().getFotos().isEmpty()) {
-                        Glide.with(DetalleItemActivity.this)
-                                .load(item.getProducto().getFotos().get(0).getUrlFoto())
-                                .placeholder(R.drawable.logo_subastar) // Imagen de espera
-                                .into(ivImagen);
+                        // Quitamos el fondo por si antes había un logo
+                        vpImagenes.setBackgroundResource(0);
+
+                        if (item.getProducto().getFotos().size() > 1) {
+                            tvContadorFotos.setVisibility(View.VISIBLE);
+                            tvContadorFotos.setText("1 / " + item.getProducto().getFotos().size());
+                        } else {
+                            tvContadorFotos.setVisibility(View.GONE);
+                        }
+
+                        com.grupo6.subastar.adapter.ImagenSliderAdapter adapter =
+                                new com.grupo6.subastar.adapter.ImagenSliderAdapter(DetalleItemActivity.this, item.getProducto().getFotos());
+                        vpImagenes.setAdapter(adapter);
+
+                        vpImagenes.registerOnPageChangeCallback(new androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+                            @Override
+                            public void onPageSelected(int position) {
+                                tvContadorFotos.setText((position + 1) + " / " + item.getProducto().getFotos().size());
+                            }
+                        });
                     } else {
-                        // Buena práctica: Si no hay foto, mostramos el logo por defecto
-                        ivImagen.setImageResource(R.drawable.logo_subastar);
+                        // SI NO HAY FOTOS EN LA BASE DE DATOS:
+                        tvContadorFotos.setVisibility(View.GONE);
+                        vpImagenes.setAdapter(null); // Vaciamos el carrusel
+                        // Le clavamos el logo de fondo al contenedor para que no quede en blanco
+                        vpImagenes.setBackgroundResource(R.drawable.logo_subastar);
                     }
                     if ("si".equalsIgnoreCase(item.getSubastado())) {
                         btnPujar.setEnabled(false);
