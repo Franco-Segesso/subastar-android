@@ -556,11 +556,20 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void mostrarModalMayorPostor() {
-        new AlertDialog.Builder(this)
-                .setTitle("No podes salir todavia")
-                .setMessage("Actualmente sos el mayor postor de este item. Para mantener la puja activa, tenes que esperar a que alguien te supere o a que finalice la subasta del item.")
-                .setPositiveButton("Entendido", null)
-                .show();
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_error);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        android.widget.TextView tvMensaje = dialog.findViewById(R.id.tvMensajeError);
+        // Combinamos el título y el mensaje original
+        tvMensaje.setText("No podés salir todavía.\n\nActualmente sos el mayor postor de este ítem. Para mantener la puja activa, tenés que esperar a que alguien te supere o a que finalice la subasta del ítem.");
+
+        android.widget.Button btnEntendido = dialog.findViewById(R.id.btnEntendidoError);
+        btnEntendido.setText("Entendido");
+        btnEntendido.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private void finalizarSalida(boolean navegarAlCatalogo) {
