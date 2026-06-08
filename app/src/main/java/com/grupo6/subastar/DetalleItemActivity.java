@@ -54,7 +54,7 @@ public class DetalleItemActivity extends AppCompatActivity {
         String estado = getIntent().getStringExtra("SUBASTA_ESTADO");
         String nombreItem = getIntent().getStringExtra("ITEM_TITULO");
         Double baseItem = getIntent().getDoubleExtra("ITEM_BASE", 0);
-
+        String fechaSubasta = getIntent().getStringExtra("SUBASTA_FECHA");
         btnPujar.setVisibility(View.VISIBLE);
         configurarBotonPujaPorEstado(estado, false);
 
@@ -73,6 +73,7 @@ public class DetalleItemActivity extends AppCompatActivity {
                 // Opcional: pasar textos para la cabecera (reemplazá con los datos reales de tu objeto ítem)
                 intent.putExtra("ITEM_TITULO", nombreItem);
                 intent.putExtra("ITEM_BASE", baseItem);
+                intent.putExtra("SUBASTA_FECHA", fechaSubasta);
 
                 startActivity(intent);
             });

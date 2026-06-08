@@ -5,49 +5,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primario">
-
-    <!-- HEADER -->
-    <ImageView
-        android:id="@+id/btnVolver"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@android:drawable/ic_menu_revert"
-        app:tint="@color/texto_ppal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+    android:background="@color/primario"
+    android:fitsSystemWindows="true"> <ImageView
+    android:id="@+id/btnVolver"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
+    android:src="@android:drawable/ic_menu_revert"
+    app:tint="@color/texto_ppal"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
 
     <LinearLayout
         android:id="@+id/headerTitles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp" android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="16dp"
-        app:layout_constraintTop_toTopOf="@+id/btnVolver"
+        android:layout_marginEnd="16dp" app:layout_constraintTop_toTopOf="@+id/btnVolver"
         app:layout_constraintBottom_toBottomOf="@+id/btnVolver"
-        app:layout_constraintStart_toEndOf="@+id/btnVolver">
+        app:layout_constraintStart_toEndOf="@+id/btnVolver"
+        app:layout_constraintEnd_toStartOf="@+id/layoutEnVivo"> <TextView
+        android:id="@+id/tvHeaderTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sala de puja - Ítem #3"
+        android:textColor="@color/texto_ppal"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:ellipsize="end" android:maxLines="1" />
 
-        <TextView
-            android:id="@+id/tvHeaderTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sala de puja - Ítem #3"
-            android:textColor="@color/texto_ppal"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
         <TextView
             android:id="@+id/tvHeaderSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Subasta - Lun 23 Mar 17:00 hs"
             android:textColor="@color/texto_sec"
-            android:textSize="12sp"/>
+            android:textSize="12sp"
+            android:ellipsize="end"
+            android:maxLines="1" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/layoutEnVivo" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
@@ -80,7 +80,6 @@
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/headerTitles"/>
 
-    <!-- BLOQUE DE INFORMACIÓN DEL ÍTEM -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvItemImage"
         android:layout_width="72dp"
@@ -154,7 +153,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvFinalizaLabel"
         app:layout_constraintEnd_toEndOf="@+id/tvFinalizaLabel"/>
 
-    <!-- BANNER DE ESTADO -->
     <TextView
         android:id="@+id/tvBannerEstado"
         android:layout_width="match_parent"
@@ -178,7 +176,6 @@
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/tvBannerEstado"/>
 
-    <!-- HISTORIAL DE PUJAS -->
     <TextView
         android:id="@+id/tvLabelHistorial"
         android:layout_width="wrap_content"
@@ -211,7 +208,6 @@
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/layoutInputPuja"/>
 
-    <!-- BOTTOM BAR (Input y Botón) -->
     <LinearLayout
         android:id="@+id/layoutInputPuja"
         android:layout_width="match_parent"

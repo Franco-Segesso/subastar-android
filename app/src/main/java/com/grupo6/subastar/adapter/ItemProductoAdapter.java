@@ -27,12 +27,15 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     private Integer idPrimerItemActivo = -1;
     private String estadoSubasta;
 
-    public ItemProductoAdapter(List<ItemCatalogo> items, Context context, Integer subastaId, String estadoSubasta) {
+    private String fechaSubasta;
+
+    public ItemProductoAdapter(List<ItemCatalogo> items, Context context, Integer subastaId, String estadoSubasta, String fechaSubasta) {
         this.items = items;
         this.context = context;
         this.subastaId = subastaId;
         calcularItemActivo();
         this.estadoSubasta = estadoSubasta;
+        this.fechaSubasta = fechaSubasta;
     }
 
     public void updateData(List<ItemCatalogo> nuevosItems) {
@@ -78,6 +81,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
         String titulo = item.getProducto() != null ? item.getProducto().getTipo() + " - Ítem #" + item.getId() : "Ítem #" + item.getId();
         holder.tvTitulo.setText(titulo);
 
+
         if (item.getProducto() != null && item.getProducto().getFotos() != null && !item.getProducto().getFotos().isEmpty()) {
             Glide.with(context)
                     .load(item.getProducto().getFotos().get(0).getUrlFoto())
@@ -93,41 +97,51 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
         }
 
         // --- MÁQUINA DE ESTADOS VISUALES ---
-        if ("si".equalsIgnoreCase(item.getSubastado())) {
-            // 1. ESTADO: VENDIDO (Ítems Anteriores)
-            holder.itemView.setAlpha(0.5f); // Opacamos la tarjeta
+        boolean esVendido = "si".equalsIgnoreCase(item.getSubastado());
+        boolean esEnVivo = item.getId().equals(idPrimerItemActivo) && "abierta".equalsIgnoreCase(estadoSubasta);
 
-            holder.tvEstado.setText("VENDIDO");
-            holder.tvEstado.setTextColor(Color.WHITE);
-            holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
 
-            holder.tvPrecio.setVisibility(View.VISIBLE);
+        if (esVendido) {
+            // ESTADO: VENDIDO (Opaco y con badge gris)
+            holder.itemView.setAlpha(0.6f);
+
+            holder.tvBadgeEnCurso.setVisibility(View.VISIBLE);
+            holder.tvBadgeEnCurso.setText("VENDIDO");
+            holder.tvBadgeEnCurso.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.DKGRAY));
+
+            holder.cardContenedor.setStrokeWidth(1);
+            holder.cardContenedor.setStrokeColor(context.getResources().getColor(R.color.bordes));
+
+            Double precioMostrar = item.getPrecioFinal() != null ? item.getPrecioFinal() : item.getPrecioBase();
+            holder.tvPrecio.setText(String.format("Vendido a: $%.2f", precioMostrar));
             holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_sec));
 
-            // Usamos el precio final real de la venta
-            Double precioMostrar = item.getPrecioFinal() != null ? item.getPrecioFinal() : item.getPrecioBase();
-            holder.tvPrecio.setText(String.format("$%.2f", precioMostrar));
-
-        } else if (esSubastaAbierta() && item.getId().equals(idPrimerItemActivo)) {
-            // 2. ESTADO: EN VIVO
+        } else if (esEnVivo) {
+            // ESTADO: EN CURSO (Borde Dorado grueso y badge flotante Dorado)
             holder.itemView.setAlpha(1.0f);
-            holder.tvEstado.setText("EN VIVO");
-            holder.tvEstado.setTextColor(context.getResources().getColor(R.color.primario));
-            holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.secundario)));
 
-            holder.tvPrecio.setVisibility(View.VISIBLE);
-            holder.tvPrecio.setText(String.format("Base: USD %.2f", item.getPrecioBase()));
+            holder.tvBadgeEnCurso.setVisibility(View.VISIBLE);
+            holder.tvBadgeEnCurso.setText("EN CURSO");
+            holder.tvBadgeEnCurso.setBackgroundTintList(android.content.res.ColorStateList.valueOf(context.getResources().getColor(R.color.secundario)));
+
+            // LA MAGIA DEL BORDE
+            holder.cardContenedor.setStrokeWidth(5); // Más grueso
+            holder.cardContenedor.setStrokeColor(context.getResources().getColor(R.color.secundario)); // Dorado
+
+            holder.tvPrecio.setText(String.format("Base: $%.2f", item.getPrecioBase()));
+            holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_ppal));
 
         } else {
-            // 3. ESTADO: PRÓXIMAMENTE
+            // ESTADO: PRÓXIMAMENTE (Normal)
             holder.itemView.setAlpha(1.0f);
 
-            holder.tvEstado.setText("PRÓXIMAMENTE");
-            holder.tvEstado.setTextColor(context.getResources().getColor(R.color.texto_sec));
-            holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+            holder.tvBadgeEnCurso.setVisibility(View.GONE); // Ocultamos el badge
 
-            // Los ítems que vienen después no dicen nada
-            holder.tvPrecio.setVisibility(View.GONE);
+            holder.cardContenedor.setStrokeWidth(1);
+            holder.cardContenedor.setStrokeColor(context.getResources().getColor(R.color.bordes));
+
+            holder.tvPrecio.setText("PROXIMAMENTE");
+            holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_sec));
         }
 
         // Bloqueamos el clic si ya está vendido
@@ -140,6 +154,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
             intent.putExtra("SUBASTA_ESTADO", estadoSubasta);
             intent.putExtra("ITEM_TITULO", titulo);
             intent.putExtra("ITEM_BASE", item.getPrecioBase());
+            intent.putExtra("SUBASTA_FECHA", fechaSubasta);
             context.startActivity(intent);
         });
     }
@@ -151,15 +166,17 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivImagen;
-        TextView tvTitulo, tvPrecio, tvEstado;
+        TextView tvTitulo, tvPrecio, tvBadgeEnCurso;
+        com.google.android.material.card.MaterialCardView cardContenedor;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            // CONECTAMOS CON LOS IDs DEL XML COMPACTO
+            // Referenciamos EXACTAMENTE los IDs del XML nuevo
+            cardContenedor = itemView.findViewById(R.id.cardContenedorItem);
             ivImagen = itemView.findViewById(R.id.ivItemFoto);
             tvTitulo = itemView.findViewById(R.id.tvItemNombre);
             tvPrecio = itemView.findViewById(R.id.tvItemPrecio);
-            tvEstado = itemView.findViewById(R.id.tvItemCategoria); // Usamos este como el badge de estado
+            tvBadgeEnCurso = itemView.findViewById(R.id.tvBadgeEnCurso);
         }
     }
 }

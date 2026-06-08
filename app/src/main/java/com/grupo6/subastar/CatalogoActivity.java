@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +29,7 @@ import ua.naiksoftware.stomp.StompClient;
 
 public class CatalogoActivity extends AppCompatActivity {
 
-    private TextView tvTitulo, tvCat, tvMoneda, tvEstado;
+    private TextView tvTitulo, tvCat, tvMoneda, tvEstado, tvFecha;
     private View layoutTransmisionVivo;
     private RecyclerView recyclerView;
     private Integer subastaId;
@@ -36,6 +38,7 @@ public class CatalogoActivity extends AppCompatActivity {
     private StompClient stompClient;
     private CompositeDisposable compositeDisposable;
     private Gson gson;
+    private LinearLayout layoutEnVivoCatalogo;
     private boolean refrescandoPorCierre = false;
 
     @Override
@@ -53,6 +56,8 @@ public class CatalogoActivity extends AppCompatActivity {
         tvEstado = findViewById(R.id.tvHeaderEstado);
         layoutTransmisionVivo = findViewById(R.id.layoutTransmisionVivo);
         recyclerView = findViewById(R.id.recyclerViewProductos);
+        tvFecha = findViewById(R.id.tvCatalogoFecha);
+        layoutEnVivoCatalogo = findViewById(R.id.layoutEnVivoCatalogo);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -165,13 +170,27 @@ public class CatalogoActivity extends AppCompatActivity {
                             "abierta".equalsIgnoreCase(subasta.getEstado()) ? View.VISIBLE : View.GONE
                     );
 
+                    String fecha = subasta.getFecha() != null ? subasta.getFecha() : "Fecha a confirmar";
+                    String hora = subasta.getHora() != null ? subasta.getHora() : "";
+                    String fechaFormateada = fecha + " - " + hora + " hs";
+                    // Formateamos para que se vea prolijo (Ej: 15/08/2026 - 18:30 hs)
+                    tvFecha.setText(fechaFormateada);
+
+                    if ("abierta".equalsIgnoreCase(subasta.getEstado())) {
+                        layoutEnVivoCatalogo.setVisibility(View.VISIBLE);
+                    } else {
+                        layoutEnVivoCatalogo.setVisibility(View.GONE);
+                    }
+
                     // Le pasamos los datos directamente al instanciar el adapter
                     if (subasta.getCatalogo() != null && subasta.getCatalogo().getItems() != null) {
                         adapter = new ItemProductoAdapter(
                                 subasta.getCatalogo().getItems(),
                                 CatalogoActivity.this,
                                 subasta.getId(),
-                                subasta.getEstado()
+                                subasta.getEstado(),
+                                fechaFormateada
+
                         );
                         // Aseguramos que la lista se repinte por completo al volver de la sala
                         recyclerView.setAdapter(adapter);
