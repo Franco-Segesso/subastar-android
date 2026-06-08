@@ -142,6 +142,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         String titulo = getIntent().getStringExtra("ITEM_TITULO");
         double precioBase = getIntent().getDoubleExtra("ITEM_BASE", 0);
         String urlImagen = getIntent().getStringExtra("ITEM_IMAGEN");
+        String fechaSubasta = getIntent().getStringExtra("SUBASTA_FECHA");
 
         if (titulo != null) tvHeaderTitle.setText("Sala de puja - " + titulo);
         if (precioBase > 0) {
@@ -150,6 +151,12 @@ public class SalaPujaActivity extends AppCompatActivity {
         }
         if (urlImagen != null && !urlImagen.isEmpty()) {
             Glide.with(this).load(urlImagen).centerCrop().into(ivItemImagen);
+        }
+
+        if (fechaSubasta != null && !fechaSubasta.isEmpty()) {
+            tvHeaderSubtitle.setText("Subasta - " + fechaSubasta);
+        } else {
+            tvHeaderSubtitle.setText("Subasta - Fecha a confirmar");
         }
     }
 

@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/primario"
     android:padding="24dp"
+    android:fitsSystemWindows="true"
     tools:context=".CatalogoActivity">
 
     <ImageButton
@@ -28,11 +29,52 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="2"
         app:layout_constraintStart_toEndOf="@id/btnVolver"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnVolver"
-        app:layout_constraintBottom_toBottomOf="@id/btnVolver"/>
+        app:layout_constraintEnd_toStartOf="@+id/layoutEnVivoCatalogo"
+        app:layout_constraintTop_toTopOf="@id/btnVolver" />
 
+    <TextView
+        android:id="@+id/tvCatalogoFecha"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="00/00/0000 - 00:00 hs"
+        android:textColor="@color/texto_sec"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintStart_toStartOf="@id/tvCatalogoTitulo"
+        app:layout_constraintEnd_toStartOf="@+id/layoutEnVivoCatalogo"
+        app:layout_constraintTop_toBottomOf="@id/tvCatalogoTitulo" />
+
+    <LinearLayout
+        android:id="@+id/layoutEnVivoCatalogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="gone" app:layout_constraintTop_toTopOf="@+id/tvCatalogoTitulo"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCatalogoTitulo"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/bg_circulo_dorado"
+            android:backgroundTint="@color/error"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EN VIVO"
+            android:textColor="@color/error"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/layoutInfoSubasta"
         android:layout_width="match_parent"
@@ -40,7 +82,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="24dp"
         android:weightSum="3"
-        app:layout_constraintTop_toBottomOf="@id/btnVolver">
+        app:layout_constraintTop_toBottomOf="@id/tvCatalogoFecha">
 
         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Categoría" android:textColor="@color/texto_sec" android:textSize="12sp"/>

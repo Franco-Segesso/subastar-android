@@ -27,12 +27,15 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     private Integer idPrimerItemActivo = -1;
     private String estadoSubasta;
 
-    public ItemProductoAdapter(List<ItemCatalogo> items, Context context, Integer subastaId, String estadoSubasta) {
+    private String fechaSubasta;
+
+    public ItemProductoAdapter(List<ItemCatalogo> items, Context context, Integer subastaId, String estadoSubasta, String fechaSubasta) {
         this.items = items;
         this.context = context;
         this.subastaId = subastaId;
         calcularItemActivo();
         this.estadoSubasta = estadoSubasta;
+        this.fechaSubasta = fechaSubasta;
     }
 
     public void updateData(List<ItemCatalogo> nuevosItems) {
@@ -140,6 +143,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
             intent.putExtra("SUBASTA_ESTADO", estadoSubasta);
             intent.putExtra("ITEM_TITULO", titulo);
             intent.putExtra("ITEM_BASE", item.getPrecioBase());
+            intent.putExtra("SUBASTA_FECHA", fechaSubasta);
             context.startActivity(intent);
         });
     }
