@@ -348,6 +348,9 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
+                    subastasDelDia.clear(); // Borramos los datos del día anterior
+                    subastasDelDia.addAll(listaOriginal); // Guardamos la lista fresca
+
                     // Comprobamos si la lista quedó vacía después del filtro
                     if (listaOriginal.isEmpty()) {
                         recyclerView.setVisibility(View.GONE); // Ocultamos la lista

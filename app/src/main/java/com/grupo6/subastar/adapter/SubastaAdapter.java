@@ -54,6 +54,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Subasta subasta = subastas.get(position);
+        String estado = subasta.getEstado() != null ? subasta.getEstado().toLowerCase() : "pendiente";
 
         if (holder instanceof ActivaViewHolder) {
             ActivaViewHolder activaHolder = (ActivaViewHolder) holder;
@@ -106,10 +107,25 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 normalHolder.tvCategoria.setText("CATEGORÍA: " + subasta.getCategoria().toUpperCase());
             }
 
+            if (estado.equals("cerrada") || estado.equals("finalizada")) {
+                normalHolder.tvEstadoSubasta.setText("FINALIZADA");
+                normalHolder.tvEstadoSubasta.setBackgroundResource(R.drawable.bg_badge_relleno);
+                normalHolder.tvEstadoSubasta.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                        android.graphics.Color.parseColor("#E05252"))); // Rojo
+                normalHolder.tvEstadoSubasta.setTextColor(android.graphics.Color.WHITE);
+            } else {
+                normalHolder.tvEstadoSubasta.setText("PRÓXIMAMENTE");
+                normalHolder.tvEstadoSubasta.setBackgroundResource(R.drawable.bg_badge_relleno);
+                normalHolder.tvEstadoSubasta.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                        android.graphics.Color.parseColor("#C9A84C"))); // Dorado
+                normalHolder.tvEstadoSubasta.setTextColor(android.graphics.Color.parseColor("#0C0C0F")); // Texto Oscuro
+            }
+
             // Le asignamos el clic tanto al botón "VER" como a toda la tarjeta (mejor UX)
             normalHolder.btnVer.setOnClickListener(v -> navegarAlCatalogo(v, subasta));
             normalHolder.itemView.setOnClickListener(v -> navegarAlCatalogo(v, subasta));
         }
+
     }
 
     private void navegarAlCatalogo(View v, Subasta subasta) {
@@ -127,7 +143,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     // El ViewHolder para las subastas futuras/pasadas
     public static class NormalViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvFecha, tvCategoria; // Ajustá estos tipos según tu item_subasta.xml
+        TextView tvTitulo, tvFecha, tvCategoria, tvEstadoSubasta; // Ajustá estos tipos según tu item_subasta.xml
         MaterialButton btnVer;
 
         public NormalViewHolder(@NonNull View itemView) {
@@ -137,6 +153,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvFecha = itemView.findViewById(R.id.tvFechaSubasta);
             tvCategoria = itemView.findViewById(R.id.tvCategoriaSubasta);
             btnVer = itemView.findViewById(R.id.btnVer);
+            tvEstadoSubasta = itemView.findViewById(R.id.tvEstadoSubasta);
         }
     }
 
