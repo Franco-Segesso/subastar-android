@@ -42,6 +42,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     }
 
     public void actualizarItemActivo(Integer itemId) {
+        if (!esSubastaAbierta()) return;
         if (itemId == null) return;
         this.idPrimerItemActivo = itemId;
         notifyDataSetChanged();
@@ -50,17 +51,17 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     // El corazón de la secuencia: el primer ítem con estado "no" es el que está en vivo
     private void calcularItemActivo() {
         idPrimerItemActivo = -1;
-        // Si la subasta no está abierta, NINGÚN ítem está en vivo
-        if (!"abierta".equalsIgnoreCase(estadoSubasta)) {
-            return;
-        }
-
+        if (!esSubastaAbierta()) return;
         for (ItemCatalogo item : items) {
             if ("no".equalsIgnoreCase(item.getSubastado())) {
                 idPrimerItemActivo = item.getId();
                 break;
             }
         }
+    }
+
+    private boolean esSubastaAbierta() {
+        return "abierta".equalsIgnoreCase(estadoSubasta);
     }
 
     @NonNull
@@ -85,17 +86,21 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
 
         // --- MÁQUINA DE ESTADOS VISUALES ---
         if ("si".equalsIgnoreCase(item.getSubastado())) {
-            // 1. ESTADO: VENDIDO
-            holder.itemView.setAlpha(0.5f);
+            // 1. ESTADO: VENDIDO (Ítems Anteriores)
+            holder.itemView.setAlpha(0.5f); // Opacamos la tarjeta
+
             holder.tvEstado.setText("VENDIDO");
             holder.tvEstado.setTextColor(Color.WHITE);
             holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
 
             holder.tvPrecio.setVisibility(View.VISIBLE);
-            Double precioMostrar = item.getPrecioFinal() != null ? item.getPrecioFinal() : item.getPrecioBase();
-            holder.tvPrecio.setText(String.format("USD %.2f", precioMostrar));
+            holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_sec));
 
-        } else if (item.getId().equals(idPrimerItemActivo)) {
+            // Usamos el precio final real de la venta
+            Double precioMostrar = item.getPrecioFinal() != null ? item.getPrecioFinal() : item.getPrecioBase();
+            holder.tvPrecio.setText(String.format("$%.2f", precioMostrar));
+
+        } else if (esSubastaAbierta() && item.getId().equals(idPrimerItemActivo)) {
             // 2. ESTADO: EN VIVO
             holder.itemView.setAlpha(1.0f);
             holder.tvEstado.setText("EN VIVO");
@@ -108,16 +113,25 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
         } else {
             // 3. ESTADO: PRÓXIMAMENTE
             holder.itemView.setAlpha(1.0f);
+
             holder.tvEstado.setText("PRÓXIMAMENTE");
             holder.tvEstado.setTextColor(context.getResources().getColor(R.color.texto_sec));
             holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+
+            // Los ítems que vienen después no dicen nada
             holder.tvPrecio.setVisibility(View.GONE);
         }
+
+        // Bloqueamos el clic si ya está vendido
+        holder.itemView.setEnabled(!"si".equalsIgnoreCase(item.getSubastado()));
 
         holder.itemView.setOnClickListener(v -> {
             android.content.Intent intent = new android.content.Intent(context, DetalleItemActivity.class);
             intent.putExtra("ITEM_ID", item.getId());
             intent.putExtra("SUBASTA_ID", subastaId);
+            intent.putExtra("SUBASTA_ESTADO", estadoSubasta);
+            intent.putExtra("ITEM_TITULO", titulo);
+            intent.putExtra("ITEM_BASE", item.getPrecioBase());
             context.startActivity(intent);
         });
     }

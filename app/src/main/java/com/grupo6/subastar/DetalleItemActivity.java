@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
@@ -50,6 +51,9 @@ public class DetalleItemActivity extends AppCompatActivity {
         String nombreItem = getIntent().getStringExtra("ITEM_TITULO");
         Double baseItem = getIntent().getDoubleExtra("ITEM_BASE", 0);
 
+        btnPujar.setVisibility(View.VISIBLE);
+        configurarBotonPujaPorEstado(estado, false);
+
         // Regla: Solo mostramos el botón si la subasta está abierta
         if ("abierta".equalsIgnoreCase(estado)) {
             btnPujar.setVisibility(View.VISIBLE);
@@ -70,11 +74,11 @@ public class DetalleItemActivity extends AppCompatActivity {
             });
         }
 
-        cargarDatosBackend(subastaId, itemId);
+        cargarDatosBackend(subastaId, itemId, estado);
     }
 
 
-    private void cargarDatosBackend(int subastaId, int itemId) {
+    private void cargarDatosBackend(int subastaId, int itemId, String estadoSubasta) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -127,6 +131,7 @@ public class DetalleItemActivity extends AppCompatActivity {
                         btnPujar.setEnabled(true);
                         btnPujar.setText("Participar en la puja");
                     }
+                    configurarBotonPujaPorEstado(estadoSubasta, "si".equalsIgnoreCase(item.getSubastado()));
                 }
             }
 
@@ -135,5 +140,22 @@ public class DetalleItemActivity extends AppCompatActivity {
                 Toast.makeText(DetalleItemActivity.this, "Error de red", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void configurarBotonPujaPorEstado(String estadoSubasta, boolean itemSubastado) {
+        if (itemSubastado) {
+            btnPujar.setEnabled(false);
+            btnPujar.setText("Subasta finalizada");
+            btnPujar.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.GRAY));
+        } else if (!"abierta".equalsIgnoreCase(estadoSubasta)) {
+            btnPujar.setEnabled(false);
+            btnPujar.setText("La puja no empezo");
+            btnPujar.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.GRAY));
+        } else {
+            btnPujar.setEnabled(true);
+            btnPujar.setText("Participar en la puja");
+            btnPujar.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.secundario)));
+        }
     }
 }
