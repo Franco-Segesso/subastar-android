@@ -24,15 +24,15 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     private List<ItemCatalogo> items;
     private Context context;
     private Integer subastaId;
-    private String estadoSubasta;
     private Integer idPrimerItemActivo = -1;
+    private String estadoSubasta;
 
     public ItemProductoAdapter(List<ItemCatalogo> items, Context context, Integer subastaId, String estadoSubasta) {
         this.items = items;
         this.context = context;
         this.subastaId = subastaId;
-        this.estadoSubasta = estadoSubasta;
         calcularItemActivo();
+        this.estadoSubasta = estadoSubasta;
     }
 
     public void updateData(List<ItemCatalogo> nuevosItems) {
@@ -67,7 +67,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_producto, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_producto_compacto, parent, false);
         return new ViewHolder(view);
     }
 
@@ -98,30 +98,28 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
             holder.itemView.setAlpha(0.5f); // Opacamos la tarjeta
 
             holder.tvEstado.setText("VENDIDO");
-            holder.tvEstado.setTextColor(context.getResources().getColor(R.color.texto_ppal));
-            holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(Color.DKGRAY));
+            holder.tvEstado.setTextColor(Color.WHITE);
+            holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
 
             holder.tvPrecio.setVisibility(View.VISIBLE);
             holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_sec));
 
             // Usamos el precio final real de la venta
             Double precioMostrar = item.getPrecioFinal() != null ? item.getPrecioFinal() : item.getPrecioBase();
-            holder.tvPrecio.setText(String.format("Vendido a: USD %.2f", precioMostrar));
+            holder.tvPrecio.setText(String.format("$%.2f", precioMostrar));
 
         } else if (esSubastaAbierta() && item.getId().equals(idPrimerItemActivo)) {
-            // 2. ESTADO: EN VIVO (El Ítem Actual)
-            holder.itemView.setAlpha(1.0f); // Tarjeta al 100% de brillo
-
+            // 2. ESTADO: EN VIVO
+            holder.itemView.setAlpha(1.0f);
             holder.tvEstado.setText("EN VIVO");
             holder.tvEstado.setTextColor(context.getResources().getColor(R.color.primario));
             holder.tvEstado.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.secundario)));
 
             holder.tvPrecio.setVisibility(View.VISIBLE);
-            holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_ppal));
             holder.tvPrecio.setText(String.format("Base: USD %.2f", item.getPrecioBase()));
 
         } else {
-            // 3. ESTADO: PRÓXIMAMENTE (Ítems Futuros)
+            // 3. ESTADO: PRÓXIMAMENTE
             holder.itemView.setAlpha(1.0f);
 
             holder.tvEstado.setText("PRÓXIMAMENTE");
@@ -157,10 +155,11 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivImagen = itemView.findViewById(R.id.ivProducto);
-            tvTitulo = itemView.findViewById(R.id.tvTituloProducto);
-            tvPrecio = itemView.findViewById(R.id.tvPrecioProducto);
-            tvEstado = itemView.findViewById(R.id.tvEstadoProducto);
+            // CONECTAMOS CON LOS IDs DEL XML COMPACTO
+            ivImagen = itemView.findViewById(R.id.ivItemFoto);
+            tvTitulo = itemView.findViewById(R.id.tvItemNombre);
+            tvPrecio = itemView.findViewById(R.id.tvItemPrecio);
+            tvEstado = itemView.findViewById(R.id.tvItemCategoria); // Usamos este como el badge de estado
         }
     }
 }

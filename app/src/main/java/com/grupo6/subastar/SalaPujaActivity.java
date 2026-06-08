@@ -164,7 +164,7 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         btnPujar.setOnClickListener(v -> {
             if (!itemActivo) {
-                Toast.makeText(this, "Este item no esta activo para pujar.", Toast.LENGTH_SHORT).show();
+                mostrarDialogoError("Este ítem no está activo para pujar.");
                 return;
             }
 
@@ -232,20 +232,20 @@ public class SalaPujaActivity extends AppCompatActivity {
                     etMontoPuja.setText("");
                     mostrarModalPujaExitosa();
                 } else if (response.code() == 400) {
-                    Toast.makeText(SalaPujaActivity.this, "Oferta rechazada: no supera el minimo", Toast.LENGTH_LONG).show();
+                    mostrarDialogoError("Oferta rechazada: el monto no supera a la oferta actual.");
                 } else if (response.code() == 409) {
-                    Toast.makeText(SalaPujaActivity.this, "Oferta rechazada: supera el limite maximo", Toast.LENGTH_LONG).show();
+                    mostrarDialogoError("Oferta rechazada: supera el límite máximo permitido (20% de la base).");
                 } else if (response.code() == 422) {
-                    Toast.makeText(SalaPujaActivity.this, "El item ya fue subastado", Toast.LENGTH_LONG).show();
+                    mostrarDialogoError("El ítem ya fue subastado.");
                 } else {
-                    Toast.makeText(SalaPujaActivity.this, leerError(response), Toast.LENGTH_LONG).show();
+                    mostrarDialogoError(leerError(response));
                 }
             }
 
             @Override
             public void onFailure(Call<PujaMensajeDTO> call, Throwable t) {
                 habilitarPuja(itemActivo);
-                Toast.makeText(SalaPujaActivity.this, "Error de red al pujar", Toast.LENGTH_SHORT).show();
+                mostrarDialogoError("Error de red al intentar enviar tu puja.");
             }
         });
     }
@@ -390,14 +390,22 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void mostrarModalPujaExitosa() {
-        new AlertDialog.Builder(this)
-                .setTitle("PUJA EXITOSA!")
-                .setMessage("Actualmente eres el mayor postor por este item.")
-                .setPositiveButton("Cerrar", null)
-                .show();
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_exito);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        android.widget.TextView tvMensaje = dialog.findViewById(R.id.tvMensajeExito);
+        tvMensaje.setText("Actualmente eres el mayor postor por este ítem.");
+
+        android.widget.Button btnAceptar = dialog.findViewById(R.id.btnAceptarExito);
+        btnAceptar.setText("Cerrar");
+        btnAceptar.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
-    private void mostrarModalResultado(CierreSubastaDTO cierre) {
+    private void mostrarModalResultado(com.grupo6.subastar.dto.CierreSubastaDTO cierre) {
         if (modalResultadoMostrado || cierre == null) return;
         if (cierre.getItemId() != null && !cierre.getItemId().equals(itemId)) return;
 
@@ -408,37 +416,69 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         if (mStompClient != null && mStompClient.isConnected()) mStompClient.disconnect();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false);
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_resultado); // <-- El XML nuevo
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false); // Obliga a tocar un botón para salir
+
+        android.widget.ImageView ivIcono = dialog.findViewById(R.id.ivResultadoIcono);
+        android.widget.TextView tvTitulo = dialog.findViewById(R.id.tvResultadoTitulo);
+        android.widget.TextView tvMensaje = dialog.findViewById(R.id.tvResultadoMensaje);
+        android.widget.Button btnSecundario = dialog.findViewById(R.id.btnResultadoSecundario);
+        android.widget.Button btnPrincipal = dialog.findViewById(R.id.btnResultadoPrincipal);
 
         if (!cierre.isHayGanador()) {
-            builder.setTitle("Subasta Desierta")
-                    .setMessage("Nadie pujo por este item.")
-                    .setPositiveButton("Volver", (dialog, which) -> salirYNavegarAlCatalogo());
+            ivIcono.setImageResource(android.R.drawable.ic_dialog_info);
+            tvTitulo.setText("Subasta Desierta");
+            tvMensaje.setText("Nadie pujó por este ítem. El mismo será devuelto a su dueño.");
+            btnPrincipal.setText("Volver al Catálogo");
+            btnPrincipal.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
+
         } else if (miClienteId.equals(cierre.getIdClienteGanador())) {
-            builder.setTitle("FELICIDADES\nGANASTE LA SUBASTA")
-                    .setMessage("Se registro tu compra privada con el importe que debes pagar, comisiones y costo de envio.")
-                    .setNegativeButton("Volver a subastas", (dialog, which) -> salirYNavegarAlCatalogo())
-                    .setPositiveButton("Ir al pago", (dialog, which) -> salirYNavegarAlCatalogo());
+            ivIcono.setImageResource(android.R.drawable.btn_star_big_on);
+            tvTitulo.setText("¡FELICIDADES!\nGANASTE LA SUBASTA");
+            tvMensaje.setText("Se registró tu compra por USD " + cierre.getImporteFinal() + ".");
+
+            btnSecundario.setVisibility(android.view.View.VISIBLE);
+            btnSecundario.setText("Ver más ítems");
+            btnSecundario.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
+
+            btnPrincipal.setText("Pagar luego");
+            btnPrincipal.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
+
         } else {
-            builder.setTitle("Subasta Finalizada")
-                    .setMessage("El item fue vendido a otro postor por USD " + cierre.getImporteFinal())
-                    .setPositiveButton("Volver", (dialog, which) -> salirYNavegarAlCatalogo());
+            ivIcono.setImageResource(android.R.drawable.ic_menu_recent_history);
+            tvTitulo.setText("Subasta Finalizada");
+            tvMensaje.setText("El ítem fue vendido a otro postor por USD " + cierre.getImporteFinal());
+            btnPrincipal.setText("Volver al Catálogo");
+            btnPrincipal.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
         }
 
-        builder.show();
+        dialog.show();
     }
 
     private void mostrarErrorIngreso(int codigo, String detalle) {
-        String titulo = codigo == 403 ? "Tu categoria no te permite participar en esta subasta" : "No se pudo ingresar";
-        String mensaje = detalle != null && !detalle.isEmpty() ? detalle : "Intenta nuevamente mas tarde.";
+        String titulo = codigo == 403 ? "Categoría insuficiente\n" : "No se pudo ingresar\n";
+        String mensaje = detalle != null && !detalle.isEmpty() ? detalle : "Intenta nuevamente más tarde.";
 
-        new AlertDialog.Builder(this)
-                .setTitle(titulo)
-                .setMessage(mensaje)
-                .setCancelable(false)
-                .setPositiveButton("Aceptar", (dialog, which) -> finish())
-                .show();
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_error);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+
+        android.widget.TextView tvMensaje = dialog.findViewById(R.id.tvMensajeError);
+        tvMensaje.setText(titulo + mensaje);
+
+        android.widget.Button btnEntendido = dialog.findViewById(R.id.btnEntendidoError);
+        btnEntendido.setText("Salir de la sala");
+        btnEntendido.setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
+
+        dialog.show();
     }
 
     private void habilitarPuja(boolean habilitada) {
@@ -543,5 +583,20 @@ public class SalaPujaActivity extends AppCompatActivity {
         super.onDestroy();
         detenerTickerVisual();
         if (compositeDisposable != null) compositeDisposable.dispose();
+    }
+
+    private void mostrarDialogoError(String mensaje) {
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_error);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        android.widget.TextView tvMensaje = dialog.findViewById(R.id.tvMensajeError);
+        tvMensaje.setText(mensaje);
+
+        android.widget.Button btnEntendido = dialog.findViewById(R.id.btnEntendidoError);
+        btnEntendido.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 }
