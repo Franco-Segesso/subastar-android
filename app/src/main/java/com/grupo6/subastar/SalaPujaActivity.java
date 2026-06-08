@@ -146,8 +146,8 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         if (titulo != null) tvHeaderTitle.setText("Sala de puja - " + titulo);
         if (precioBase > 0) {
-            tvBase.setText(String.format("Base: USD %.2f", precioBase));
-            tvOfertaActual.setText(String.format("USD %.2f", precioBase));
+            tvBase.setText(String.format("Base: $%.2f", precioBase));
+            tvOfertaActual.setText(String.format("$%.2f", precioBase));
         }
         if (urlImagen != null && !urlImagen.isEmpty()) {
             Glide.with(this).load(urlImagen).centerCrop().into(ivItemImagen);

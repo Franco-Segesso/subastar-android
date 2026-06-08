@@ -116,7 +116,7 @@ public class DetalleItemActivity extends AppCompatActivity {
                     }
 
                     if (item.getPrecioBase() != null) {
-                        tvPrecio.setText("USD " + item.getPrecioBase());
+                        tvPrecio.setText("$" + item.getPrecioBase());
                         tvPrecio.setVisibility(View.VISIBLE);
                     } else {
                         tvPrecio.setText("Iniciá sesión");
