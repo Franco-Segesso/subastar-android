@@ -49,7 +49,7 @@ public class CatalogoActivity extends AppCompatActivity {
         tokenManager = new TokenManager(this);
         gson = new Gson();
 
-        // Bindear vistas
+
         tvTitulo = findViewById(R.id.tvCatalogoTitulo);
         tvCat = findViewById(R.id.tvHeaderCat);
         tvMoneda = findViewById(R.id.tvHeaderMoneda);
@@ -75,8 +75,7 @@ public class CatalogoActivity extends AppCompatActivity {
 
         conectarWebSocketCatalogo();
 
-        // Eliminamos el cargarDetalleSubasta(subastaId) de acá porque el onResume
-        // se encarga de llamarlo automáticamente ni bien la pantalla carga.
+
     }
 
     @Override
@@ -161,7 +160,7 @@ public class CatalogoActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Subasta subasta = response.body();
 
-                    // Llenar cabecera
+
                     tvTitulo.setText(subasta.getUbicacion());
                     tvCat.setText(subasta.getCategoria().toUpperCase());
                     tvMoneda.setText(subasta.getMoneda());

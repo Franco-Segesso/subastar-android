@@ -11,16 +11,16 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // 1. Instalamos y capturamos la pantalla nativa ANTES del super.onCreate
+
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
 
-        // 2. Le decimos a Android que MANTENGA el logo en pantalla y no lo borre
+
         splashScreen.setKeepOnScreenCondition(() -> true);
 
-        // Ya NO usamos setContentView(R.layout.activity_splash); porque no necesitamos el XML
 
-        // 3. Mantenemos tu temporizador de 2.5 segundos
+
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
 
             TokenManager tokenManager = new TokenManager(this);

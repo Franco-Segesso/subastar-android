@@ -42,7 +42,7 @@ public class RegistroActivity extends AppCompatActivity {
     private TextView tvEstadoFrente, tvEstadoDorso;
     private boolean isCargandoFrente = true;
 
-    // AHORA SÍ DECLARAMOS EL SPINNER Y LA LISTA DE PAÍSES
+
     private Spinner spPais;
     private List<Pais> listaPaises = new ArrayList<>();
 
@@ -93,7 +93,7 @@ public class RegistroActivity extends AppCompatActivity {
                     },
                     year, month, day);
 
-            // 3. Detalle profesional: Bloqueamos las fechas del futuro (nadie puede nacer mañana)
+
             datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
 
             // 4. Mostramos el calendario
@@ -163,7 +163,7 @@ public class RegistroActivity extends AppCompatActivity {
             RequestBody reqDoc = RequestBody.create(MediaType.parse("text/plain"), etDoc.getText().toString());
             RequestBody reqDir = RequestBody.create(MediaType.parse("text/plain"), etDireccion.getText().toString());
             RequestBody reqPais = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(idPaisSeleccionado));
-            // Abajo de donde creás reqDir y reqPais, agregá esto:
+
             RequestBody reqFecha = RequestBody.create(MediaType.parse("text/plain"), etFecha.getText().toString());
 
 
@@ -177,13 +177,13 @@ public class RegistroActivity extends AppCompatActivity {
             btnRegistrar.setEnabled(false);
             btnRegistrar.setText("Enviando...");
 
-            // Disparamos la petición
+
             api.registrar(reqNombre, reqApellido, reqEmail, reqDoc, reqDir, reqFecha, reqPais, partFrente, partDorso)
                     .enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
-                                // En vez de mostrar un Toast, abrimos la nueva pantalla de éxito
+
                                 Intent intent = new Intent(RegistroActivity.this, RegistroExitosoActivity.class);
                                 startActivity(intent);
                                 finish(); // Cerramos RegistroActivity

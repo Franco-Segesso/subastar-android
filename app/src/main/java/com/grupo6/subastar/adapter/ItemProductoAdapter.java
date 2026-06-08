@@ -51,7 +51,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
         notifyDataSetChanged();
     }
 
-    // El corazón de la secuencia: el primer ítem con estado "no" es el que está en vivo
+    // el primer ítem con estado "no" es el que está en vivo
     private void calcularItemActivo() {
         idPrimerItemActivo = -1;
         if (!esSubastaAbierta()) return;
@@ -90,19 +90,19 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
                     .error(R.drawable.logo_subastar)       // Imagen si la URL está rota
                     .into(holder.ivImagen);
         } else {
-            // ACÁ ESTABA EL PROBLEMA: Reemplazamos R.color.primario por tu logo
+
             holder.ivImagen.setImageResource(R.drawable.logo_subastar);
-            // Opcional: aseguramos que el logo se centre bien en la tarjeta
+
             holder.ivImagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
 
-        // --- MÁQUINA DE ESTADOS VISUALES ---
+
         boolean esVendido = "si".equalsIgnoreCase(item.getSubastado());
         boolean esEnVivo = item.getId().equals(idPrimerItemActivo) && "abierta".equalsIgnoreCase(estadoSubasta);
 
 
         if (esVendido) {
-            // ESTADO: VENDIDO (Opaco y con badge gris)
+
             holder.itemView.setAlpha(0.6f);
 
             holder.tvBadgeEnCurso.setVisibility(View.VISIBLE);
@@ -117,25 +117,25 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
             holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_sec));
 
         } else if (esEnVivo) {
-            // ESTADO: EN CURSO (Borde Dorado grueso y badge flotante Dorado)
+            // ESTADO: EN CURSO
             holder.itemView.setAlpha(1.0f);
 
             holder.tvBadgeEnCurso.setVisibility(View.VISIBLE);
             holder.tvBadgeEnCurso.setText("EN CURSO");
             holder.tvBadgeEnCurso.setBackgroundTintList(android.content.res.ColorStateList.valueOf(context.getResources().getColor(R.color.secundario)));
 
-            // LA MAGIA DEL BORDE
-            holder.cardContenedor.setStrokeWidth(5); // Más grueso
+
+            holder.cardContenedor.setStrokeWidth(5);
             holder.cardContenedor.setStrokeColor(context.getResources().getColor(R.color.secundario)); // Dorado
 
             holder.tvPrecio.setText(String.format("Base: $%.2f", item.getPrecioBase()));
             holder.tvPrecio.setTextColor(context.getResources().getColor(R.color.texto_ppal));
 
         } else {
-            // ESTADO: PRÓXIMAMENTE (Normal)
+            // ESTADO: PRÓXIMAMENTE
             holder.itemView.setAlpha(1.0f);
 
-            holder.tvBadgeEnCurso.setVisibility(View.GONE); // Ocultamos el badge
+            holder.tvBadgeEnCurso.setVisibility(View.GONE); //
 
             holder.cardContenedor.setStrokeWidth(1);
             holder.cardContenedor.setStrokeColor(context.getResources().getColor(R.color.bordes));
@@ -171,7 +171,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Referenciamos EXACTAMENTE los IDs del XML nuevo
+
             cardContenedor = itemView.findViewById(R.id.cardContenedorItem);
             ivImagen = itemView.findViewById(R.id.ivItemFoto);
             tvTitulo = itemView.findViewById(R.id.tvItemNombre);

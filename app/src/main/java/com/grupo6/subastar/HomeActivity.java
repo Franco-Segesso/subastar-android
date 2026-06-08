@@ -269,7 +269,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void actualizarVistaChip(TextView chipSeleccionado, String estado, String categoria) {
-        // Apagamos todos los chips (Gris)
+
         this.estadoActual = estado;
         this.categoriaActual = categoria;
 
@@ -279,7 +279,7 @@ public class HomeActivity extends AppCompatActivity {
             chip.setTypeface(null, android.graphics.Typeface.NORMAL);
         }
 
-        // Encendemos solo el que el usuario tocó (Dorado)
+
         chipSeleccionado.setBackgroundResource(R.drawable.bg_chip_activo);
         chipSeleccionado.setTextColor(ContextCompat.getColor(this, R.color.secundario));
         chipSeleccionado.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -396,11 +396,11 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    // 1. Agregá esto dentro de tu clase HomeActivity
+
     @Override
     protected void onResume() {
         super.onResume();
-        // Solo verificamos si el usuario tiene sesión iniciada
+        // verificamos si el usuario tiene sesión iniciada
         if (tokenManager != null && tokenManager.getToken() != null) {
             verificarMediosPagoObligatorio();
         }
@@ -425,7 +425,7 @@ public class HomeActivity extends AppCompatActivity {
                     if (response.body().isEmpty()) {
                         android.content.Intent intent = new android.content.Intent(HomeActivity.this, AgregarMedioPagoActivity.class);
                         intent.putExtra("clienteId", idCliente);
-                        intent.putExtra("esObligatorio", true); // <--- ESTO ES LA CLAVE
+                        intent.putExtra("esObligatorio", true); //
                         startActivity(intent);
                     }
                 }
@@ -463,7 +463,7 @@ public class HomeActivity extends AppCompatActivity {
         // Actualizamos la vista dependiendo de si encontramos algo o no
         if (listaFiltrada.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
-            tvMensajeVacio.setText("No se encontraron resultados para tu búsqueda."); // <-- Texto específico
+            tvMensajeVacio.setText("No se encontraron resultados para tu búsqueda.");
             tvMensajeVacio.setVisibility(View.VISIBLE);
         } else {
             recyclerView.setVisibility(View.VISIBLE);

@@ -82,7 +82,7 @@ public class MedioPagoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemCount() { return lista.size(); }
 
-    // --- VIEW HOLDERS ---
+
 
     static class TarjetaViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitular, tvUltimosDigitos, tvVencimiento;

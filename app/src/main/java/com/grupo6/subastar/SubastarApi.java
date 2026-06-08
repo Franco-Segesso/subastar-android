@@ -56,8 +56,7 @@ public interface SubastarApi {
     @POST("v1/auth/login")
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    // ETAPA 1 DEL REGISTRO: Solo 8 parámetros, sin clave y sin fecha.
-    // Nombres exactos de las fotos según documentación.
+
     @Multipart
     @POST("v1/auth/registro")
     Call<ResponseBody> registrar(
@@ -75,7 +74,7 @@ public interface SubastarApi {
     @POST("v1/auth/activar")
     Call<ResponseBody> activarCuenta(@Body com.grupo6.subastar.dto.ActivarRequest request);
 
-    @POST("v1/subastas/{id}/ingresar") // Ajustá el prefijo de la URL según tu backend
+    @POST("v1/subastas/{id}/ingresar")
     Call<Void> ingresarSubasta(@Header("Authorization") String token, @Path("id") Integer id);
 
     @POST("v1/subastas/{id}/salir")

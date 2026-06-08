@@ -14,12 +14,12 @@ public class TokenManager {
 
     public TokenManager(Context context) {
         try {
-            // Generamos o recuperamos la llave maestra del Keystore de Android
+
             MasterKey masterKey = new MasterKey.Builder(context)
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                     .build();
 
-            // Inicializamos las preferencias encriptadas
+
             sharedPreferences = EncryptedSharedPreferences.create(
                     context,
                     PREFS_NAME,
@@ -58,7 +58,7 @@ public class TokenManager {
         return null;
     }
 
-    // Método para cerrar sesión borrando el token
+
     public void clearToken() {
         if (sharedPreferences != null) {
             sharedPreferences.edit()

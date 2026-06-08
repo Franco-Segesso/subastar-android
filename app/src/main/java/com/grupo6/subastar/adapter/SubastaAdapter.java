@@ -18,7 +18,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private List<Subasta> subastas;
 
-    // Identificadores para decirle a Android qué diseño inflar
+
     private static final int VIEW_TYPE_NORMAL = 0;
     private static final int VIEW_TYPE_ACTIVA = 1;
 
@@ -26,7 +26,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.subastas = subastas;
     }
 
-    // 1. Magia: Analizamos la fila y decidimos el tipo de vista
+
     @Override
     public int getItemViewType(int position) {
         Subasta subasta = subastas.get(position);
@@ -36,7 +36,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return VIEW_TYPE_NORMAL;
     }
 
-    // 2. Inflamos el XML que corresponda al tipo
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -44,13 +44,13 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_subasta_activa, parent, false);
             return new ActivaViewHolder(view);
         } else {
-            // Asegurate de que este es el nombre real de tu XML normal
+
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_subasta, parent, false);
             return new NormalViewHolder(view);
         }
     }
 
-    // 3. Llenamos los datos basándonos en qué ViewHolder se instanció
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Subasta subasta = subastas.get(position);
@@ -75,10 +75,10 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (subasta.getMejorOferta() != null) {
                 // Hay oferta real (usuario logueado)
                 activaHolder.tvMejorOferta.setText(subasta.getMoneda() + " " + subasta.getMejorOferta());
-                // Opcional: Asegurarte de que se vea verde
+
                 activaHolder.tvMejorOferta.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.exito));
             } else {
-                // Es invitado, el backend mandó null
+
                 activaHolder.tvMejorOferta.setText("Oculto");
                 activaHolder.tvMejorOferta.setTextColor(android.graphics.Color.GRAY);
             }
@@ -86,7 +86,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             int postores = subasta.getCantidadPostores() != null ? subasta.getCantidadPostores() : 0;
             activaHolder.tvPostores.setText(String.valueOf(postores));
 
-            // El clic va en el botón de ingresar
+
             activaHolder.btnIngresar.setOnClickListener(v -> navegarAlCatalogo(v, subasta));
 
 
@@ -94,7 +94,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (holder instanceof NormalViewHolder) {
             NormalViewHolder normalHolder = (NormalViewHolder) holder;
 
-            // Llenamos los datos
+
             if (subasta.getCatalogo() != null) {
                 normalHolder.tvTitulo.setText(subasta.getCatalogo().getDescripcion());
             } else {
@@ -118,10 +118,10 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 normalHolder.tvEstadoSubasta.setBackgroundResource(R.drawable.bg_badge_relleno);
                 normalHolder.tvEstadoSubasta.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
                         android.graphics.Color.parseColor("#C9A84C"))); // Dorado
-                normalHolder.tvEstadoSubasta.setTextColor(android.graphics.Color.parseColor("#0C0C0F")); // Texto Oscuro
+                normalHolder.tvEstadoSubasta.setTextColor(android.graphics.Color.parseColor("#0C0C0F"));
             }
 
-            // Le asignamos el clic tanto al botón "VER" como a toda la tarjeta (mejor UX)
+
             normalHolder.btnVer.setOnClickListener(v -> navegarAlCatalogo(v, subasta));
             normalHolder.itemView.setOnClickListener(v -> navegarAlCatalogo(v, subasta));
         }
@@ -139,16 +139,14 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return subastas != null ? subastas.size() : 0;
     }
 
-    // --- VIEWHOLDERS ---
 
-    // El ViewHolder para las subastas futuras/pasadas
     public static class NormalViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvFecha, tvCategoria, tvEstadoSubasta; // Ajustá estos tipos según tu item_subasta.xml
+        TextView tvTitulo, tvFecha, tvCategoria, tvEstadoSubasta;
         MaterialButton btnVer;
 
         public NormalViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Reemplazá con los IDs correctos de tu layout normal
+
             tvTitulo = itemView.findViewById(R.id.tvTituloSubasta);
             tvFecha = itemView.findViewById(R.id.tvFechaSubasta);
             tvCategoria = itemView.findViewById(R.id.tvCategoriaSubasta);
@@ -157,7 +155,7 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    // El ViewHolder para la subasta en vivo
+
     public static class ActivaViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitulo, tvSubDetalle, tvItemActual, tvMejorOferta, tvPostores;
         MaterialButton btnIngresar;
@@ -174,9 +172,9 @@ public class SubastaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    // Metodo para actualizar la lista desde el buscador
+
     public void actualizarLista(List<Subasta> subastasFiltradas) {
         this.subastas = subastasFiltradas;
-        notifyDataSetChanged(); // Le avisa a Android que redibuje las tarjetas
+        notifyDataSetChanged();
     }
 }

@@ -154,7 +154,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                     },
                     year, month, day);
 
-            // Bloqueamos las fechas del pasado (opcional)
+            // Bloqueamos las fechas del pasado
             datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
 
             datePickerDialog.show();
@@ -280,7 +280,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                 return;
             }
 
-            // MAGIA: Extraemos solo los últimos 4 dígitos para mandarlos al servidor y descartamos el CVV
+            // Extraemos solo los últimos 4 dígitos para mandarlos al servidor y descartamos el CVV
             String digitosFinales = numeroCompleto.substring(numeroCompleto.length() - 4);
 
             AgregarTarjetaRequest req = new AgregarTarjetaRequest(digitosFinales, vence, titular, extran,
@@ -315,7 +315,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                 return;
             }
 
-            // ACÁ ESTABA EL ERROR: Usamos la variable 'pais' en vez de etPaisBanco.getText()
+
             AgregarCuentaRequest req = new AgregarCuentaRequest(cbu,
                     etAlias.getText().toString().trim(), banco, pais, moneda);
 
@@ -371,7 +371,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
             });
         }
     }
-    // Método auxiliar para verificar que la tarjeta no esté vencida
+
     private boolean esTarjetaVencida(String vencimiento) {
         try {
             String[] partes = vencimiento.split("/");
@@ -410,7 +410,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                     String errorJsonStr = response.errorBody().string();
                     org.json.JSONObject errorJson = new org.json.JSONObject(errorJsonStr);
 
-                    // Capturamos el mensaje exacto que escupe nuestro Exception en Spring Boot
+
                     if (errorJson.has("message")) {
                         mensajeError = errorJson.getString("message");
                     } else if (errorJson.has("error")) {
@@ -421,7 +421,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            // Llamamos al modal rojo que creamos antes
+
             mostrarDialogoError(mensajeError);
         }
     }

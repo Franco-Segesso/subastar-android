@@ -11,7 +11,7 @@ public class RegistroRequest {
     private String documento;
 
 
-    // Agregá esto a tu clase RegistroRequest
+
     public RegistroRequest(String nombre, String apellido, String email, String clave, String documento) {
         this.nombre = nombre;
         this.apellido = apellido;

@@ -29,7 +29,7 @@ public class ActivarActivity extends AppCompatActivity {
         Button btnActivar = findViewById(R.id.btnActivarCuenta);
         ImageButton btnVolver = findViewById(R.id.btnVolver);
 
-        // Enlazar flecha de retroceso
+
         btnVolver.setOnClickListener(v -> finish());
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -49,7 +49,7 @@ public class ActivarActivity extends AppCompatActivity {
                 return;
             }
 
-            // 2. VALIDACIÓN DE SEGURIDAD (REGEX)
+            // 2.
             // Regla: Mínimo 8 caracteres, 1 número, 1 minúscula, 1 mayúscula, 1 símbolo.
             String patronPassword = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._-]).{8,}$";
 

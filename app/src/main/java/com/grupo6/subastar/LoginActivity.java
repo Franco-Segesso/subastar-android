@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // 1. Enlazamos las vistas del XML con Java
+
         etEmail = findViewById(R.id.etEmail);
         etClave = findViewById(R.id.etClave);
         btnLogin = findViewById(R.id.btnLogin);
@@ -42,10 +42,10 @@ public class LoginActivity extends AppCompatActivity {
 
         findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
-        // 2. Inicializamos nuestra "bóveda" de seguridad
+
         tokenManager = new TokenManager(this);
 
-        // 3. Configuramos Retrofit
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
 
         api = retrofit.create(SubastarApi.class);
 
-        // 4. Capturamos el clic del botón de login
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,13 +61,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Darle la acción de ir a RegistroActivity al hacer clic
+
         tvIrARegistro.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegistroActivity.class);
             startActivity(intent);
         });
 
-        // 5. NUEVO: Capturamos el clic para ir a Activar Cuenta
+
         tvActivarCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

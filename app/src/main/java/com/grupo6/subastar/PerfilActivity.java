@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PerfilActivity extends AppCompatActivity {
 
-    // 1. Declaramos todas las vistas, incluyendo las nuevas de dirección, país y DNI
+
     private TextView tvNombreCompleto, tvEmail, tvCategoria, tvDireccion, tvPais, tvDocumento;
     private RecyclerView recyclerMediosPago;
     private MedioPagoAdapter adapter;
@@ -40,7 +40,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         tokenManager = new TokenManager(this);
 
-        // 2. Enlazamos las vistas con los IDs de tu XML
+
         tvNombreCompleto = findViewById(R.id.tvNombreCompleto);
         tvEmail          = findViewById(R.id.tvEmail);
         tvCategoria      = findViewById(R.id.tvCategoria);
@@ -80,7 +80,7 @@ public class PerfilActivity extends AppCompatActivity {
                 .build();
         api = retrofit.create(SubastarApi.class);
 
-        // 3. Obtenemos TODOS los datos desde SharedPreferences (guardados en el Login)
+
         String nombre    = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_NAME", "");
         String email     = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_EMAIL", "");
         String categoria = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_CATEGORIA", "");
@@ -89,7 +89,7 @@ public class PerfilActivity extends AppCompatActivity {
         String documento = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_DOCUMENTO", "-");
         clienteId        = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getInt("USER_ID", -1);
 
-        // 4. Se los inyectamos a los TextView de la pantalla
+
         tvNombreCompleto.setText(nombre);
         tvEmail.setText(email);
         tvCategoria.setText(categoria.isEmpty() ? "Sin categoría" : categoria);
@@ -133,10 +133,10 @@ public class PerfilActivity extends AppCompatActivity {
     private void confirmarEliminar(MedioPagoDTO item) {
         // Creamos el Dialog vacío
         final android.app.Dialog dialog = new android.app.Dialog(this);
-        // Le inyectamos el layout que creaste recién
+
         dialog.setContentView(R.layout.dialog_eliminar_medio);
 
-        // El fondo del "window" debe ser transparente para que el CardView redondeado brille por sí solo
+
         dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -187,7 +187,7 @@ public class PerfilActivity extends AppCompatActivity {
         btnAceptar.setOnClickListener(v -> {
             dialog.dismiss();
             // Refrescamos la lista DESPUÉS de que el usuario clickea "Aceptar"
-            // (Asegurate de llamar acá a tu método que recarga los medios de pago, ej: cargarMediosDePago() )
+
         });
 
         dialog.show();

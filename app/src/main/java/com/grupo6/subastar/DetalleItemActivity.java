@@ -21,7 +21,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 public class DetalleItemActivity extends AppCompatActivity {
 
-    // Borrar: private ImageView ivImagen;
+
     private androidx.viewpager2.widget.ViewPager2 vpImagenes;
     private TextView tvContadorFotos;
     private TextView tvTitulo, tvPrecio, tvDescripcion, tvCategoria, tvDuenio;
@@ -58,19 +58,19 @@ public class DetalleItemActivity extends AppCompatActivity {
         btnPujar.setVisibility(View.VISIBLE);
         configurarBotonPujaPorEstado(estado, false);
 
-        // Regla: Solo mostramos el botón si la subasta está abierta
+        // Solo mostramos el botón si la subasta está abierta
         if ("abierta".equalsIgnoreCase(estado)) {
             btnPujar.setVisibility(View.VISIBLE);
 
             btnPujar.setOnClickListener(v -> {
-                // Creamos el "puente" hacia la nueva Activity
+
                 android.content.Intent intent = new android.content.Intent(DetalleItemActivity.this, SalaPujaActivity.class);
 
                 // Le pasamos los datos exactos que espera recibir el onCreate() de SalaPujaActivity
                 intent.putExtra("SUBASTA_ID", subastaId);
                 intent.putExtra("ITEM_ID", itemId);
 
-                // Opcional: pasar textos para la cabecera (reemplazá con los datos reales de tu objeto ítem)
+
                 intent.putExtra("ITEM_TITULO", nombreItem);
                 intent.putExtra("ITEM_BASE", baseItem);
                 intent.putExtra("SUBASTA_FECHA", fechaSubasta);
@@ -124,7 +124,7 @@ public class DetalleItemActivity extends AppCompatActivity {
 
                     // CARRUSEL DE IMÁGENES
                     if (item.getProducto().getFotos() != null && !item.getProducto().getFotos().isEmpty()) {
-                        // Quitamos el fondo por si antes había un logo
+
                         vpImagenes.setBackgroundResource(0);
 
                         if (item.getProducto().getFotos().size() > 1) {

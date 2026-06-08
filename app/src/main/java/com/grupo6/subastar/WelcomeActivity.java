@@ -30,20 +30,20 @@ public class WelcomeActivity extends AppCompatActivity {
         });
 
         tvInvitado.setOnClickListener(v -> {
-            // 1. Limpiamos SharedPreferences para asegurarnos de que no haya un "USER_NAME" o Token viejo
+
             getSharedPreferences("SubastarPrefs", MODE_PRIVATE).edit().clear().apply();
 
-            // (Opcional) Si Franco creó un metodo específico para borrar el token en su TokenManager, sumalo acá:
+
             tokenManager.clearToken();
 
-            // 2. Creamos el puente hacia el Catálogo
+
             Intent intent = new Intent(WelcomeActivity.this, HomeActivity.class);
 
-            // 3. Estas banderas evitan que el usuario pueda volver a esta pantalla tocando "Atrás"
+
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             startActivity(intent);
-            finish(); // Destruimos el WelcomeActivity
+            finish();
         });
     }
 }
