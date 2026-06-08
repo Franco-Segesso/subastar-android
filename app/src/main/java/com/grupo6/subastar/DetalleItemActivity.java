@@ -120,7 +120,11 @@ public class DetalleItemActivity extends AppCompatActivity {
                     if (item.getProducto().getFotos() != null && !item.getProducto().getFotos().isEmpty()) {
                         Glide.with(DetalleItemActivity.this)
                                 .load(item.getProducto().getFotos().get(0).getUrlFoto())
+                                .placeholder(R.drawable.logo_subastar) // Imagen de espera
                                 .into(ivImagen);
+                    } else {
+                        // Buena práctica: Si no hay foto, mostramos el logo por defecto
+                        ivImagen.setImageResource(R.drawable.logo_subastar);
                     }
                     if ("si".equalsIgnoreCase(item.getSubastado())) {
                         btnPujar.setEnabled(false);

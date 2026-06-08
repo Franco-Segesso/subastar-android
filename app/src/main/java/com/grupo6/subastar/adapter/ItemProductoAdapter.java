@@ -79,9 +79,13 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
         holder.tvTitulo.setText(titulo);
 
         if (item.getProducto() != null && item.getProducto().getFotos() != null && !item.getProducto().getFotos().isEmpty()) {
-            Glide.with(context).load(item.getProducto().getFotos().get(0).getUrlFoto()).centerCrop().into(holder.ivImagen);
+            Glide.with(context)
+                    .load(item.getProducto().getFotos().get(0).getUrlFoto())
+                    .centerCrop()
+                    .placeholder(R.drawable.logo_subastar) // Imagen de espera mientras descarga la URL
+                    .into(holder.ivImagen);
         } else {
-            holder.ivImagen.setImageResource(R.color.primario);
+            holder.ivImagen.setImageResource(R.color.primario); // Opcional: o podés poner el logo_subastar acá también
         }
 
         // --- MÁQUINA DE ESTADOS VISUALES ---
