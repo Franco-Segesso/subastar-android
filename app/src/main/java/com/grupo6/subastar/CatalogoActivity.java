@@ -2,8 +2,8 @@ package com.grupo6.subastar;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +28,7 @@ import ua.naiksoftware.stomp.StompClient;
 public class CatalogoActivity extends AppCompatActivity {
 
     private TextView tvTitulo, tvCat, tvMoneda, tvEstado;
+    private View layoutTransmisionVivo;
     private RecyclerView recyclerView;
     private Integer subastaId;
     private TokenManager tokenManager;
@@ -50,6 +51,7 @@ public class CatalogoActivity extends AppCompatActivity {
         tvCat = findViewById(R.id.tvHeaderCat);
         tvMoneda = findViewById(R.id.tvHeaderMoneda);
         tvEstado = findViewById(R.id.tvHeaderEstado);
+        layoutTransmisionVivo = findViewById(R.id.layoutTransmisionVivo);
         recyclerView = findViewById(R.id.recyclerViewProductos);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -117,6 +119,7 @@ public class CatalogoActivity extends AppCompatActivity {
                     if (refrescandoPorCierre) return;
                     EstadoPujaDTO estado = gson.fromJson(stompMessage.getPayload(), EstadoPujaDTO.class);
                     if (estado != null && estado.getItemId() != null && adapter != null && !estado.isCerrado()) {
+                        layoutTransmisionVivo.setVisibility(View.VISIBLE);
                         adapter.actualizarItemActivo(estado.getItemId());
                     }
                 }, error -> Log.e("CATALOGO_STOMP", "Error en topic estado", error)));
@@ -158,6 +161,9 @@ public class CatalogoActivity extends AppCompatActivity {
                     tvCat.setText(subasta.getCategoria().toUpperCase());
                     tvMoneda.setText(subasta.getMoneda());
                     tvEstado.setText(subasta.getEstado().toUpperCase());
+                    layoutTransmisionVivo.setVisibility(
+                            "abierta".equalsIgnoreCase(subasta.getEstado()) ? View.VISIBLE : View.GONE
+                    );
 
                     // Le pasamos los datos directamente al instanciar el adapter
                     if (subasta.getCatalogo() != null && subasta.getCatalogo().getItems() != null) {

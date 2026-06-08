@@ -64,6 +64,40 @@
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
         app:layout_constraintTop_toBottomOf="@id/layoutInfoSubasta"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/layoutTransmisionVivo" />
+
+    <LinearLayout
+        android:id="@+id/layoutTransmisionVivo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewProductos"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tvTransmisionTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ver transmision en VIVO"
+            android:textColor="@color/texto_ppal"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTransmisionLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:text="https://www.youtube.com/watch?v=oOQ-dqfAf4g"
+            android:textColor="@color/texto_sec"
+            android:textSize="13sp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
