@@ -2,6 +2,7 @@ package com.grupo6.subastar;
 
 import com.grupo6.subastar.dto.LoginRequest;
 import com.grupo6.subastar.dto.LoginResponse;
+import com.grupo6.subastar.dto.NotificacionDTO;
 import com.grupo6.subastar.dto.PujaMensajeDTO;
 import com.grupo6.subastar.model.ItemCatalogo;
 import com.grupo6.subastar.model.Subasta;
@@ -22,6 +23,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
@@ -127,6 +129,28 @@ public interface SubastarApi {
     Call<ResponseBody> darDeBajaMedioPago(
             @Path("id") Integer id,
             @Header("Authorization") String token
+    );
+
+
+    //NOTIFICACIONES
+    // GET Notificaciones (Con filtro opcional)
+    @GET("clientes/me/notificaciones")
+    Call<List<NotificacionDTO>> getNotificaciones(
+            @Header("Authorization") String token,
+            @Query("leidas") Boolean leidas
+    );
+
+    // PATCH Marcar todas como leídas
+    @PATCH("clientes/me/notificaciones/leer-todas")
+    Call<java.util.Map<String, Object>> marcarTodasComoLeidas(
+            @Header("Authorization") String token
+    );
+
+    // PATCH Marcar una como leída
+    @PATCH("clientes/me/notificaciones/{id}/leer")
+    Call<java.util.Map<String, String>> marcarComoLeida(
+            @Header("Authorization") String token,
+            @Path("id") Integer id
     );
 }
 

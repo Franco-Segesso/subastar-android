@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primario"
+    android:fitsSystemWindows="true">
+
+    <!-- HEADER -->
+    <ImageView
+        android:id="@+id/btnVolverNotif"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_arrow_back"
+        app:tint="@color/texto_ppal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvTituloNotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="Notificaciones"
+        android:textColor="@color/texto_ppal"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/btnVolverNotif"
+        app:layout_constraintStart_toEndOf="@+id/btnVolverNotif"
+        app:layout_constraintTop_toTopOf="@+id/btnVolverNotif" />
+
+    <TextView
+        android:id="@+id/tvContadorNoLeidas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_circulo_dorado"
+        android:backgroundTint="@color/bordes"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        android:text="3"
+        android:textColor="@color/texto_ppal"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTituloNotif"
+        app:layout_constraintStart_toEndOf="@+id/tvTituloNotif"
+        app:layout_constraintTop_toTopOf="@+id/tvTituloNotif" />
+
+    <TextView
+        android:id="@+id/btnMarcarTodas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Marcar todas"
+        android:textColor="@color/texto_ppal"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTituloNotif"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvTituloNotif" />
+
+    <View
+        android:id="@+id/dividerHeader"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/bordes"
+        app:layout_constraintTop_toBottomOf="@+id/tvTituloNotif" />
+
+    <!-- FILTROS (TODAS / NO LEIDAS) -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleFiltroNotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        app:checkedButton="@id/btnFiltroTodas"
+        app:singleSelection="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dividerHeader">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFiltroTodas"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Todas"
+            android:textColor="@color/texto_ppal"
+            app:cornerRadius="20dp"
+            app:strokeColor="@color/bordes" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFiltroNoLeidas"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No leídas"
+            android:textColor="@color/texto_ppal"
+            app:cornerRadius="20dp"
+            app:strokeColor="@color/bordes" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <!-- LISTA DE NOTIFICACIONES -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvNotificaciones"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toggleFiltroNotif"
+        tools:listitem="@layout/item_notificacion" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
