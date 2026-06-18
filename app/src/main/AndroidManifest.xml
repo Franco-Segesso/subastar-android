@@ -58,6 +58,10 @@
         <activity android:name=".DetalleConsignacionActivity" android:exported="false" />
         <activity android:name=".CuentaDestinoConsignacionActivity" android:exported="false" />
         <activity android:name=".ResultadoConsignacionActivity" android:exported="false" />
+        <activity android:name=".MisPujasActivity" android:exported="false" />
+        <activity android:name=".DetalleMisPujasActivity" android:exported="false" />
+        <activity android:name=".MisMetricasActivity" android:exported="false" />
+        <activity android:name=".FacturaCompraActivity" android:exported="false" />
 
         <activity android:name=".MedioPagoExitosoActivity" android:exported="false" />
 

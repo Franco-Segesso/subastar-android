@@ -6,6 +6,11 @@ import com.grupo6.subastar.dto.PujaMensajeDTO;
 import com.grupo6.subastar.dto.ConsignacionDTO;
 import com.grupo6.subastar.dto.CuentaDestinoRequest;
 import com.grupo6.subastar.dto.RespuestaConsignacionRequest;
+import com.grupo6.subastar.dto.HistorialPujasClienteDTO;
+import com.grupo6.subastar.dto.MetricasClienteDTO;
+import com.grupo6.subastar.dto.SubastaParticipacionDTO;
+import com.grupo6.subastar.dto.CompraDTO;
+import com.grupo6.subastar.dto.ModalidadEntregaRequest;
 import com.grupo6.subastar.model.ItemCatalogo;
 import com.grupo6.subastar.model.Subasta;
 
@@ -167,6 +172,36 @@ public interface SubastarApi {
             @Header("Authorization") String token,
             @Path("id") Integer id,
             @Body CuentaDestinoRequest request
+    );
+
+    @GET("/v1/clientes/me/subastas")
+    Call<List<SubastaParticipacionDTO>> obtenerMisPujas(
+            @Header("Authorization") String token,
+            @Query("resultado") String resultado
+    );
+
+    @GET("/v1/clientes/me/subastas/{subastaId}/pujas")
+    Call<HistorialPujasClienteDTO> obtenerDetalleMisPujas(
+            @Header("Authorization") String token,
+            @Path("subastaId") Integer subastaId
+    );
+
+    @GET("/v1/clientes/me/metricas")
+    Call<MetricasClienteDTO> obtenerMisMetricas(
+            @Header("Authorization") String token
+    );
+
+    @GET("/v1/clientes/me/compras/{compraId}")
+    Call<CompraDTO> obtenerCompra(
+            @Header("Authorization") String token,
+            @Path("compraId") Integer compraId
+    );
+
+    @PATCH("/v1/clientes/me/compras/{compraId}/entrega")
+    Call<ResponseBody> definirEntregaCompra(
+            @Header("Authorization") String token,
+            @Path("compraId") Integer compraId,
+            @Body ModalidadEntregaRequest request
     );
 }
 

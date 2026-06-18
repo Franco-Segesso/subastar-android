@@ -102,7 +102,11 @@ public class HomeActivity extends AppCompatActivity {
 
         // --- LÓGICA DE NAVEGACIÓN INFERIOR ---
         navMisPujas.setOnClickListener(v -> {
-            Toast.makeText(HomeActivity.this, "Esa funcionalidad todavía no está disponible", Toast.LENGTH_SHORT).show();
+            if (tokenManager.getToken() == null) {
+                startActivity(new Intent(HomeActivity.this, WelcomeActivity.class));
+            } else {
+                startActivity(new Intent(HomeActivity.this, MisPujasActivity.class));
+            }
         });
 
         navConsignacion.setOnClickListener(v -> {
