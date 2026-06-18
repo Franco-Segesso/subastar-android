@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primario"
+    android:orientation="vertical"
+    android:padding="28dp">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+        <ImageButton android:id="@+id/btnVolver" android:layout_width="40dp" android:layout_height="40dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_arrow_back" app:tint="@color/secundario" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Detalle del bien" android:textColor="@color/texto_ppal" android:textSize="22sp" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="16dp" android:background="@color/bordes" />
+
+    <TextView android:layout_width="100dp" android:layout_height="100dp" android:layout_gravity="center_horizontal" android:layout_marginTop="50dp" android:background="@drawable/bg_success_icon" android:gravity="center" android:text="✓" android:textColor="@color/secundario" android:textSize="48sp" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:gravity="center" android:text="¡Condiciones aceptadas!" android:textColor="@color/texto_ppal" android:textSize="18sp" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center" android:lineSpacingExtra="6dp" android:text="Tu propuesta y condiciones han sido confirmadas. En breve podras ver tu item en el catalogo de subastas." android:textColor="@color/texto_sec" android:textSize="14sp" />
+
+    <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cargar CBU" android:textColor="@color/texto_sec" android:textSize="14sp" />
+    <EditText android:id="@+id/etCbu" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="8dp" android:background="@drawable/bg_input_redondeado" android:inputType="number" android:paddingHorizontal="14dp" android:textColor="@color/texto_ppal" android:textSize="20sp" />
+    <Button android:id="@+id/btnAgregarCbu" android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginHorizontal="28dp" android:layout_marginTop="16dp" android:backgroundTint="@color/secundario" android:text="Agregar CBU" android:textColor="@color/primario" android:textSize="18sp" android:textStyle="bold" />
+    <Button android:id="@+id/btnVolverMisConsignaciones" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="54dp" android:backgroundTint="@color/fondo_sec_b" android:text="VOLVER A MIS CONSIGNACIONES" android:textColor="@color/texto_ppal" android:visibility="gone" />
+</LinearLayout>

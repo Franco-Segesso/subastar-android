@@ -63,6 +63,11 @@ public class PerfilActivity extends AppCompatActivity {
         });
 
         // Botón Cerrar Sesión
+        findViewById(R.id.btnMisConsignaciones).setOnClickListener(v -> {
+            Intent intent = new Intent(this, MisConsignacionesActivity.class);
+            startActivity(intent);
+        });
+
         ImageButton btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnCerrarSesion.setOnClickListener(v -> {
             tokenManager.clearToken();

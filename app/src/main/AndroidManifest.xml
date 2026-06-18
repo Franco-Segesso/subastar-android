@@ -52,6 +52,12 @@
 
         <activity android:name=".PerfilActivity" />
         <activity android:name=".AgregarMedioPagoActivity" />
+        <activity android:name=".ConsignarBienActivity" android:exported="false" />
+        <activity android:name=".ConsignacionEnviadaActivity" android:exported="false" />
+        <activity android:name=".MisConsignacionesActivity" android:exported="false" />
+        <activity android:name=".DetalleConsignacionActivity" android:exported="false" />
+        <activity android:name=".CuentaDestinoConsignacionActivity" android:exported="false" />
+        <activity android:name=".ResultadoConsignacionActivity" android:exported="false" />
 
         <activity android:name=".MedioPagoExitosoActivity" android:exported="false" />
 

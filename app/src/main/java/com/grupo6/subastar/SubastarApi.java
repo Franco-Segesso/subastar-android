@@ -3,6 +3,9 @@ package com.grupo6.subastar;
 import com.grupo6.subastar.dto.LoginRequest;
 import com.grupo6.subastar.dto.LoginResponse;
 import com.grupo6.subastar.dto.PujaMensajeDTO;
+import com.grupo6.subastar.dto.ConsignacionDTO;
+import com.grupo6.subastar.dto.CuentaDestinoRequest;
+import com.grupo6.subastar.dto.RespuestaConsignacionRequest;
 import com.grupo6.subastar.model.ItemCatalogo;
 import com.grupo6.subastar.model.Subasta;
 
@@ -22,6 +25,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
@@ -127,6 +131,42 @@ public interface SubastarApi {
     Call<ResponseBody> darDeBajaMedioPago(
             @Path("id") Integer id,
             @Header("Authorization") String token
+    );
+
+    @GET("/v1/consignaciones")
+    Call<List<ConsignacionDTO>> obtenerConsignaciones(@Header("Authorization") String token);
+
+    @GET("/v1/consignaciones/{id}")
+    Call<ConsignacionDTO> obtenerDetalleConsignacion(
+            @Header("Authorization") String token,
+            @Path("id") Integer id
+    );
+
+    @Multipart
+    @POST("/v1/consignaciones")
+    Call<ConsignacionDTO> crearConsignacion(
+            @Header("Authorization") String token,
+            @Part("tipoBien") RequestBody tipoBien,
+            @Part("descripcion") RequestBody descripcion,
+            @Part("artista") RequestBody artista,
+            @Part("fechaCreacion") RequestBody fechaCreacion,
+            @Part("historia") RequestBody historia,
+            @Part("declaraPropiedad") RequestBody declaraPropiedad,
+            @Part List<MultipartBody.Part> fotos
+    );
+
+    @PATCH("/v1/consignaciones/{id}/respuesta")
+    Call<ResponseBody> responderConsignacion(
+            @Header("Authorization") String token,
+            @Path("id") Integer id,
+            @Body RespuestaConsignacionRequest request
+    );
+
+    @POST("/v1/consignaciones/{id}/cuenta-destino")
+    Call<ResponseBody> registrarCuentaDestino(
+            @Header("Authorization") String token,
+            @Path("id") Integer id,
+            @Body CuentaDestinoRequest request
     );
 }
 

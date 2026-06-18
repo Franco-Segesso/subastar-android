@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primario"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnVolver"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/secundario" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:text="Consignar un Bien"
+            android:textColor="@color/texto_ppal"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="16dp"
+        android:background="@color/bordes" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView style="@style/ConsignacionLabel" android:text="TIPO DE BIEN" />
+            <EditText android:id="@+id/etTipoBien" style="@style/ConsignacionInput" android:hint="Obra de arte" />
+
+            <TextView style="@style/ConsignacionLabel" android:text="DESCRIPCION DETALLADA DEL ARTICULO" />
+            <EditText android:id="@+id/etDescripcion" style="@style/ConsignacionInput" android:hint="Descripcion detallada del articulo..." android:minLines="3" />
+
+            <TextView style="@style/ConsignacionLabel" android:text="ARTISTA / DISENADOR (SI APLICA)" />
+            <EditText android:id="@+id/etArtista" style="@style/ConsignacionInput" android:hint="Fernando Fader" />
+
+            <TextView style="@style/ConsignacionLabel" android:text="FECHA DE CREACION APROXIMADA" />
+            <EditText android:id="@+id/etFechaCreacion" style="@style/ConsignacionInput" android:hint="1929" />
+
+            <TextView style="@style/ConsignacionLabel" android:text="HISTORIA Y PROCEDENCIA" />
+            <EditText android:id="@+id/etHistoria" style="@style/ConsignacionInput" android:hint="Ej: adquirida en galeria..." android:minLines="2" />
+
+            <TextView style="@style/ConsignacionLabel" android:text="FOTOGRAFIAS DEL BIEN (MIN 6)" />
+            <Button
+                android:id="@+id/btnSeleccionarFotos"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:backgroundTint="@color/fondo_sec_b"
+                android:text="Seleccionar fotos"
+                android:textColor="@color/texto_ppal" />
+
+            <TextView
+                android:id="@+id/tvCantidadFotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="0 de 6 fotos cargadas"
+                android:textColor="@color/texto_sec"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/chkPropiedad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:buttonTint="@color/secundario"
+                android:text="Declaro ser propietario legitimo del bien"
+                android:textColor="@color/texto_sec" />
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnEnviarSolicitud"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:backgroundTint="@color/secundario"
+        android:text="ENVIAR SOLICITUD"
+        android:textColor="@color/primario"
+        android:textStyle="bold" />
+</LinearLayout>

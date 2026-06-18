@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primario"
+    android:orientation="vertical"
+    android:padding="28dp">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+        <ImageButton android:id="@+id/btnVolver" android:layout_width="40dp" android:layout_height="40dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_arrow_back" app:tint="@color/secundario" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Detalle del bien" android:textColor="@color/texto_ppal" android:textSize="22sp" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="16dp" android:background="@color/bordes" />
+
+    <TextView
+        android:id="@+id/tvResultadoIcono"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="72dp"
+        android:gravity="center"
+        android:text="✕"
+        android:textColor="@color/error"
+        android:textSize="72sp" />
+
+    <TextView android:id="@+id/tvResultadoTitulo" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:gravity="center" android:text="Condiciones rechazadas" android:textColor="@color/texto_ppal" android:textSize="18sp" />
+    <TextView android:id="@+id/tvResultadoMensaje" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center" android:lineSpacingExtra="4dp" android:text="El bien sera devuelto y la empresa te informara los costos asociados" android:textColor="@color/texto_sec" android:textSize="13sp" />
+
+    <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+
+    <Button android:id="@+id/btnVolverMisConsignaciones" android:layout_width="match_parent" android:layout_height="52dp" android:backgroundTint="@color/secundario" android:text="VOLVER A MIS CONSIGNACIONES" android:textColor="@color/primario" />
+</LinearLayout>

@@ -109,6 +109,14 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(HomeActivity.this, "Esa funcionalidad todavía no está disponible", Toast.LENGTH_SHORT).show();
         });
 
+        navConsignacion.setOnClickListener(v -> {
+            if (tokenManager.getToken() == null) {
+                startActivity(new Intent(HomeActivity.this, WelcomeActivity.class));
+            } else {
+                startActivity(new Intent(HomeActivity.this, ConsignarBienActivity.class));
+            }
+        });
+
         recyclerView = findViewById(R.id.recyclerViewSubastas);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
