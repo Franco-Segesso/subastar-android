@@ -395,6 +395,7 @@ public class HomeActivity extends AppCompatActivity {
         if (tokenManager != null && tokenManager.getToken() != null) {
             verificarMediosPagoObligatorio();
             chequearNotificacionesPendientes();
+            suscribirAFirebase();
         }
     }
 
@@ -454,6 +455,23 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onFailure(retrofit2.Call<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>> call, Throwable t) {}
         });
+    }
+
+    private void suscribirAFirebase() {
+        // Recuperamos el ID del cliente de tus SharedPreferences
+        int idCliente = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getInt("USER_ID", -1);
+
+        if (idCliente != -1) {
+            com.google.firebase.messaging.FirebaseMessaging.getInstance()
+                    .subscribeToTopic("cliente_" + idCliente)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("FIREBASE", "Suscrito exitosamente al canal: cliente_" + idCliente);
+                        } else {
+                            Log.e("FIREBASE", "Falló la suscripción a Firebase");
+                        }
+                    });
+        }
     }
 
     private void filtrarBuscador(String textoBusqueda) {
