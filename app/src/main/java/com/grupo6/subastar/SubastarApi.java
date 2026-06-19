@@ -2,6 +2,7 @@ package com.grupo6.subastar;
 
 import com.grupo6.subastar.dto.LoginRequest;
 import com.grupo6.subastar.dto.LoginResponse;
+import com.grupo6.subastar.dto.NotificacionDTO;
 import com.grupo6.subastar.dto.PujaMensajeDTO;
 import com.grupo6.subastar.dto.ConsignacionDTO;
 import com.grupo6.subastar.dto.CuentaDestinoRequest;
@@ -210,6 +211,28 @@ public interface SubastarApi {
             @Header("Authorization") String token,
             @Path("compraId") Integer compraId,
             @Body PagarCompraRequest request
+    );
+
+
+    //NOTIFICACIONES
+    // GET Notificaciones (Con filtro opcional)
+    @GET("v1/clientes/me/notificaciones")
+    Call<List<NotificacionDTO>> getNotificaciones(
+            @Header("Authorization") String token,
+            @Query("leidas") Boolean leidas
+    );
+
+    // PATCH Marcar todas como leídas
+    @PATCH("v1/clientes/me/notificaciones/leer-todas")
+    Call<java.util.Map<String, Object>> marcarTodasComoLeidas(
+            @Header("Authorization") String token
+    );
+
+    // PATCH Marcar una como leída
+    @PATCH("v1/clientes/me/notificaciones/{id}/leer")
+    Call<java.util.Map<String, String>> marcarComoLeida(
+            @Header("Authorization") String token,
+            @Path("id") Integer id
     );
 }
 

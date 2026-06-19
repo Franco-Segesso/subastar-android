@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardNotificacion"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- ICONO CIRCULAR -->
+        <ImageView
+            android:id="@+id/ivIconoNotif"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_circulo_dorado"
+            android:backgroundTint="@color/bordes"
+            android:padding="8dp"
+            android:src="@drawable/ic_notifications"
+            app:tint="@color/texto_ppal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- TÍTULO -->
+        <TextView
+            android:id="@+id/tvTituloItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Título Notificación"
+            android:textColor="@color/texto_ppal"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivIconoNotif"
+            app:layout_constraintTop_toTopOf="@+id/ivIconoNotif" />
+
+        <!-- MENSAJE -->
+        <TextView
+            android:id="@+id/tvMensajeItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Cuerpo del mensaje con los detalles..."
+            android:textColor="@color/texto_sec"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvTituloItem"
+            app:layout_constraintTop_toBottomOf="@+id/tvTituloItem" />
+
+        <!-- ACCIÓN / REDIRECCIÓN -->
+        <TextView
+            android:id="@+id/tvAccionItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Ver detalle >"
+            android:textColor="@color/texto_ppal"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMensajeItem" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
