@@ -54,6 +54,18 @@
         app:layout_constraintEnd_toStartOf="@+id/btnPerfil"
         app:layout_constraintTop_toTopOf="@+id/btnPerfil" />
 
+    <View
+        android:id="@+id/badgeNotificacion"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_badge_relleno"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/btnNotificaciones"
+        app:layout_constraintEnd_toEndOf="@+id/btnNotificaciones" />
+
+
+
     <EditText
         android:id="@+id/etBuscador"
         android:layout_width="0dp"

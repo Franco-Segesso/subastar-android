@@ -55,6 +55,11 @@
 
         <activity android:name=".MedioPagoExitosoActivity" android:exported="false" />
 
+        <activity android:name=".PasarelaPagoActivity" />
+        <activity android:name=".MultasActivity" />
+        <activity android:name=".MisConsignacionesActivity" />
+        <activity android:name=".NotificacionesActivity"/>
+
     </application>
 
 </manifest>

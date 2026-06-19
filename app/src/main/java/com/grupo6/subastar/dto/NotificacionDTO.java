@@ -1,6 +1,7 @@
 package com.grupo6.subastar.dto;
-
+import com.google.gson.annotations.SerializedName;
 public class NotificacionDTO {
+    @SerializedName("id")
     private Integer identificador;
     private String titulo;
     private String mensaje;
@@ -17,4 +18,8 @@ public class NotificacionDTO {
     public Integer getReferenciaId() { return referenciaId; }
     public String getFechaEnvio() { return fechaEnvio; }
     public Boolean getLeido() { return leido; }
+
+    public void setLeido(Boolean leido) {
+        this.leido = leido;
+    }
 }

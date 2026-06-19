@@ -91,6 +91,10 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
         notifyDataSetChanged();
     }
 
+    public List<NotificacionDTO> getNotificaciones() {
+        return this.notificaciones;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         MaterialCardView cardNotificacion;
         ImageView ivIcono;

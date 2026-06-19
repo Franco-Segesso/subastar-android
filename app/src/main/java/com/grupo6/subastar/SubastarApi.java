@@ -134,20 +134,20 @@ public interface SubastarApi {
 
     //NOTIFICACIONES
     // GET Notificaciones (Con filtro opcional)
-    @GET("clientes/me/notificaciones")
+    @GET("v1/clientes/me/notificaciones")
     Call<List<NotificacionDTO>> getNotificaciones(
             @Header("Authorization") String token,
             @Query("leidas") Boolean leidas
     );
 
     // PATCH Marcar todas como leídas
-    @PATCH("clientes/me/notificaciones/leer-todas")
+    @PATCH("v1/clientes/me/notificaciones/leer-todas")
     Call<java.util.Map<String, Object>> marcarTodasComoLeidas(
             @Header("Authorization") String token
     );
 
     // PATCH Marcar una como leída
-    @PATCH("clientes/me/notificaciones/{id}/leer")
+    @PATCH("v1/clientes/me/notificaciones/{id}/leer")
     Call<java.util.Map<String, String>> marcarComoLeida(
             @Header("Authorization") String token,
             @Path("id") Integer id
