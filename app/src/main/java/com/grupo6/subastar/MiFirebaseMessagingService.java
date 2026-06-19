@@ -1,5 +1,7 @@
 package com.grupo6.subastar;
 
+import android.util.Log;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -9,13 +11,21 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // Firebase nos manda los datos en un formato "Data" (Clave-Valor)
+        // ESTO NOS AVISARÁ EN EL LOGCAT SI EL MENSAJE LLEGÓ AL CELULAR
+        Log.d("FIREBASE_TEST", "¡¡¡Mensaje recibido desde Firebase!!!");
+
         if (remoteMessage.getData().size() > 0) {
+            Log.d("FIREBASE_TEST", "Datos recibidos: " + remoteMessage.getData());
+
             String titulo = remoteMessage.getData().get("titulo");
             String mensaje = remoteMessage.getData().get("mensaje");
 
-            // Llamamos a la clase que creamos en el paso anterior para que salte desde arriba
             GeneradorNotificacionesLocales.lanzarNotificacion(this, titulo, mensaje);
         }
+    }
+
+    @Override
+    public void onNewToken(String token) {
+        Log.d("FIREBASE_TEST", "Nuevo token generado: " + token);
     }
 }
