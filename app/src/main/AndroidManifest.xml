@@ -7,7 +7,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -69,6 +69,14 @@
         <activity android:name=".PasarelaPagoActivity" />
         <activity android:name=".MultasActivity" />
         <activity android:name=".NotificacionesActivity"/>
+
+        <service
+            android:name=".MiFirebaseMessagingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
     </application>
 
