@@ -17,8 +17,10 @@ import java.util.List;
 public class PujaHistorialAdapter extends RecyclerView.Adapter<PujaHistorialAdapter.ViewHolder> {
 
     private final List<PujaMensajeDTO> pujas = new ArrayList<>();
+    private final String moneda;
 
-    public PujaHistorialAdapter(Integer miClienteId) {
+    public PujaHistorialAdapter(Integer miClienteId, String moneda) {
+        this.moneda = moneda;
     }
 
     public void setPujas(List<PujaMensajeDTO> nuevasPujas) {
@@ -48,7 +50,7 @@ public class PujaHistorialAdapter extends RecyclerView.Adapter<PujaHistorialAdap
         PujaMensajeDTO puja = pujas.get(position);
         PujaMensajeDTO.ClienteDTO cliente = puja.getAsistente() != null ? puja.getAsistente().getCliente() : null;
 
-        holder.tvMontoPuja.setText(String.format("USD %.2f", puja.getImporte()));
+        holder.tvMontoPuja.setText(String.format("%s %.2f", moneda, puja.getImporte()));
         holder.tvNombrePostor.setText(cliente != null ? cliente.getNombreCompleto() : "Postor");
         holder.tvHoraPuja.setText(formatearHora(puja.getFechaHora()));
 

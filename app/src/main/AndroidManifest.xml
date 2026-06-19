@@ -67,6 +67,7 @@
 
         <activity android:name=".PasarelaPagoActivity" />
         <activity android:name=".MultasActivity" />
+        <activity android:name=".PagarMultaActivity" android:exported="false" />
         <activity android:name=".NotificacionesActivity"/>
 
     </application>

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.grupo6.subastar.adapter.MedioPagoAdapter;
 import com.grupo6.subastar.dto.MedioPagoDTO;
+import com.grupo6.subastar.dto.MultaDTO;
 import java.util.ArrayList;
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -26,6 +27,7 @@ public class PerfilActivity extends AppCompatActivity {
 
 
     private TextView tvNombreCompleto, tvEmail, tvCategoria, tvDireccion, tvPais, tvDocumento;
+    private TextView tvMultasPendientes, tvBadgeMultas;
     private RecyclerView recyclerMediosPago;
     private MedioPagoAdapter adapter;
     private List<MedioPagoDTO> listaMedios = new ArrayList<>();
@@ -47,6 +49,8 @@ public class PerfilActivity extends AppCompatActivity {
         tvDireccion      = findViewById(R.id.tvDireccion);
         tvPais           = findViewById(R.id.tvPais);
         tvDocumento      = findViewById(R.id.tvDocumento);
+        tvMultasPendientes = findViewById(R.id.tvMultasPendientesPerfil);
+        tvBadgeMultas = findViewById(R.id.tvBadgeMultasPerfil);
         recyclerMediosPago = findViewById(R.id.recyclerMediosPago);
 
         recyclerMediosPago.setLayoutManager(new LinearLayoutManager(this));
@@ -67,6 +71,8 @@ public class PerfilActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MisConsignacionesActivity.class);
             startActivity(intent);
         });
+        findViewById(R.id.btnMultasPerfil).setOnClickListener(v ->
+                startActivity(new Intent(this, MultasActivity.class)));
 
         ImageButton btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnCerrarSesion.setOnClickListener(v -> {
@@ -103,6 +109,13 @@ public class PerfilActivity extends AppCompatActivity {
         tvDocumento.setText(documento);
 
         cargarMediosPago();
+        cargarMultasPendientes();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (api != null) cargarMultasPendientes();
     }
 
     @Override
@@ -133,6 +146,36 @@ public class PerfilActivity extends AppCompatActivity {
                 Toast.makeText(PerfilActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void cargarMultasPendientes() {
+        api.obtenerMultas("Bearer " + tokenManager.getToken())
+                .enqueue(new Callback<List<MultaDTO>>() {
+                    @Override
+                    public void onResponse(
+                            Call<List<MultaDTO>> call,
+                            Response<List<MultaDTO>> response) {
+                        if (!response.isSuccessful() || response.body() == null) return;
+                        int pendientes = 0;
+                        for (MultaDTO multa : response.body()) {
+                            if ("pendiente".equalsIgnoreCase(multa.getEstado())) {
+                                pendientes++;
+                            }
+                        }
+                        tvMultasPendientes.setText(pendientes == 0
+                                ? "Sin multas pendientes"
+                                : pendientes + (pendientes == 1
+                                        ? " multa pendiente de pago"
+                                        : " multas pendientes de pago"));
+                        tvBadgeMultas.setText(String.valueOf(pendientes));
+                        tvBadgeMultas.setVisibility(
+                                pendientes > 0 ? View.VISIBLE : View.GONE);
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<MultaDTO>> call, Throwable t) {
+                    }
+                });
     }
 
     private void confirmarEliminar(MedioPagoDTO item) {

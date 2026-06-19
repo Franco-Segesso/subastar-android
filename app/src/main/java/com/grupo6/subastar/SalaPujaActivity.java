@@ -60,6 +60,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     private Integer subastaId;
     private Integer itemId;
     private Integer miClienteId;
+    private String monedaSubasta;
     private String tokenJwt;
     private SubastarApi api;
 
@@ -99,6 +100,10 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         subastaId = getIntent().getIntExtra("SUBASTA_ID", -1);
         itemId = getIntent().getIntExtra("ITEM_ID", -1);
+        monedaSubasta = getIntent().getStringExtra("SUBASTA_MONEDA");
+        if (monedaSubasta == null || monedaSubasta.isBlank()) {
+            monedaSubasta = "ARS";
+        }
         if (subastaId <= 0 || itemId <= 0) {
             Toast.makeText(this, "No se pudo abrir la sala de puja.", Toast.LENGTH_LONG).show();
             finish();
@@ -152,8 +157,8 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         if (titulo != null) tvHeaderTitle.setText("Sala de puja - " + titulo);
         if (precioBase > 0) {
-            tvBase.setText(String.format("Base: $%.2f", precioBase));
-            tvOfertaActual.setText(String.format("$%.2f", precioBase));
+            tvBase.setText(String.format("Base: %s %.2f", monedaSubasta, precioBase));
+            tvOfertaActual.setText(String.format("%s %.2f", monedaSubasta, precioBase));
         }
         if (urlImagen != null && !urlImagen.isEmpty()) {
             Glide.with(this).load(urlImagen).centerCrop().into(ivItemImagen);
@@ -167,7 +172,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void configurarRecyclerView() {
-        adapter = new PujaHistorialAdapter(miClienteId);
+        adapter = new PujaHistorialAdapter(miClienteId, monedaSubasta);
         rvHistorialPujas.setLayoutManager(new LinearLayoutManager(this));
         rvHistorialPujas.setAdapter(adapter);
     }
@@ -414,7 +419,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         itemActivo = esEsteItem && !estado.isCerrado();
 
         if (estado.getImporteActual() != null && esEsteItem) {
-            tvOfertaActual.setText(String.format("USD %.2f", estado.getImporteActual()));
+            tvOfertaActual.setText(String.format("%s %.2f", monedaSubasta, estado.getImporteActual()));
         }
 
         int segundos = estado.getTiempoRestanteSegundos() != null ? estado.getTiempoRestanteSegundos() : 0;
@@ -440,7 +445,7 @@ public class SalaPujaActivity extends AppCompatActivity {
 
     private void actualizarResumenConPuja(PujaMensajeDTO puja) {
         if (puja == null) return;
-        tvOfertaActual.setText(String.format("USD %.2f", puja.getImporte()));
+        tvOfertaActual.setText(String.format("%s %.2f", monedaSubasta, puja.getImporte()));
         if (esMiPuja(puja)) {
             soyMayorPostor = true;
             tvBannerEstado.setText("Actualmente eres el mayor postor de esta subasta!");
@@ -534,7 +539,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         } else if (miClienteId.equals(cierre.getIdClienteGanador())) {
             ivIcono.setImageResource(android.R.drawable.btn_star_big_on);
             tvTitulo.setText("¡FELICIDADES!\nGANASTE LA SUBASTA");
-            tvMensaje.setText("Se registró tu compra por USD " + cierre.getImporteFinal() + ".");
+            tvMensaje.setText("Se registró tu compra por " + monedaSubasta + " " + cierre.getImporteFinal() + ".");
 
             btnSecundario.setVisibility(android.view.View.VISIBLE);
             btnSecundario.setText("Ver más ítems");
@@ -557,7 +562,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         } else {
             ivIcono.setImageResource(android.R.drawable.ic_menu_recent_history);
             tvTitulo.setText("Subasta Finalizada");
-            tvMensaje.setText("El ítem fue vendido a otro postor por USD " + cierre.getImporteFinal());
+            tvMensaje.setText("El ítem fue vendido a otro postor por " + monedaSubasta + " " + cierre.getImporteFinal());
             btnPrincipal.setText("Volver al Catálogo");
             btnPrincipal.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
         }

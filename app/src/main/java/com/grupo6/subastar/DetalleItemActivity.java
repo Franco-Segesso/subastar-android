@@ -55,6 +55,7 @@ public class DetalleItemActivity extends AppCompatActivity {
         String nombreItem = getIntent().getStringExtra("ITEM_TITULO");
         Double baseItem = getIntent().getDoubleExtra("ITEM_BASE", 0);
         String fechaSubasta = getIntent().getStringExtra("SUBASTA_FECHA");
+        String monedaSubasta = getIntent().getStringExtra("SUBASTA_MONEDA");
         btnPujar.setVisibility(View.VISIBLE);
         configurarBotonPujaPorEstado(estado, false);
 
@@ -74,6 +75,7 @@ public class DetalleItemActivity extends AppCompatActivity {
                 intent.putExtra("ITEM_TITULO", nombreItem);
                 intent.putExtra("ITEM_BASE", baseItem);
                 intent.putExtra("SUBASTA_FECHA", fechaSubasta);
+                intent.putExtra("SUBASTA_MONEDA", monedaSubasta);
 
                 startActivity(intent);
             });

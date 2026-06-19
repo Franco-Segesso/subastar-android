@@ -188,7 +188,8 @@ public class CatalogoActivity extends AppCompatActivity {
                                 CatalogoActivity.this,
                                 subasta.getId(),
                                 subasta.getEstado(),
-                                fechaFormateada
+                                fechaFormateada,
+                                subasta.getMoneda()
 
                         );
                         // Aseguramos que la lista se repinte por completo al volver de la sala
