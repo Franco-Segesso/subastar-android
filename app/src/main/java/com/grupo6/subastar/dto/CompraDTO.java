@@ -11,6 +11,8 @@ public class CompraDTO {
     private String modalidadEntrega;
     private String direccionEnvio;
     private String avisoSeguro;
+    private String estadoPago;
+    private Integer medioPagoId;
 
     public Integer getIdentificador() { return identificador; }
     public SubastaDTO getSubasta() { return subasta; }
@@ -20,8 +22,11 @@ public class CompraDTO {
     public Double getCostoEnvio() { return costoEnvio; }
     public Double getTotal() { return total; }
     public String getModalidadEntrega() { return modalidadEntrega; }
+    public void setModalidadEntrega(String modalidadEntrega) { this.modalidadEntrega = modalidadEntrega; }
     public String getDireccionEnvio() { return direccionEnvio; }
     public String getAvisoSeguro() { return avisoSeguro; }
+    public String getEstadoPago() { return estadoPago; }
+    public Integer getMedioPagoId() { return medioPagoId; }
 
     public static class SubastaDTO {
         private Integer identificador;

@@ -70,6 +70,10 @@ public class DetalleMisPujasActivity extends AppCompatActivity {
         TextView btnFactura = findViewById(R.id.btnVerFacturaCompra);
         if (compraId > 0) {
             btnFactura.setVisibility(View.VISIBLE);
+            String estadoPago = getIntent().getStringExtra("ESTADO_PAGO");
+            btnFactura.setText("pagada".equalsIgnoreCase(estadoPago)
+                    ? "VER FACTURA DE COMPRA"
+                    : "PAGAR");
             btnFactura.setOnClickListener(v -> {
                 Intent intent = new Intent(this, FacturaCompraActivity.class);
                 intent.putExtra("COMPRA_ID", compraId);

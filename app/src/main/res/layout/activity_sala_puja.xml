@@ -212,38 +212,56 @@
         android:id="@+id/layoutInputPuja"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <EditText
-            android:id="@+id/etMontoPuja"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="12dp"
-            android:background="@drawable/bg_input_redondeado"
-            android:hint=""
-            android:inputType="numberDecimal"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="14dp"
-            android:textColor="@color/texto_ppal"
-            android:textColorHint="@color/texto_sec"/>
+        <TextView
+            android:id="@+id/btnSeleccionarMedioPuja"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_chip_inactivo"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="14dp"
+            android:text="Seleccionar medio de pago"
+            android:textColor="@color/texto_sec"
+            android:textSize="13sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPujar"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PUJAR ->"
-            android:textColor="@color/primario"
-            android:textStyle="bold"
-            app:backgroundTint="@color/secundario"
-            app:cornerRadius="24dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="14dp"/>
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etMontoPuja"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_input_redondeado"
+                android:hint=""
+                android:inputType="numberDecimal"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="14dp"
+                android:textColor="@color/texto_ppal"
+                android:textColorHint="@color/texto_sec"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPujar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PUJAR ->"
+                android:textColor="@color/primario"
+                android:textStyle="bold"
+                app:backgroundTint="@color/secundario"
+                app:cornerRadius="24dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="14dp"/>
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

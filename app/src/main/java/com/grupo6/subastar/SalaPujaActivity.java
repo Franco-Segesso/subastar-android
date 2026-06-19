@@ -26,6 +26,7 @@ import com.grupo6.subastar.dto.CierreSubastaDTO;
 import com.grupo6.subastar.dto.EstadoPujaDTO;
 import com.grupo6.subastar.dto.PujaMensajeDTO;
 import com.grupo6.subastar.dto.PujaRequest;
+import com.grupo6.subastar.dto.MedioPagoDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     private EditText etMontoPuja;
     private Button btnPujar;
     private RecyclerView rvHistorialPujas;
+    private TextView btnSeleccionarMedioPuja;
 
     private PujaHistorialAdapter adapter;
     private StompClient mStompClient;
@@ -77,6 +79,8 @@ public class SalaPujaActivity extends AppCompatActivity {
     private boolean itemActivo = false;
     private boolean soyMayorPostor = false;
     private TokenManager tokenManager;
+    private final List<MedioPagoDTO> mediosPago = new ArrayList<>();
+    private MedioPagoDTO medioPagoSeleccionado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +122,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         configurarRecyclerView();
         configurarBotones();
         configurarNavegacionAtras();
+        cargarMediosPago();
         ingresarSalaBackend();
     }
 
@@ -133,6 +138,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         etMontoPuja = findViewById(R.id.etMontoPuja);
         btnPujar = findViewById(R.id.btnPujar);
         rvHistorialPujas = findViewById(R.id.rvHistorialPujas);
+        btnSeleccionarMedioPuja = findViewById(R.id.btnSeleccionarMedioPuja);
 
         tvBannerEstado.setVisibility(View.GONE);
         habilitarPuja(false);
@@ -168,10 +174,16 @@ public class SalaPujaActivity extends AppCompatActivity {
 
     private void configurarBotones() {
         btnVolver.setOnClickListener(v -> salirYFinalizar());
+        btnSeleccionarMedioPuja.setOnClickListener(v -> mostrarSelectorMediosPago());
 
         btnPujar.setOnClickListener(v -> {
             if (!itemActivo) {
                 mostrarDialogoError("Este ítem no está activo para pujar.");
+                return;
+            }
+
+            if (medioPagoSeleccionado == null) {
+                mostrarDialogoError("Selecciona un medio de pago antes de pujar.");
                 return;
             }
 
@@ -229,7 +241,10 @@ public class SalaPujaActivity extends AppCompatActivity {
 
     private void realizarPujaBackend(Double monto) {
         habilitarPuja(false);
-        PujaRequest request = new PujaRequest(itemId, monto);
+        PujaRequest request = new PujaRequest(
+                itemId,
+                monto,
+                medioPagoSeleccionado.getIdentificador());
 
         api.registrarPuja(tokenJwt, subastaId, request).enqueue(new Callback<PujaMensajeDTO>() {
             @Override
@@ -255,6 +270,80 @@ public class SalaPujaActivity extends AppCompatActivity {
                 mostrarDialogoError("Error de red al intentar enviar tu puja.");
             }
         });
+    }
+
+    private void cargarMediosPago() {
+        api.obtenerMediosPago(miClienteId, tokenJwt)
+                .enqueue(new Callback<List<MedioPagoDTO>>() {
+                    @Override
+                    public void onResponse(
+                            Call<List<MedioPagoDTO>> call,
+                            Response<List<MedioPagoDTO>> response) {
+                        mediosPago.clear();
+                        if (response.isSuccessful() && response.body() != null) {
+                            for (MedioPagoDTO medio : response.body()) {
+                                if ("si".equalsIgnoreCase(medio.getActivo())) {
+                                    mediosPago.add(medio);
+                                }
+                            }
+                            if (mediosPago.size() == 1) {
+                                seleccionarMedio(mediosPago.get(0));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<MedioPagoDTO>> call, Throwable t) {
+                        Log.e("MEDIOS_PUJA", "No se pudieron cargar los medios", t);
+                    }
+                });
+    }
+
+    private void mostrarSelectorMediosPago() {
+        if (mediosPago.isEmpty()) {
+            mostrarDialogoError("No tenes medios de pago activos disponibles.");
+            return;
+        }
+        String[] opciones = new String[mediosPago.size()];
+        for (int i = 0; i < mediosPago.size(); i++) {
+            opciones[i] = descripcionMedio(mediosPago.get(i));
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Seleccionar medio de pago")
+                .setItems(opciones, (dialog, posicion) ->
+                        seleccionarMedio(mediosPago.get(posicion)))
+                .show();
+    }
+
+    private void seleccionarMedio(MedioPagoDTO medio) {
+        medioPagoSeleccionado = medio;
+        btnSeleccionarMedioPuja.setText(descripcionMedio(medio));
+        btnSeleccionarMedioPuja.setTextColor(
+                androidx.core.content.ContextCompat.getColor(this, R.color.secundario));
+        btnSeleccionarMedioPuja.setBackgroundResource(R.drawable.bg_chip_activo);
+    }
+
+    private String descripcionMedio(MedioPagoDTO medio) {
+        if (medio == null || medio.getTipo() == null) return "Medio de pago";
+        if ("tarjeta".equalsIgnoreCase(medio.getTipo())) {
+            return "Tarjeta terminada en " + valorTexto(medio.getUltimosDigitos());
+        }
+        if ("cuenta".equalsIgnoreCase(medio.getTipo())) {
+            return "Cuenta " + valorTexto(medio.getBanco())
+                    + " - " + valorTexto(medio.getMoneda())
+                    + " " + valorNumero(medio.getFondosReservados());
+        }
+        return "Cheque " + valorTexto(medio.getNroCheque())
+                + " - " + valorTexto(medio.getMoneda())
+                + " " + valorNumero(medio.getMontoGarantia());
+    }
+
+    private String valorTexto(String valor) {
+        return valor == null || valor.isBlank() ? "--" : valor;
+    }
+
+    private String valorNumero(Double valor) {
+        return String.format(java.util.Locale.US, "%.2f", valor == null ? 0.0 : valor);
     }
 
     private void conectarWebSocket() {
@@ -451,8 +540,19 @@ public class SalaPujaActivity extends AppCompatActivity {
             btnSecundario.setText("Ver más ítems");
             btnSecundario.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
 
-            btnPrincipal.setText("Pagar luego");
-            btnPrincipal.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
+            if (cierre.getCompraId() != null) {
+                btnPrincipal.setText("Ir al pago");
+                btnPrincipal.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    salirYNavegarAlPago(cierre.getCompraId());
+                });
+            } else {
+                btnPrincipal.setText("Pagar luego");
+                btnPrincipal.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    salirYNavegarAlCatalogo();
+                });
+            }
 
         } else {
             ivIcono.setImageResource(android.R.drawable.ic_menu_recent_history);
@@ -515,6 +615,29 @@ public class SalaPujaActivity extends AppCompatActivity {
 
     private void salirYNavegarAlCatalogo() {
         salirDeSala(true);
+    }
+
+    private void salirYNavegarAlPago(Integer compraId) {
+        if (saliendo) return;
+        saliendo = true;
+        api.salirSubasta(tokenJwt, subastaId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Intent intent = new Intent(
+                        SalaPujaActivity.this,
+                        FacturaCompraActivity.class);
+                intent.putExtra("COMPRA_ID", compraId);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                saliendo = false;
+                mostrarDialogoError(
+                        "No se pudo salir de la sala para continuar al pago.");
+            }
+        });
     }
 
     private void salirDeSala(boolean navegarAlCatalogo) {

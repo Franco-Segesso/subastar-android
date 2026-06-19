@@ -11,6 +11,7 @@ import com.grupo6.subastar.dto.MetricasClienteDTO;
 import com.grupo6.subastar.dto.SubastaParticipacionDTO;
 import com.grupo6.subastar.dto.CompraDTO;
 import com.grupo6.subastar.dto.ModalidadEntregaRequest;
+import com.grupo6.subastar.dto.PagarCompraRequest;
 import com.grupo6.subastar.model.ItemCatalogo;
 import com.grupo6.subastar.model.Subasta;
 
@@ -202,6 +203,13 @@ public interface SubastarApi {
             @Header("Authorization") String token,
             @Path("compraId") Integer compraId,
             @Body ModalidadEntregaRequest request
+    );
+
+    @POST("/v1/clientes/me/compras/{compraId}/pagar")
+    Call<ResponseBody> pagarCompra(
+            @Header("Authorization") String token,
+            @Path("compraId") Integer compraId,
+            @Body PagarCompraRequest request
     );
 }
 

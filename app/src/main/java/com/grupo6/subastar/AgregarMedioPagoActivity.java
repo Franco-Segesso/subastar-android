@@ -38,7 +38,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
     private View labelPaisEmisor;
 
     // Campos cuenta
-    private EditText etCbuIban, etAlias, etBancoCuenta;
+    private EditText etCbuIban, etAlias, etBancoCuenta, etFondosReservados;
     private Spinner spinnerMonedaCuenta, spinnerPaisBanco;
 
     private java.util.List<Pais> listaPaises = new java.util.ArrayList<>();
@@ -118,6 +118,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
         etCbuIban           = findViewById(R.id.etCbuIban);
         etAlias             = findViewById(R.id.etAlias);
         etBancoCuenta       = findViewById(R.id.etBancoCuenta);
+        etFondosReservados  = findViewById(R.id.etFondosReservados);
         spinnerPaisBanco    = findViewById(R.id.spinnerPaisBanco);
         spinnerMonedaCuenta = findViewById(R.id.spinnerMonedaCuenta);
 
@@ -296,6 +297,7 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
         } else if (tipoSeleccionado.equals("cuenta")) {
             String cbu   = etCbuIban.getText().toString().trim();
             String banco = etBancoCuenta.getText().toString().trim();
+            String fondos = etFondosReservados.getText().toString().trim();
             String moneda = spinnerMonedaCuenta.getSelectedItem().toString();
 
             // Leemos el país seleccionado desde el Spinner nuevo
@@ -304,8 +306,8 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
                 pais = spinnerPaisBanco.getSelectedItem().toString();
             }
 
-            if (cbu.isEmpty() || banco.isEmpty()) {
-                Toast.makeText(this, "CBU/IBAN y Banco son obligatorios", Toast.LENGTH_SHORT).show();
+            if (cbu.isEmpty() || banco.isEmpty() || fondos.isEmpty()) {
+                Toast.makeText(this, "CBU/IBAN, banco y fondos reservados son obligatorios", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -316,8 +318,21 @@ public class AgregarMedioPagoActivity extends AppCompatActivity {
             }
 
 
+            BigDecimal fondosReservados;
+            try {
+                fondosReservados = new BigDecimal(fondos);
+                if (fondosReservados.compareTo(BigDecimal.ZERO) <= 0) {
+                    etFondosReservados.setError("El monto debe ser mayor a 0");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                etFondosReservados.setError("Ingresá un monto válido");
+                return;
+            }
+
             AgregarCuentaRequest req = new AgregarCuentaRequest(cbu,
-                    etAlias.getText().toString().trim(), banco, pais, moneda);
+                    etAlias.getText().toString().trim(), banco, pais, moneda,
+                    fondosReservados);
 
             api.agregarCuenta(clienteId, token, req).enqueue(new Callback<ResponseBody>() {
                 @Override

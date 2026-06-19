@@ -1,6 +1,8 @@
 package com.grupo6.subastar;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.grupo6.subastar.dto.ConsignacionDTO;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import okhttp3.MediaType;
@@ -128,6 +131,12 @@ public class ConsignarBienActivity extends AppCompatActivity {
             return;
         }
 
+        List<MultipartBody.Part> fotos = partesFotos();
+        if (fotos.size() != fotosSeleccionadas.size()) {
+            Toast.makeText(this, "No se pudieron leer todas las fotos. Volve a seleccionarlas.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         btnEnviar.setEnabled(false);
         api.crearConsignacion(
                 "Bearer " + token,
@@ -137,7 +146,7 @@ public class ConsignarBienActivity extends AppCompatActivity {
                 parteTexto(texto(etFechaCreacion)),
                 parteTexto(texto(etHistoria)),
                 parteTexto("true"),
-                partesFotos()
+                fotos
         ).enqueue(new Callback<ConsignacionDTO>() {
             @Override
             public void onResponse(Call<ConsignacionDTO> call, Response<ConsignacionDTO> response) {
@@ -146,7 +155,15 @@ public class ConsignarBienActivity extends AppCompatActivity {
                     startActivity(new Intent(ConsignarBienActivity.this, ConsignacionEnviadaActivity.class));
                     finish();
                 } else {
-                    Toast.makeText(ConsignarBienActivity.this, "No se pudo enviar la solicitud.", Toast.LENGTH_LONG).show();
+                    String detalle = leerError(response);
+                    Log.e("CONSIGNACION", "HTTP " + response.code() + ": " + detalle);
+                    Toast.makeText(
+                            ConsignarBienActivity.this,
+                            detalle.isEmpty()
+                                    ? "No se pudo enviar la solicitud (" + response.code() + ")."
+                                    : detalle,
+                            Toast.LENGTH_LONG
+                    ).show();
                 }
             }
 
@@ -163,25 +180,52 @@ public class ConsignarBienActivity extends AppCompatActivity {
         List<MultipartBody.Part> partes = new ArrayList<>();
         for (int i = 0; i < fotosSeleccionadas.size(); i++) {
             try {
-                byte[] bytes = leerBytes(fotosSeleccionadas.get(i));
+                byte[] bytes = comprimirImagen(fotosSeleccionadas.get(i));
                 RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
                 partes.add(MultipartBody.Part.createFormData("fotos", "foto_" + i + ".jpg", body));
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e("CONSIGNACION", "No se pudo preparar la foto " + i, e);
             }
         }
         return partes;
     }
 
-    private byte[] leerBytes(Uri uri) throws Exception {
-        InputStream inputStream = getContentResolver().openInputStream(uri);
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        byte[] data = new byte[4096];
-        int nRead;
-        while (inputStream != null && (nRead = inputStream.read(data)) != -1) {
-            buffer.write(data, 0, nRead);
+    private byte[] comprimirImagen(Uri uri) throws Exception {
+        BitmapFactory.Options limites = new BitmapFactory.Options();
+        limites.inJustDecodeBounds = true;
+        try (InputStream input = getContentResolver().openInputStream(uri)) {
+            BitmapFactory.decodeStream(input, null, limites);
         }
-        if (inputStream != null) inputStream.close();
-        return buffer.toByteArray();
+
+        if (limites.outWidth <= 0 || limites.outHeight <= 0) {
+            throw new IllegalArgumentException("La imagen no es valida");
+        }
+
+        int muestra = 1;
+        while (limites.outWidth / muestra > 1600 || limites.outHeight / muestra > 1600) {
+            muestra *= 2;
+        }
+
+        BitmapFactory.Options opciones = new BitmapFactory.Options();
+        opciones.inSampleSize = muestra;
+        Bitmap bitmap;
+        try (InputStream input = getContentResolver().openInputStream(uri)) {
+            bitmap = BitmapFactory.decodeStream(input, null, opciones);
+        }
+        if (bitmap == null) {
+            throw new IllegalArgumentException("No se pudo decodificar la imagen");
+        }
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try {
+            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 82, buffer)) {
+                throw new IllegalStateException("No se pudo comprimir la imagen");
+            }
+            return buffer.toByteArray();
+        } finally {
+            bitmap.recycle();
+            buffer.close();
+        }
     }
 
     private RequestBody parteTexto(String valor) {
@@ -190,5 +234,15 @@ public class ConsignarBienActivity extends AppCompatActivity {
 
     private String texto(EditText editText) {
         return editText.getText().toString().trim();
+    }
+
+    private String leerError(Response<?> response) {
+        if (response.errorBody() == null) return "";
+        try {
+            String mensaje = new String(response.errorBody().bytes(), StandardCharsets.UTF_8).trim();
+            return mensaje.replaceFirst("^\\d{3}:\\s*", "");
+        } catch (Exception e) {
+            return "";
+        }
     }
 }

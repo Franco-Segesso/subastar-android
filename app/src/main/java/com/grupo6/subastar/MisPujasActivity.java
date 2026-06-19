@@ -153,6 +153,7 @@ public class MisPujasActivity extends AppCompatActivity {
         }
         if (item.getCompraId() != null) {
             intent.putExtra("COMPRA_ID", item.getCompraId());
+            intent.putExtra("ESTADO_PAGO", item.getEstadoPago());
         }
         startActivity(intent);
     }

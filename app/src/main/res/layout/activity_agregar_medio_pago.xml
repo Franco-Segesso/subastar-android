@@ -197,6 +197,15 @@
                     android:layout_height="48dp" android:background="@drawable/bg_input"
                     android:layout_marginBottom="16dp"/>
 
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Fondos reservados para subastas" android:textColor="@color/texto_sec"
+                    android:textSize="13sp" android:layout_marginBottom="4dp"/>
+                <EditText android:id="@+id/etFondosReservados" android:layout_width="match_parent"
+                    android:layout_height="48dp" android:background="@drawable/bg_input"
+                    android:textColor="#1A1A1A" android:paddingHorizontal="12dp"
+                    android:inputType="numberDecimal" android:layout_marginBottom="16dp"
+                    android:hint="Ej: 50000.00" android:textColorHint="#666666"/>
+
             </LinearLayout>
 
             <LinearLayout

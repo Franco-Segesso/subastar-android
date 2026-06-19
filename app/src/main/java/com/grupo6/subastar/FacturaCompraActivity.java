@@ -1,14 +1,21 @@
 package com.grupo6.subastar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import com.grupo6.subastar.dto.CompraDTO;
+import com.grupo6.subastar.dto.MedioPagoDTO;
 import com.grupo6.subastar.dto.ModalidadEntregaRequest;
+import com.grupo6.subastar.dto.PagarCompraRequest;
 import com.grupo6.subastar.util.FormatoPujas;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,6 +29,17 @@ public class FacturaCompraActivity extends AppCompatActivity {
     private TokenManager tokenManager;
     private int compraId;
     private TextView error;
+    private TextView selectorMedio;
+    private TextView btnEnvio;
+    private TextView btnRetiro;
+    private TextView btnFinalizar;
+    private LinearLayout contenedorModalidad;
+    private CompraDTO compraActual;
+    private final List<MedioPagoDTO> medios = new ArrayList<>();
+    private MedioPagoDTO medioSeleccionado;
+    private String modalidadSeleccionada;
+    private boolean procesando;
+    private boolean entregaRegistrada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +58,21 @@ public class FacturaCompraActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(SubastarApi.class);
+
         error = findViewById(R.id.tvFacturaError);
+        selectorMedio = findViewById(R.id.btnSeleccionarMedioCompra);
+        btnEnvio = findViewById(R.id.btnElegirEnvio);
+        btnRetiro = findViewById(R.id.btnElegirRetiro);
+        btnFinalizar = findViewById(R.id.btnFinalizarCompra);
+        contenedorModalidad = findViewById(R.id.contenedorModalidad);
 
         findViewById(R.id.btnVolverFactura).setOnClickListener(v -> finish());
-        findViewById(R.id.btnElegirEnvio).setOnClickListener(v ->
-                confirmarModalidad("envio"));
-        findViewById(R.id.btnElegirRetiro).setOnClickListener(v ->
-                confirmarModalidad("retiro"));
+        selectorMedio.setOnClickListener(v -> mostrarSelectorMedios());
+        btnEnvio.setOnClickListener(v -> seleccionarModalidad("envio"));
+        btnRetiro.setOnClickListener(v -> seleccionarModalidad("retiro"));
+        btnFinalizar.setOnClickListener(v -> finalizarCompra());
 
+        cargarMedios();
         cargarCompra();
     }
 
@@ -57,11 +82,13 @@ public class FacturaCompraActivity extends AppCompatActivity {
             public void onResponse(Call<CompraDTO> call, Response<CompraDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     error.setVisibility(View.GONE);
-                    mostrarCompra(response.body());
+                    compraActual = response.body();
+                    mostrarCompra(compraActual);
+                    preseleccionarMedio();
                 } else {
                     mostrarError(response.code() == 404
                             ? "La compra todavía no está disponible."
-                            : "No se pudo cargar la factura.");
+                            : "No se pudo cargar el detalle del pago.");
                 }
             }
 
@@ -70,6 +97,34 @@ public class FacturaCompraActivity extends AppCompatActivity {
                 mostrarError("No se pudo conectar con el servidor.");
             }
         });
+    }
+
+    private void cargarMedios() {
+        Integer clienteId = tokenManager.getClienteId();
+        if (clienteId == null || clienteId <= 0) return;
+        api.obtenerMediosPago(clienteId, token())
+                .enqueue(new Callback<List<MedioPagoDTO>>() {
+                    @Override
+                    public void onResponse(
+                            Call<List<MedioPagoDTO>> call,
+                            Response<List<MedioPagoDTO>> response) {
+                        medios.clear();
+                        if (response.isSuccessful() && response.body() != null) {
+                            for (MedioPagoDTO medio : response.body()) {
+                                if ("si".equalsIgnoreCase(medio.getActivo())) {
+                                    medios.add(medio);
+                                }
+                            }
+                            if (medios.size() == 1) seleccionarMedio(medios.get(0));
+                            preseleccionarMedio();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<MedioPagoDTO>> call, Throwable t) {
+                        mostrarError("No se pudieron cargar tus medios de pago.");
+                    }
+                });
     }
 
     private void mostrarCompra(CompraDTO compra) {
@@ -86,25 +141,26 @@ public class FacturaCompraActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvFacturaSubasta)).setText(nombreSubasta);
         ((TextView) findViewById(R.id.tvFacturaItem)).setText(item);
         ((TextView) findViewById(R.id.tvFacturaImporte)).setText(
-                "Importe pujado\n" + FormatoPujas.moneda(
+                "Precio pujado\n" + FormatoPujas.moneda(
                         moneda, compra.getImportePujado()));
         ((TextView) findViewById(R.id.tvFacturaComision)).setText(
-                "Comisión\n" + FormatoPujas.moneda(
-                        moneda, compra.getComision()));
+                "Comisión\n" + FormatoPujas.moneda(moneda, compra.getComision()));
         ((TextView) findViewById(R.id.tvFacturaEnvio)).setText(
                 compra.getCostoEnvio() == null
-                        ? "Costo de envío\nPendiente de cotización"
+                        ? "Costo de envío\nSe define según la modalidad"
                         : "Costo de envío\n" + FormatoPujas.moneda(
                         moneda, compra.getCostoEnvio()));
         ((TextView) findViewById(R.id.tvFacturaTotal)).setText(
-                "TOTAL\n" + FormatoPujas.moneda(moneda, compra.getTotal()));
+                "TOTAL A PAGAR\n" + FormatoPujas.moneda(moneda, compra.getTotal()));
+        ((TextView) findViewById(R.id.tvFacturaSeguro)).setText(
+                compra.getAvisoSeguro() == null ? "" : compra.getAvisoSeguro());
 
         String modalidad = compra.getModalidadEntrega() == null
                 ? "pendiente" : compra.getModalidadEntrega();
-        ((TextView) findViewById(R.id.tvFacturaModalidad)).setText(
-                "Modalidad de entrega: " + modalidad.toUpperCase());
-        ((LinearLayout) findViewById(R.id.contenedorModalidad)).setVisibility(
-                "pendiente".equalsIgnoreCase(modalidad) ? View.VISIBLE : View.GONE);
+        modalidadSeleccionada = "pendiente".equalsIgnoreCase(modalidad)
+                ? null : modalidad.toLowerCase(Locale.ROOT);
+        entregaRegistrada = modalidadSeleccionada != null;
+        actualizarModalidadVisual();
 
         TextView direccion = findViewById(R.id.tvFacturaDireccion);
         if (compra.getDireccionEnvio() == null || compra.getDireccionEnvio().isBlank()) {
@@ -113,49 +169,226 @@ public class FacturaCompraActivity extends AppCompatActivity {
             direccion.setText("Dirección de envío: " + compra.getDireccionEnvio());
             direccion.setVisibility(View.VISIBLE);
         }
-        ((TextView) findViewById(R.id.tvFacturaSeguro)).setText(
-                compra.getAvisoSeguro() == null ? "" : compra.getAvisoSeguro());
+
+        boolean pagada = "pagada".equalsIgnoreCase(compra.getEstadoPago());
+        btnFinalizar.setText(pagada ? "COMPRA PAGADA" : "FINALIZAR COMPRA");
+        btnFinalizar.setEnabled(!pagada);
+        selectorMedio.setEnabled(!pagada);
+        contenedorModalidad.setVisibility(pagada ? View.GONE : View.VISIBLE);
     }
 
-    private void confirmarModalidad(String modalidad) {
-        boolean retiro = "retiro".equals(modalidad);
-        String mensaje = retiro
-                ? "Al retirar el bien personalmente, la cobertura del seguro finalizará al entregarlo. Esta elección no se puede cambiar."
-                : "El costo del envío estará a tu cargo y se incorporará al total cuando sea cotizado. Esta elección no se puede cambiar.";
-
+    private void mostrarSelectorMedios() {
+        if (medios.isEmpty()) {
+            mostrarError("No tenés medios de pago activos.");
+            return;
+        }
+        String[] opciones = new String[medios.size()];
+        for (int i = 0; i < medios.size(); i++) {
+            opciones[i] = descripcionMedio(medios.get(i));
+        }
         new AlertDialog.Builder(this)
-                .setTitle(retiro ? "Confirmar retiro" : "Confirmar envío")
-                .setMessage(mensaje)
-                .setNegativeButton("Cancelar", null)
-                .setPositiveButton("Confirmar", (dialog, which) ->
-                        guardarModalidad(modalidad))
+                .setTitle("Seleccionar medio de pago")
+                .setItems(opciones, (dialog, posicion) ->
+                        seleccionarMedio(medios.get(posicion)))
                 .show();
     }
 
-    private void guardarModalidad(String modalidad) {
+    private void seleccionarMedio(MedioPagoDTO medio) {
+        medioSeleccionado = medio;
+        selectorMedio.setText(descripcionMedio(medio));
+        selectorMedio.setTextColor(ContextCompat.getColor(this, R.color.secundario));
+        selectorMedio.setBackgroundResource(R.drawable.bg_chip_activo);
+    }
+
+    private void preseleccionarMedio() {
+        if (compraActual == null || compraActual.getMedioPagoId() == null
+                || medioSeleccionado != null) return;
+        for (MedioPagoDTO medio : medios) {
+            if (compraActual.getMedioPagoId().equals(medio.getIdentificador())) {
+                seleccionarMedio(medio);
+                return;
+            }
+        }
+    }
+
+    private void seleccionarModalidad(String modalidad) {
+        if (compraActual != null
+                && "pagada".equalsIgnoreCase(compraActual.getEstadoPago())) {
+            return;
+        }
+        modalidadSeleccionada = modalidad;
+        actualizarModalidadVisual();
+    }
+
+    private void actualizarModalidadVisual() {
+        boolean envio = "envio".equals(modalidadSeleccionada);
+        boolean retiro = "retiro".equals(modalidadSeleccionada);
+        pintarOpcion(btnEnvio, envio);
+        pintarOpcion(btnRetiro, retiro);
+        ((TextView) findViewById(R.id.tvFacturaModalidad)).setText(
+                modalidadSeleccionada == null
+                        ? "Elegí cómo querés recibir el artículo"
+                        : "Modalidad: " + modalidadSeleccionada.toUpperCase(Locale.ROOT));
+    }
+
+    private void pintarOpcion(TextView opcion, boolean seleccionada) {
+        opcion.setBackgroundResource(
+                seleccionada ? R.drawable.bg_chip_activo : R.drawable.bg_chip_inactivo);
+        opcion.setTextColor(ContextCompat.getColor(
+                this, seleccionada ? R.color.secundario : R.color.texto_ppal));
+    }
+
+    private void finalizarCompra() {
+        if (procesando) return;
+        if (medioSeleccionado == null) {
+            mostrarError("Seleccioná un medio de pago.");
+            return;
+        }
+        if (modalidadSeleccionada == null) {
+            mostrarError("Seleccioná envío a domicilio o retiro en persona.");
+            return;
+        }
+
+        String aviso = "retiro".equals(modalidadSeleccionada)
+                ? "Al retirar el artículo, la cobertura del seguro finalizará al momento de la entrega."
+                : "El envío se realizará a la dirección registrada y estará a cargo del comprador.";
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar compra")
+                .setMessage(aviso)
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Finalizar", (dialog, which) -> procesarCompra())
+                .show();
+    }
+
+    private void procesarCompra() {
+        procesando = true;
+        btnFinalizar.setEnabled(false);
+        String modalidadGuardada = compraActual == null
+                ? null : compraActual.getModalidadEntrega();
+        boolean cambioModalidad = modalidadGuardada == null
+                || !modalidadSeleccionada.equalsIgnoreCase(modalidadGuardada);
+        if (!entregaRegistrada || cambioModalidad) {
+            guardarEntregaYPagar();
+        } else {
+            ejecutarPago();
+        }
+    }
+
+    private void guardarEntregaYPagar() {
         api.definirEntregaCompra(
                 token(),
                 compraId,
-                new ModalidadEntregaRequest(modalidad))
+                new ModalidadEntregaRequest(modalidadSeleccionada))
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(
                             Call<ResponseBody> call,
                             Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
-                            cargarCompra();
+                            entregaRegistrada = true;
+                            if (compraActual != null) {
+                                compraActual.setModalidadEntrega(modalidadSeleccionada);
+                            }
+                            ejecutarPago();
                         } else {
-                            mostrarError(response.code() == 409
-                                    ? "La modalidad de entrega ya fue definida."
-                                    : "No se pudo registrar la modalidad.");
+                            finalizarConError(leerError(response));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        mostrarError("No se pudo conectar con el servidor.");
+                        finalizarConError("No se pudo registrar la entrega.");
                     }
                 });
+    }
+
+    private void ejecutarPago() {
+        api.pagarCompra(
+                token(),
+                compraId,
+                new PagarCompraRequest(medioSeleccionado.getIdentificador()))
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(
+                            Call<ResponseBody> call,
+                            Response<ResponseBody> response) {
+                        procesando = false;
+                        if (response.isSuccessful()) {
+                            mostrarExito();
+                        } else {
+                            btnFinalizar.setEnabled(true);
+                            mostrarModalError(leerError(response));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        procesando = false;
+                        btnFinalizar.setEnabled(true);
+                        mostrarModalError("No se pudo conectar con el servidor.");
+                    }
+                });
+    }
+
+    private void mostrarExito() {
+        new AlertDialog.Builder(this)
+                .setTitle("La compra se realizó con éxito")
+                .setMessage("El pago fue confirmado y la compra quedó registrada.")
+                .setCancelable(false)
+                .setPositiveButton("Ir a subastas", (dialog, which) -> {
+                    Intent intent = new Intent(this, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                })
+                .show();
+    }
+
+    private void finalizarConError(String mensaje) {
+        procesando = false;
+        btnFinalizar.setEnabled(true);
+        mostrarModalError(mensaje);
+    }
+
+    private void mostrarModalError(String mensaje) {
+        new AlertDialog.Builder(this)
+                .setTitle("No se pudo completar la compra")
+                .setMessage(mensaje)
+                .setPositiveButton("Aceptar", null)
+                .show();
+    }
+
+    private String descripcionMedio(MedioPagoDTO medio) {
+        if (medio == null || medio.getTipo() == null) return "Medio de pago";
+        if ("tarjeta".equalsIgnoreCase(medio.getTipo())) {
+            return "Tarjeta terminada en " + texto(medio.getUltimosDigitos());
+        }
+        if ("cuenta".equalsIgnoreCase(medio.getTipo())) {
+            return "Cuenta " + texto(medio.getBanco())
+                    + " · " + texto(medio.getMoneda())
+                    + " " + numero(medio.getFondosReservados());
+        }
+        return "Cheque " + texto(medio.getNroCheque())
+                + " · " + texto(medio.getMoneda())
+                + " " + numero(medio.getMontoGarantia());
+    }
+
+    private String leerError(Response<?> response) {
+        try {
+            if (response.errorBody() != null) {
+                return response.errorBody().string();
+            }
+        } catch (Exception ignored) {
+        }
+        return "Error " + response.code();
+    }
+
+    private String texto(String valor) {
+        return valor == null || valor.isBlank() ? "--" : valor;
+    }
+
+    private String numero(Double valor) {
+        return String.format(Locale.US, "%.2f", valor == null ? 0.0 : valor);
     }
 
     private void mostrarError(String mensaje) {

@@ -8,6 +8,7 @@ public class SubastaParticipacionDTO {
     private Integer loteGanado;
     private Double importePagado;
     private Integer compraId;
+    private String estadoPago;
 
     public SubastaDTO getSubasta() { return subasta; }
     public Integer getCantidadPujas() { return cantidadPujas; }
@@ -16,6 +17,7 @@ public class SubastaParticipacionDTO {
     public Integer getLoteGanado() { return loteGanado; }
     public Double getImportePagado() { return importePagado; }
     public Integer getCompraId() { return compraId; }
+    public String getEstadoPago() { return estadoPago; }
 
     public static class SubastaDTO {
         private Integer identificador;
