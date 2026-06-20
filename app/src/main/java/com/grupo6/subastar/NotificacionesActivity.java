@@ -165,28 +165,11 @@ public class NotificacionesActivity extends AppCompatActivity {
             });
         }
 
-        Intent intent;
         if (notificacion.getTipo() == null) return;
-
-        switch (notificacion.getTipo()) {
-            case "GANADA":
-                intent = new Intent(this, PasarelaPagoActivity.class);
-                intent.putExtra("ITEM_ID", notificacion.getReferenciaId());
-                startActivity(intent);
-                break;
-            case "MULTA":
-                intent = new Intent(this, MultasActivity.class);
-                intent.putExtra("MULTA_ID", notificacion.getReferenciaId());
-                startActivity(intent);
-                break;
-            case "CONSIGNACION":
-                intent = new Intent(this, MisConsignacionesActivity.class);
-                startActivity(intent);
-                break;
-            default:
-                cargarNotificaciones(toggleFiltro.getCheckedButtonId() == R.id.btnFiltroNoLeidas ? false : null);
-                break;
-        }
+        startActivity(NotificacionDestino.crearIntent(
+                this,
+                notificacion.getTipo(),
+                notificacion.getReferenciaId()));
     }
 
     @Override

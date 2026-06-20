@@ -19,13 +19,26 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
             String titulo = remoteMessage.getData().get("titulo");
             String mensaje = remoteMessage.getData().get("mensaje");
+            String tipo = remoteMessage.getData().get("tipo");
+            Integer referenciaId = convertirEntero(
+                    remoteMessage.getData().get("referenciaId"));
 
-            GeneradorNotificacionesLocales.lanzarNotificacion(this, titulo, mensaje);
+            GeneradorNotificacionesLocales.lanzarNotificacion(
+                    this, titulo, mensaje, tipo, referenciaId);
         }
     }
 
     @Override
     public void onNewToken(String token) {
         Log.d("FIREBASE_TEST", "Nuevo token generado: " + token);
+    }
+
+    private Integer convertirEntero(String valor) {
+        if (valor == null) return null;
+        try {
+            return Integer.valueOf(valor);
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
     }
 }
