@@ -43,6 +43,7 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
     private TextView tvTitulo, tvCondiciones, tvUbicacionTitulo, tvUbicacion;
     private TextView tvSeguroTitulo, tvSeguro;
     private TextView tvIconoEstado, tvMotivoRechazo;
+    private TextView tvCostoDevolucion, tvInstruccionDevolucion;
     private Button btnContactarAseguradora;
     private LinearLayout layoutTimeline, layoutCondiciones, layoutAcciones;
     private LinearLayout layoutDocumentacion;
@@ -71,6 +72,9 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
         tvTitulo = findViewById(R.id.tvDetalleTituloBien);
         tvIconoEstado = findViewById(R.id.tvDetalleIconoEstado);
         tvMotivoRechazo = findViewById(R.id.tvMotivoRechazoConsignacion);
+        tvCostoDevolucion = findViewById(R.id.tvCostoDevolucionConsignacion);
+        tvInstruccionDevolucion =
+                findViewById(R.id.tvInstruccionDevolucionConsignacion);
         tvCondiciones = findViewById(R.id.tvCondicionesDetalle);
         tvUbicacionTitulo = findViewById(R.id.tvUbicacionTitulo);
         tvUbicacion = findViewById(R.id.tvUbicacionDetalle);
@@ -132,6 +136,11 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
             layoutRechazada.setVisibility(View.VISIBLE);
             tvMotivoRechazo.setText(
                     "Motivo:\n" + texto(c.getMotivoRechazo()));
+            tvCostoDevolucion.setText(
+                    "Costo de devolucion: "
+                            + importe(c.getMonedaDevolucion(), c.getCostoDevolucion()));
+            tvInstruccionDevolucion.setText(
+                    texto(c.getInstruccionDevolucion()));
         } else {
             // Dejamos el texto vacío para que no se superponga y se vea solo el tilde del fondo
             tvIconoEstado.setText("");

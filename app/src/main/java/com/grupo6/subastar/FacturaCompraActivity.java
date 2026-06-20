@@ -25,6 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FacturaCompraActivity extends AppCompatActivity {
 
+    private static final double COSTO_ENVIO_FIJO = 5000.0;
     private SubastarApi api;
     private TokenManager tokenManager;
     private int compraId;
@@ -220,6 +221,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
             return;
         }
         modalidadSeleccionada = modalidad;
+        actualizarImportesSegunModalidad();
         actualizarModalidadVisual();
     }
 
@@ -233,6 +235,25 @@ public class FacturaCompraActivity extends AppCompatActivity {
                         ? "Elegí cómo querés recibir el artículo"
                         : "Modalidad: " + modalidadSeleccionada.toUpperCase(Locale.ROOT));
         actualizarAvisoSeguro();
+    }
+
+    private void actualizarImportesSegunModalidad() {
+        if (compraActual == null) return;
+        double costoEnvio = "envio".equals(modalidadSeleccionada)
+                ? COSTO_ENVIO_FIJO : 0.0;
+        double importe = compraActual.getImportePujado() == null
+                ? 0.0 : compraActual.getImportePujado();
+        double comision = compraActual.getComision() == null
+                ? 0.0 : compraActual.getComision();
+        compraActual.setCostoEnvio(costoEnvio);
+        compraActual.setTotal(importe + comision + costoEnvio);
+        String moneda = compraActual.getSubasta() == null
+                ? "" : compraActual.getSubasta().getMoneda();
+        ((TextView) findViewById(R.id.tvFacturaEnvio)).setText(
+                "Costo de envio\n" + FormatoPujas.moneda(moneda, costoEnvio));
+        ((TextView) findViewById(R.id.tvFacturaTotal)).setText(
+                "TOTAL A PAGAR\n"
+                        + FormatoPujas.moneda(moneda, compraActual.getTotal()));
     }
 
     private void pintarOpcion(TextView opcion, boolean seleccionada) {

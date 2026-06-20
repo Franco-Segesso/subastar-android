@@ -6,6 +6,9 @@ public class ConsignacionDTO {
     private Integer identificador;
     private String estado;
     private String motivoRechazo;
+    private Double costoDevolucion;
+    private String monedaDevolucion;
+    private String instruccionDevolucion;
     private String motivoDocumentacion;
     private Boolean condicionesAceptadas;
     private String fechaSolicitud;
@@ -19,6 +22,9 @@ public class ConsignacionDTO {
     public Integer getIdentificador() { return identificador; }
     public String getEstado() { return estado; }
     public String getMotivoRechazo() { return motivoRechazo; }
+    public Double getCostoDevolucion() { return costoDevolucion; }
+    public String getMonedaDevolucion() { return monedaDevolucion; }
+    public String getInstruccionDevolucion() { return instruccionDevolucion; }
     public String getMotivoDocumentacion() { return motivoDocumentacion; }
     public Boolean getCondicionesAceptadas() { return condicionesAceptadas; }
     public String getFechaSolicitud() { return fechaSolicitud; }

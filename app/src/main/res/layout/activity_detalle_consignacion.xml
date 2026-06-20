@@ -85,6 +85,23 @@
                     android:layout_marginTop="8dp"
                     android:textColor="@color/texto_ppal"
                     android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvCostoDevolucionConsignacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/secundario"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvInstruccionDevolucionConsignacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
