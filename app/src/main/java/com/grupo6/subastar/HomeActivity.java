@@ -95,6 +95,13 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         // --- LÓGICA DE NOTIFICACIONES ---
+        // Pedir permiso para notificaciones
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+
         btnNotificaciones.setOnClickListener(v -> {
             if (tokenManager.getToken() == null) {
                 Toast.makeText(HomeActivity.this, "Debes iniciar sesión para ver tus notificaciones", Toast.LENGTH_SHORT).show();
@@ -395,6 +402,7 @@ public class HomeActivity extends AppCompatActivity {
         if (tokenManager != null && tokenManager.getToken() != null) {
             verificarMediosPagoObligatorio();
             chequearNotificacionesPendientes();
+            suscribirAFirebase();
         }
     }
 
@@ -454,6 +462,23 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onFailure(retrofit2.Call<java.util.List<com.grupo6.subastar.dto.MedioPagoDTO>> call, Throwable t) {}
         });
+    }
+
+    private void suscribirAFirebase() {
+        // Recuperamos el ID del cliente de tus SharedPreferences
+        int idCliente = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getInt("USER_ID", -1);
+
+        if (idCliente != -1) {
+            com.google.firebase.messaging.FirebaseMessaging.getInstance()
+                    .subscribeToTopic("cliente_" + idCliente)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("FIREBASE", "Suscrito exitosamente al canal: cliente_" + idCliente);
+                        } else {
+                            Log.e("FIREBASE", "Falló la suscripción a Firebase");
+                        }
+                    });
+        }
     }
 
     private void filtrarBuscador(String textoBusqueda) {
