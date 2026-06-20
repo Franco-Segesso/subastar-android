@@ -63,12 +63,15 @@
                 android:layout_marginBottom="16dp">
 
                 <ImageView
+                    android:id="@+id/ivFotoPerfil"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     android:src="@drawable/ic_person"
                     android:background="@drawable/bg_circulo_dorado"
                     android:padding="16dp"
-                    app:tint="@color/secundario"
+                    android:scaleType="centerCrop"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:layout_marginEnd="16dp"/>
 
                 <LinearLayout

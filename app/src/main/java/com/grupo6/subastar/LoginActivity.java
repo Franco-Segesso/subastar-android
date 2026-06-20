@@ -123,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                             .putString("USER_DOCUMENTO", clienteLogueado.getDocumento())
                             .putString("USER_DIRECCION", clienteLogueado.getDireccion())
                             .putString("USER_PAIS", clienteLogueado.getPais())
+                            .putString("USER_FOTO", clienteLogueado.getFoto())
                             .apply();
 
 

@@ -193,6 +193,13 @@ public interface SubastarApi {
             @Query("resultado") String resultado
     );
 
+    @Multipart
+    @PATCH("/v1/clientes/me/foto")
+    Call<com.grupo6.subastar.dto.ClienteDTO> actualizarFotoPerfil(
+            @Header("Authorization") String token,
+            @Part MultipartBody.Part foto
+    );
+
     @GET("/v1/clientes/me/subastas/{subastaId}/pujas")
     Call<HistorialPujasClienteDTO> obtenerDetalleMisPujas(
             @Header("Authorization") String token,
@@ -262,5 +269,7 @@ public interface SubastarApi {
             @Header("Authorization") String token,
             @Path("id") Integer id
     );
+
+
 }
 

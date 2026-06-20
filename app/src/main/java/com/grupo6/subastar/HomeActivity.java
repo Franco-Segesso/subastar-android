@@ -34,7 +34,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
-
+import com.bumptech.glide.Glide;
 public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -50,6 +50,8 @@ public class HomeActivity extends AppCompatActivity {
     private CompositeDisposable compositeDisposable;
     private EditText etBuscador;
     private List<Subasta> subastasDelDia = new ArrayList<>();
+
+    private ImageView btnPerfil;
 
     // Componente visual para el punto rojo
     private View badgeNotificacion;
@@ -73,8 +75,10 @@ public class HomeActivity extends AppCompatActivity {
 
         tvNombreUsuario.setText(nombreGuardado);
 
-        ImageView btnPerfil = findViewById(R.id.btnPerfil);
+        btnPerfil = findViewById(R.id.btnPerfil);
         ImageView btnNotificaciones = findViewById(R.id.btnNotificaciones);
+        mostrarFotoPerfilHome(btnPerfil);
+
         TextView navMisPujas = findViewById(R.id.navMisPujas);
         TextView navConsignacion = findViewById(R.id.navConsignacion);
 
@@ -176,8 +180,29 @@ public class HomeActivity extends AppCompatActivity {
 
         ejecutarConsultaBackend(null, null);
         conectarWebSocketHome();
+
+
     }
 
+
+    private void mostrarFotoPerfilHome(ImageView btnPerfil) {
+        String fotoPerfil = getSharedPreferences("SubastarPrefs", MODE_PRIVATE)
+                .getString("USER_FOTO", null);
+
+        if (fotoPerfil != null && !fotoPerfil.trim().isEmpty()) {
+            btnPerfil.setPadding(0, 0, 0, 0);
+
+            Glide.with(this)
+                    .load(fotoPerfil)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_person)
+                    .error(R.drawable.ic_person)
+                    .into(btnPerfil);
+        } else {
+            btnPerfil.setPadding(8, 8, 8, 8);
+            btnPerfil.setImageResource(R.drawable.ic_person);
+        }
+    }
     private void conectarWebSocketHome() {
         if (stompClient != null && stompClient.isConnected()) return;
 
@@ -402,6 +427,11 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (btnPerfil != null) {
+            mostrarFotoPerfilHome(btnPerfil);
+        }
+
         if (tokenManager != null && tokenManager.getToken() != null) {
             verificarMediosPagoObligatorio();
             chequearNotificacionesPendientes();
@@ -529,4 +559,6 @@ public class HomeActivity extends AppCompatActivity {
         if (compositeDisposable != null) compositeDisposable.dispose();
         if (stompClient != null && stompClient.isConnected()) stompClient.disconnect();
     }
+
+
 }
