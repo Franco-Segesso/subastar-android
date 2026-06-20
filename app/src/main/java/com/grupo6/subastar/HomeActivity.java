@@ -326,41 +326,44 @@ public class HomeActivity extends AppCompatActivity {
                     List<Subasta> listaOriginal = response.body();
 
                     boolean isInvitado = tokenManager.getToken() == null;
+                    String mensajeVacio = "No hay subastas programadas para este día.";
 
                     if (isInvitado) {
-                        List<Subasta> listaFiltrada = new ArrayList<>();
-                        for (Subasta subasta : listaOriginal) {
-                            if (!"abierta".equalsIgnoreCase(subasta.getEstado())) {
-                                listaFiltrada.add(subasta);
+                        // NUEVA REGLA: Si es invitado y la fecha es HOY o PASADO, no ve nada.
+                        if (fechaVisualizada.isEqual(LocalDate.now()) || fechaVisualizada.isBefore(LocalDate.now())) {
+                            listaOriginal = new ArrayList<>(); // Vaciamos la lista a la fuerza
+                            mensajeVacio = "Debes iniciar sesión para ver las subastas actuales o pasadas.";
+                        } else {
+                            // Si está mirando el FUTURO, aplicamos el filtro original de ocultar las "abiertas"
+                            List<Subasta> listaFiltrada = new ArrayList<>();
+                            for (Subasta subasta : listaOriginal) {
+                                if (!"abierta".equalsIgnoreCase(subasta.getEstado())) {
+                                    listaFiltrada.add(subasta);
+                                }
                             }
-                        }
-                        listaOriginal = listaFiltrada;
-                    }
-
-                    subastasDelDia.clear();
-                    subastasDelDia.addAll(listaOriginal);
-
-                    if (subastasDelDia.isEmpty()) {
-                        recyclerView.setVisibility(View.GONE);
-                        tvMensajeVacio.setText("No hay subastas programadas para este día.");
-                        tvMensajeVacio.setVisibility(View.VISIBLE);
-                    } else {
-                        if (etBuscador != null) {
-                            filtrarBuscador(etBuscador.getText().toString());
+                            listaOriginal = listaFiltrada;
                         }
                     }
 
+                    // Actualizamos la lista local para el buscador
                     subastasDelDia.clear();
                     subastasDelDia.addAll(listaOriginal);
 
                     if (listaOriginal.isEmpty()) {
                         recyclerView.setVisibility(View.GONE);
-                        tvMensajeVacio.setText("No hay subastas programadas para este día.");
+                        tvMensajeVacio.setText(mensajeVacio);
                         tvMensajeVacio.setVisibility(View.VISIBLE);
                     } else {
                         recyclerView.setVisibility(View.VISIBLE);
                         tvMensajeVacio.setVisibility(View.GONE);
 
+                        // Si hay texto en el buscador, que filtre y corte acá
+                        if (etBuscador != null && !etBuscador.getText().toString().trim().isEmpty()) {
+                            filtrarBuscador(etBuscador.getText().toString());
+                            return;
+                        }
+
+                        // Lógica para preservar el scroll al actualizar
                         int posicionScroll = RecyclerView.NO_POSITION;
                         int offsetScroll = 0;
                         if (preservarScroll && recyclerView.getLayoutManager() instanceof LinearLayoutManager) {

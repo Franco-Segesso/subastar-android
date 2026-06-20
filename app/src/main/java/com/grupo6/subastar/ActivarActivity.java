@@ -45,22 +45,21 @@ public class ActivarActivity extends AppCompatActivity {
 
             // 1. Validar que no estén vacíos
             if (email.isEmpty() || clave.isEmpty()) {
-                Toast.makeText(this, "Complete los campos obligatorios", Toast.LENGTH_SHORT).show();
+                com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Complete los campos obligatorios");
                 return;
             }
 
-            // 2.
-            // Regla: Mínimo 8 caracteres, 1 número, 1 minúscula, 1 mayúscula, 1 símbolo.
+            // 2. Regla: Mínimo 8 caracteres, 1 número, 1 minúscula, 1 mayúscula, 1 símbolo.
             String patronPassword = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._-]).{8,}$";
 
             if (!clave.matches(patronPassword)) {
-                Toast.makeText(this, "La clave debe tener mín. 8 caracteres, una mayúscula, una minúscula, un número y un símbolo especial (!@#$...).", Toast.LENGTH_LONG).show();
+                com.grupo6.subastar.util.DialogUtils.mostrarError(this, "La clave debe tener mín. 8 caracteres, una mayúscula, una minúscula, un número y un símbolo especial (!@#$...).");
                 return;
             }
 
             // 3. Validar que coincidan
             if (!clave.equals(confirmar)) {
-                Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+                com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Las contraseñas no coinciden");
                 return;
             }
 
@@ -73,13 +72,13 @@ public class ActivarActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
-                        Toast.makeText(ActivarActivity.this, "¡Cuenta activada! Ya podés iniciar sesión.", Toast.LENGTH_LONG).show();
-                        finish(); // Cierra y vuelve al Login
+                        // MODAL DE ÉXITO (al cerrarlo ejecuta el finish() para volver al Login)
+                        com.grupo6.subastar.util.DialogUtils.mostrarExito(ActivarActivity.this, "¡Cuenta activada! Ya podés iniciar sesión.", () -> finish());
                     } else {
                         btnActivar.setEnabled(true);
                         btnActivar.setText("Generar Clave y Activar");
                         try {
-                            Toast.makeText(ActivarActivity.this, "Error: " + response.errorBody().string(), Toast.LENGTH_LONG).show();
+                            com.grupo6.subastar.util.DialogUtils.mostrarError(ActivarActivity.this, "Error: " + response.errorBody().string());
                         } catch (Exception e) {}
                     }
                 }
@@ -88,7 +87,7 @@ public class ActivarActivity extends AppCompatActivity {
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     btnActivar.setEnabled(true);
                     btnActivar.setText("Generar Clave y Activar");
-                    Toast.makeText(ActivarActivity.this, "Falla de red", Toast.LENGTH_SHORT).show();
+                    com.grupo6.subastar.util.DialogUtils.mostrarError(ActivarActivity.this, "Falla de red. Verifica tu conexión a internet.");
                 }
             });
         });
