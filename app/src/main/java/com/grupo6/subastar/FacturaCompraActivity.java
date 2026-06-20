@@ -33,6 +33,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
     private TextView btnEnvio;
     private TextView btnRetiro;
     private TextView btnFinalizar;
+    private TextView tvSeguro;
     private LinearLayout contenedorModalidad;
     private CompraDTO compraActual;
     private final List<MedioPagoDTO> medios = new ArrayList<>();
@@ -64,6 +65,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
         btnEnvio = findViewById(R.id.btnElegirEnvio);
         btnRetiro = findViewById(R.id.btnElegirRetiro);
         btnFinalizar = findViewById(R.id.btnFinalizarCompra);
+        tvSeguro = findViewById(R.id.tvFacturaSeguro);
         contenedorModalidad = findViewById(R.id.contenedorModalidad);
 
         findViewById(R.id.btnVolverFactura).setOnClickListener(v -> finish());
@@ -152,8 +154,9 @@ public class FacturaCompraActivity extends AppCompatActivity {
                         moneda, compra.getCostoEnvio()));
         ((TextView) findViewById(R.id.tvFacturaTotal)).setText(
                 "TOTAL A PAGAR\n" + FormatoPujas.moneda(moneda, compra.getTotal()));
-        ((TextView) findViewById(R.id.tvFacturaSeguro)).setText(
-                compra.getAvisoSeguro() == null ? "" : compra.getAvisoSeguro());
+        tvSeguro.setText(compra.getAvisoSeguro() == null
+                ? "El bien permanece asegurado mientras esta bajo custodia de la empresa."
+                : compra.getAvisoSeguro());
 
         String modalidad = compra.getModalidadEntrega() == null
                 ? "pendiente" : compra.getModalidadEntrega();
@@ -229,6 +232,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
                 modalidadSeleccionada == null
                         ? "Elegí cómo querés recibir el artículo"
                         : "Modalidad: " + modalidadSeleccionada.toUpperCase(Locale.ROOT));
+        actualizarAvisoSeguro();
     }
 
     private void pintarOpcion(TextView opcion, boolean seleccionada) {
@@ -236,6 +240,21 @@ public class FacturaCompraActivity extends AppCompatActivity {
                 seleccionada ? R.drawable.bg_chip_activo : R.drawable.bg_chip_inactivo);
         opcion.setTextColor(ContextCompat.getColor(
                 this, seleccionada ? R.color.secundario : R.color.texto_ppal));
+    }
+
+    private void actualizarAvisoSeguro() {
+        if (tvSeguro == null) return;
+        if ("retiro".equals(modalidadSeleccionada)) {
+            tvSeguro.setText(
+                    "COBERTURA VIGENTE HASTA EL RETIRO\n"
+                            + "Finaliza cuando la empresa te entrega el bien.");
+        } else if ("envio".equals(modalidadSeleccionada)) {
+            tvSeguro.setText(
+                    "COBERTURA VIGENTE DURANTE EL TRASLADO\n"
+                            + "Finaliza cuando el bien se entrega en tu domicilio.");
+        } else if (compraActual != null && compraActual.getAvisoSeguro() != null) {
+            tvSeguro.setText(compraActual.getAvisoSeguro());
+        }
     }
 
     private void finalizarCompra() {
@@ -250,8 +269,8 @@ public class FacturaCompraActivity extends AppCompatActivity {
         }
 
         String aviso = "retiro".equals(modalidadSeleccionada)
-                ? "Al retirar el artículo, la cobertura del seguro finalizará al momento de la entrega."
-                : "El envío se realizará a la dirección registrada y estará a cargo del comprador.";
+                ? "La cobertura permanecerá vigente hasta que retires el artículo y finalizará al recibirlo."
+                : "La cobertura permanecerá vigente durante el traslado y finalizará al entregarse en tu domicilio. El envío está a cargo del comprador.";
         new AlertDialog.Builder(this)
                 .setTitle("Confirmar compra")
                 .setMessage(aviso)

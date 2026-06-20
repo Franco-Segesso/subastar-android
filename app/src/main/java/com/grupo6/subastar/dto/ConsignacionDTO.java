@@ -49,12 +49,14 @@ public class ConsignacionDTO {
         private String seguroPoliza;
         private String contactoPoliza;
         private String subastaAsignada;
+        private String moneda;
 
         public Double getPrecioBase() { return precioBase; }
         public Double getComisionEmpresa() { return comisionEmpresa; }
         public String getSeguroPoliza() { return seguroPoliza; }
         public String getContactoPoliza() { return contactoPoliza; }
         public String getSubastaAsignada() { return subastaAsignada; }
+        public String getMoneda() { return moneda; }
     }
 
     public static class UbicacionDepositoDTO {
@@ -68,9 +70,13 @@ public class ConsignacionDTO {
         private String nroPoliza;
         private String compania;
         private Double importe;
+        private String polizaCombinada;
+        private String moneda;
         public String getNroPoliza() { return nroPoliza; }
         public String getCompania() { return compania; }
         public Double getImporte() { return importe; }
+        public String getPolizaCombinada() { return polizaCombinada; }
+        public String getMoneda() { return moneda; }
     }
 
     public static class InstanciaDTO {

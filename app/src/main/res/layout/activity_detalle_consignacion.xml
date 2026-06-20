@@ -103,6 +103,40 @@
                 android:textColor="@color/texto_ppal"
                 android:textSize="14sp"
                 android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvSeguroTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Poliza de seguro"
+                android:textColor="@color/texto_sec"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvSeguroDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_caja_lista"
+                android:padding="16dp"
+                android:textColor="@color/texto_ppal"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnContactarAseguradora"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/secundario"
+                android:text="CONTACTAR ASEGURADORA"
+                android:textColor="@color/primario"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 

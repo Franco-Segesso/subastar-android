@@ -1,6 +1,7 @@
 package com.grupo6.subastar;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,12 +19,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class DetalleConsignacionActivity extends AppCompatActivity {
 
     private Integer consignacionId;
     private TokenManager tokenManager;
     private SubastarApi api;
     private TextView tvTitulo, tvCondiciones, tvUbicacionTitulo, tvUbicacion;
+    private TextView tvSeguroTitulo, tvSeguro;
+    private Button btnContactarAseguradora;
     private LinearLayout layoutTimeline, layoutCondiciones, layoutAcciones;
 
     @Override
@@ -46,6 +52,9 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
         tvCondiciones = findViewById(R.id.tvCondicionesDetalle);
         tvUbicacionTitulo = findViewById(R.id.tvUbicacionTitulo);
         tvUbicacion = findViewById(R.id.tvUbicacionDetalle);
+        tvSeguroTitulo = findViewById(R.id.tvSeguroTitulo);
+        tvSeguro = findViewById(R.id.tvSeguroDetalle);
+        btnContactarAseguradora = findViewById(R.id.btnContactarAseguradora);
         layoutTimeline = findViewById(R.id.layoutTimeline);
         layoutCondiciones = findViewById(R.id.layoutCondiciones);
         layoutAcciones = findViewById(R.id.layoutAccionesCondiciones);
@@ -96,21 +105,43 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
             }
         }
 
-        boolean condicionesPendientes = "aceptado".equalsIgnoreCase(c.getEstado()) && !Boolean.TRUE.equals(c.getCondicionesAceptadas());
+        boolean condicionesPendientes = "aceptado".equalsIgnoreCase(c.getEstado())
+                && c.getSeguro() != null
+                && c.getCondicionesEmpresa() != null
+                && c.getCondicionesEmpresa().getPrecioBase() != null
+                && c.getCondicionesEmpresa().getComisionEmpresa() != null
+                && c.getCondicionesEmpresa().getSubastaAsignada() != null
+                && !Boolean.TRUE.equals(c.getCondicionesAceptadas());
         if (c.getCondicionesEmpresa() != null) {
             layoutCondiciones.setVisibility(View.VISIBLE);
             ConsignacionDTO.CondicionesEmpresaDTO cond = c.getCondicionesEmpresa();
             tvCondiciones.setText(
-                    "Precio base                                      USD " + entero(cond.getPrecioBase()) + "\n" +
-                    "Comision empresa                         " + entero(cond.getComisionEmpresa()) + "%\n" +
-                    "Seguro poliza                              " + cond.getSeguroPoliza() + "\n" +
-                    "Contacto poliza                            " + cond.getContactoPoliza() + "\n" +
-                    "Subasta asignada                         " + cond.getSubastaAsignada());
+                    "Precio base\n" + importe(cond.getMoneda(), cond.getPrecioBase()) + "\n\n" +
+                    "Comision empresa\n" + porcentaje(cond.getComisionEmpresa()) + "\n\n" +
+                    "Poliza\n" + texto(cond.getSeguroPoliza()) + "\n\n" +
+                    "Compania aseguradora\n" + texto(cond.getContactoPoliza()) + "\n\n" +
+                    "Subasta asignada\n" + texto(cond.getSubastaAsignada()));
         }
         if (c.getUbicacionDeposito() != null) {
             tvUbicacionTitulo.setVisibility(View.VISIBLE);
             tvUbicacion.setVisibility(View.VISIBLE);
             tvUbicacion.setText(c.getUbicacionDeposito().getNombre() + "\n" + c.getUbicacionDeposito().getDireccion());
+        }
+        if (c.getSeguro() != null) {
+            ConsignacionDTO.SeguroDTO seguro = c.getSeguro();
+            tvSeguroTitulo.setVisibility(View.VISIBLE);
+            tvSeguro.setVisibility(View.VISIBLE);
+            tvSeguro.setText(
+                    "Nro. de poliza\n" + texto(seguro.getNroPoliza()) + "\n\n" +
+                    "Compania\n" + texto(seguro.getCompania()) + "\n\n" +
+                    "Valor asegurado\n" + importe(seguro.getMoneda(), seguro.getImporte()) + "\n\n" +
+                    "Cobertura combinada\n" +
+                    ("si".equalsIgnoreCase(seguro.getPolizaCombinada()) ? "Si" : "No"));
+            if (seguro.getCompania() != null && !seguro.getCompania().isBlank()) {
+                btnContactarAseguradora.setVisibility(View.VISIBLE);
+                btnContactarAseguradora.setOnClickListener(v ->
+                        abrirContactoAseguradora(seguro.getCompania()));
+            }
         }
         layoutAcciones.setVisibility(condicionesPendientes ? View.VISIBLE : View.GONE);
     }
@@ -146,5 +177,36 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
     private String entero(Double valor) {
         if (valor == null) return "-";
         return String.valueOf(valor.intValue());
+    }
+
+    private String porcentaje(Double valor) {
+        return valor == null ? "A confirmar" : entero(valor) + "%";
+    }
+
+    private String importe(String moneda, Double valor) {
+        if (valor == null) return "A confirmar";
+        NumberFormat formato = NumberFormat.getNumberInstance(new Locale("es", "AR"));
+        formato.setMaximumFractionDigits(2);
+        formato.setMinimumFractionDigits(0);
+        String prefijo = moneda == null || moneda.isBlank() ? "" : moneda + " ";
+        return prefijo + formato.format(valor);
+    }
+
+    private String texto(String valor) {
+        return valor == null || valor.isBlank() ? "A confirmar" : valor;
+    }
+
+    private void abrirContactoAseguradora(String compania) {
+        Uri busqueda = Uri.parse(
+                "https://www.google.com/search?q="
+                        + Uri.encode("contacto oficial aseguradora " + compania));
+        Intent intent = new Intent(Intent.ACTION_VIEW, busqueda);
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this,
+                    "No se pudo abrir el contacto de la aseguradora.",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 }
