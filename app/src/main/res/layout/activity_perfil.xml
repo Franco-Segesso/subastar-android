@@ -8,285 +8,286 @@
     android:background="@color/primario"
     android:fillViewport="true">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
-
-        <ImageButton
-            android:id="@+id/btnVolver"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/texto_ppal"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Mi Perfil"
-            android:textColor="@color/texto_ppal"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
-
-        <ImageButton
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_logout"  app:tint="@color/error"/>
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnMisConsignaciones"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/secundario"
-        android:text="MIS CONSIGNACIONES"
-        android:textColor="@color/primario"
-        android:textStyle="bold" />
-
-    <LinearLayout
-        android:id="@+id/btnMultasPerfil"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_multa_pendiente"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Multas"
-                android:textColor="@color/error"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvMultasPendientesPerfil"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sin multas pendientes"
-                android:textColor="@color/texto_sec"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvBadgeMultasPerfil"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:background="@drawable/bg_circulo_error"
-            android:gravity="center"
-            android:text="0"
-            android:textColor="@color/texto_ppal"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="›"
-            android:textColor="@color/error"
-            android:textSize="28sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_caja_lista"
-        android:padding="20dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:padding="16dp"
+            android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:src="@drawable/ic_person"
-                android:background="@drawable/bg_circulo_dorado"
-                android:padding="16dp"
-                app:tint="@color/secundario"
-                android:layout_marginEnd="16dp"/>
+            <ImageButton
+                android:id="@+id/btnVolver"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/texto_ppal"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Mi Perfil"
+                android:textColor="@color/texto_ppal"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <ImageButton
+                android:id="@+id/btnCerrarSesion"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_logout"  app:tint="@color/error"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_caja_lista"
+            android:padding="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
 
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:src="@drawable/ic_person"
+                    android:background="@drawable/bg_circulo_dorado"
+                    android:padding="16dp"
+                    app:tint="@color/secundario"
+                    android:layout_marginEnd="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvNombreCompleto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/texto_ppal"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="Marcos Gonzalez"/>
+
+                    <TextView
+                        android:id="@+id/tvEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/texto_sec"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="8dp"
+                        tools:text="marcos@gmail.com"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvCategoria"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="CAT. PLATA"
+                            android:textSize="10sp"
+                            android:textColor="@color/secundario"
+                            android:background="@drawable/bg_chip_activo"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginBottom="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <TextView
-                    android:id="@+id/tvNombreCompleto"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Domicilio legal"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/tvDireccion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/texto_ppal"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    tools:text="Marcos Gonzalez"/>
+                    android:textSize="14sp"
+                    tools:text="Av. Corrientes 1234, CABA"/>
+            </LinearLayout>
 
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginVertical="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <TextView
-                    android:id="@+id/tvEmail"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="País de Origen"
                     android:textColor="@color/texto_sec"
-                    android:textSize="12sp"
-                    android:layout_marginBottom="8dp"
-                    tools:text="marcos@gmail.com"/>
-
-                <LinearLayout
+                    android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/tvPais"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:textColor="@color/texto_ppal"
+                    android:textSize="14sp"
+                    tools:text="Argentina"/>
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvCategoria"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="CAT. PLATA"
-                        android:textSize="10sp"
-                        android:textColor="@color/secundario"
-                        android:background="@drawable/bg_chip_activo"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginVertical="12dp"/>
 
-                </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="DNI/Documento"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/tvDocumento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto_ppal"
+                    android:textSize="14sp"
+                    tools:text="40552465"/>
             </LinearLayout>
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginBottom="12dp"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="12dp"
+            android:gravity="center_vertical">
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Domicilio legal"
+                android:text="MEDIOS DE PAGO"
                 android:textColor="@color/texto_sec"
-                android:textSize="14sp"/>
-            <TextView
-                android:id="@+id/tvDireccion"
+                android:textSize="12sp"
+                android:textAllCaps="true"/>
+
+            <Button
+                android:id="@+id/btnAgregarMedioPago"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/texto_ppal"
-                android:textSize="14sp"
-                tools:text="Av. Corrientes 1234, CABA"/>
+                android:layout_height="36dp"
+                android:text="+ Agregar"
+                android:textColor="@color/primario"
+                android:backgroundTint="@color/secundario"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="16dp"/>
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginVertical="12dp"/>
-
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerMediosPago"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="País de Origen"
-                android:textColor="@color/texto_sec"
-                android:textSize="14sp"/>
-            <TextView
-                android:id="@+id/tvPais"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/texto_ppal"
-                android:textSize="14sp"
-                tools:text="Argentina"/>
-        </LinearLayout>
-
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bordes" android:layout_marginVertical="12dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="DNI/Documento"
-                android:textColor="@color/texto_sec"
-                android:textSize="14sp"/>
-            <TextView
-                android:id="@+id/tvDocumento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/texto_ppal"
-                android:textSize="14sp"
-                tools:text="40552465"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="24dp"
-        android:paddingBottom="12dp"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="MEDIOS DE PAGO"
-            android:textColor="@color/texto_sec"
-            android:textSize="12sp"
-            android:textAllCaps="true"/>
+            android:layout_height="240dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_caja_lista"
+            android:padding="8dp"
+            android:clipToPadding="false"/>
 
         <Button
-            android:id="@+id/btnAgregarMedioPago"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="+ Agregar"
-            android:textColor="@color/primario"
+            android:id="@+id/btnMisConsignaciones"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="8dp"
             android:backgroundTint="@color/secundario"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:paddingHorizontal="16dp"/>
+            android:text="MIS CONSIGNACIONES"
+            android:textColor="@color/primario"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/btnMultasPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/bg_multa_pendiente"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Multas"
+                    android:textColor="@color/error"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMultasPendientesPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sin multas pendientes"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvBadgeMultasPerfil"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_circulo_error"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/texto_ppal"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="›"
+                android:textColor="@color/error"
+                android:textSize="28sp" />
+        </LinearLayout>
+
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMediosPago"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/bg_caja_lista"
-        android:padding="8dp"
-        android:clipToPadding="false"/>
-
-</LinearLayout>
 </ScrollView>
