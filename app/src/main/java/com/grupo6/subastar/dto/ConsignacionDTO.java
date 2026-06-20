@@ -6,23 +6,27 @@ public class ConsignacionDTO {
     private Integer identificador;
     private String estado;
     private String motivoRechazo;
+    private String motivoDocumentacion;
     private Boolean condicionesAceptadas;
     private String fechaSolicitud;
     private ProductoConsignadoDTO producto;
     private CondicionesEmpresaDTO condicionesEmpresa;
     private UbicacionDepositoDTO ubicacionDeposito;
     private SeguroDTO seguro;
+    private List<DocumentoDTO> documentosOrigen;
     private List<InstanciaDTO> instancias;
 
     public Integer getIdentificador() { return identificador; }
     public String getEstado() { return estado; }
     public String getMotivoRechazo() { return motivoRechazo; }
+    public String getMotivoDocumentacion() { return motivoDocumentacion; }
     public Boolean getCondicionesAceptadas() { return condicionesAceptadas; }
     public String getFechaSolicitud() { return fechaSolicitud; }
     public ProductoConsignadoDTO getProducto() { return producto; }
     public CondicionesEmpresaDTO getCondicionesEmpresa() { return condicionesEmpresa; }
     public UbicacionDepositoDTO getUbicacionDeposito() { return ubicacionDeposito; }
     public SeguroDTO getSeguro() { return seguro; }
+    public List<DocumentoDTO> getDocumentosOrigen() { return documentosOrigen; }
     public List<InstanciaDTO> getInstancias() { return instancias; }
 
     public static class ProductoConsignadoDTO {
@@ -77,6 +81,22 @@ public class ConsignacionDTO {
         public Double getImporte() { return importe; }
         public String getPolizaCombinada() { return polizaCombinada; }
         public String getMoneda() { return moneda; }
+    }
+
+    public static class DocumentoDTO {
+        private Integer identificador;
+        private String nombreArchivo;
+        private String urlArchivo;
+        private String descripcion;
+        private String fechaCarga;
+        private String estado;
+
+        public Integer getIdentificador() { return identificador; }
+        public String getNombreArchivo() { return nombreArchivo; }
+        public String getUrlArchivo() { return urlArchivo; }
+        public String getDescripcion() { return descripcion; }
+        public String getFechaCarga() { return fechaCarga; }
+        public String getEstado() { return estado; }
     }
 
     public static class InstanciaDTO {

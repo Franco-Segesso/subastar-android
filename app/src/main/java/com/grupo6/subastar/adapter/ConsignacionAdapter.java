@@ -72,6 +72,8 @@ public class ConsignacionAdapter extends RecyclerView.Adapter<ConsignacionAdapte
     private String estadoVisible(ConsignacionDTO item) {
         String estado = item.getEstado() == null ? "" : item.getEstado().toLowerCase();
         if ("rechazado".equals(estado)) return "RECHAZADA";
+        if ("documentacion_pendiente".equals(estado)) return "DOCUMENTACION REQUERIDA";
+        if ("documentacion_presentada".equals(estado)) return "EN REVISION";
         if ("aceptado".equals(estado) && Boolean.TRUE.equals(item.getCondicionesAceptadas())) return "EN SUBASTA";
         if ("aceptado".equals(estado)) return "ACEPTADA";
         return "ACTIVA";
@@ -80,7 +82,11 @@ public class ConsignacionAdapter extends RecyclerView.Adapter<ConsignacionAdapte
     private void pintarEstado(ViewHolder holder, String estado) {
         int fondo = R.drawable.bg_chip_inactivo;
         int texto = R.color.texto_sec;
-        if ("ACTIVA".equals(estado) || "ACEPTADA".equals(estado) || "EN SUBASTA".equals(estado)) {
+        if ("ACTIVA".equals(estado)
+                || "ACEPTADA".equals(estado)
+                || "EN SUBASTA".equals(estado)
+                || "DOCUMENTACION REQUERIDA".equals(estado)
+                || "EN REVISION".equals(estado)) {
             fondo = R.drawable.bg_chip_activo;
             texto = R.color.secundario;
         } else if ("RECHAZADA".equals(estado)) {
@@ -92,7 +98,9 @@ public class ConsignacionAdapter extends RecyclerView.Adapter<ConsignacionAdapte
 
     private String precioBase(ConsignacionDTO item) {
         if (item.getCondicionesEmpresa() != null && item.getCondicionesEmpresa().getPrecioBase() != null) {
-            return "USD " + String.format("%.0f", item.getCondicionesEmpresa().getPrecioBase());
+            String moneda = item.getCondicionesEmpresa().getMoneda();
+            return (moneda == null ? "" : moneda + " ")
+                    + String.format("%.0f", item.getCondicionesEmpresa().getPrecioBase());
         }
         return "Pendiente";
     }

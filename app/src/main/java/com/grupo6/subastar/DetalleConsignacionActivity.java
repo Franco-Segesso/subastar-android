@@ -1,18 +1,28 @@
 package com.grupo6.subastar;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.grupo6.subastar.dto.ConsignacionDTO;
 import com.grupo6.subastar.dto.RespuestaConsignacionRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import okhttp3.ResponseBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,17 +30,27 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class DetalleConsignacionActivity extends AppCompatActivity {
 
+    private static final int REQ_DOCUMENTOS = 702;
     private Integer consignacionId;
     private TokenManager tokenManager;
     private SubastarApi api;
     private TextView tvTitulo, tvCondiciones, tvUbicacionTitulo, tvUbicacion;
     private TextView tvSeguroTitulo, tvSeguro;
+    private TextView tvIconoEstado, tvMotivoRechazo;
     private Button btnContactarAseguradora;
     private LinearLayout layoutTimeline, layoutCondiciones, layoutAcciones;
+    private LinearLayout layoutDocumentacion;
+    private LinearLayout layoutRechazada;
+    private TextView tvMotivoDocumentacion, tvCantidadDocumentos, tvDocumentosPresentados;
+    private EditText etDescripcionDocumentacion;
+    private Button btnSeleccionarDocumentos, btnEnviarDocumentacion;
+    private final List<Uri> documentosSeleccionados = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +69,22 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
         Button btnAceptar = findViewById(R.id.btnAceptarCondiciones);
         Button btnRechazar = findViewById(R.id.btnRechazarCondiciones);
         tvTitulo = findViewById(R.id.tvDetalleTituloBien);
+        tvIconoEstado = findViewById(R.id.tvDetalleIconoEstado);
+        tvMotivoRechazo = findViewById(R.id.tvMotivoRechazoConsignacion);
         tvCondiciones = findViewById(R.id.tvCondicionesDetalle);
         tvUbicacionTitulo = findViewById(R.id.tvUbicacionTitulo);
         tvUbicacion = findViewById(R.id.tvUbicacionDetalle);
         tvSeguroTitulo = findViewById(R.id.tvSeguroTitulo);
         tvSeguro = findViewById(R.id.tvSeguroDetalle);
         btnContactarAseguradora = findViewById(R.id.btnContactarAseguradora);
+        layoutDocumentacion = findViewById(R.id.layoutDocumentacionOrigen);
+        layoutRechazada = findViewById(R.id.layoutConsignacionRechazada);
+        tvMotivoDocumentacion = findViewById(R.id.tvMotivoDocumentacion);
+        tvCantidadDocumentos = findViewById(R.id.tvCantidadDocumentos);
+        tvDocumentosPresentados = findViewById(R.id.tvDocumentosPresentados);
+        etDescripcionDocumentacion = findViewById(R.id.etDescripcionDocumentacion);
+        btnSeleccionarDocumentos = findViewById(R.id.btnSeleccionarDocumentos);
+        btnEnviarDocumentacion = findViewById(R.id.btnEnviarDocumentacion);
         layoutTimeline = findViewById(R.id.layoutTimeline);
         layoutCondiciones = findViewById(R.id.layoutCondiciones);
         layoutAcciones = findViewById(R.id.layoutAccionesCondiciones);
@@ -62,6 +92,8 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
         btnVolver.setOnClickListener(v -> finish());
         btnAceptar.setOnClickListener(v -> responder(true));
         btnRechazar.setOnClickListener(v -> responder(false));
+        btnSeleccionarDocumentos.setOnClickListener(v -> seleccionarDocumentos());
+        btnEnviarDocumentacion.setOnClickListener(v -> enviarDocumentacion());
 
         cargarDetalle();
     }
@@ -92,6 +124,18 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
     private void pintar(ConsignacionDTO c) {
         String nombre = c.getProducto() != null ? c.getProducto().getDescripcion() : "Bien consignado";
         tvTitulo.setText(nombre);
+        boolean rechazada = "rechazado".equalsIgnoreCase(c.getEstado());
+        if (rechazada) {
+            tvIconoEstado.setText("X");
+            tvIconoEstado.setTextColor(getResources().getColor(R.color.error));
+            layoutRechazada.setVisibility(View.VISIBLE);
+            tvMotivoRechazo.setText(
+                    "Motivo:\n" + texto(c.getMotivoRechazo()));
+        } else {
+            tvIconoEstado.setText("✓");
+            tvIconoEstado.setTextColor(getResources().getColor(R.color.secundario));
+            layoutRechazada.setVisibility(View.GONE);
+        }
         layoutTimeline.removeAllViews();
         if (c.getInstancias() != null) {
             for (ConsignacionDTO.InstanciaDTO instancia : c.getInstancias()) {
@@ -122,6 +166,7 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
                     "Compania aseguradora\n" + texto(cond.getContactoPoliza()) + "\n\n" +
                     "Subasta asignada\n" + texto(cond.getSubastaAsignada()));
         }
+        configurarDocumentacion(c);
         if (c.getUbicacionDeposito() != null) {
             tvUbicacionTitulo.setVisibility(View.VISIBLE);
             tvUbicacion.setVisibility(View.VISIBLE);
@@ -144,6 +189,198 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
             }
         }
         layoutAcciones.setVisibility(condicionesPendientes ? View.VISIBLE : View.GONE);
+    }
+
+    private void configurarDocumentacion(ConsignacionDTO c) {
+        boolean pendiente = "documentacion_pendiente".equalsIgnoreCase(c.getEstado());
+        boolean presentada = "documentacion_presentada".equalsIgnoreCase(c.getEstado());
+        if (!pendiente && !presentada) {
+            layoutDocumentacion.setVisibility(View.GONE);
+            return;
+        }
+
+        layoutDocumentacion.setVisibility(View.VISIBLE);
+        tvMotivoDocumentacion.setText(
+                pendiente
+                        ? "La empresa necesita la siguiente acreditacion:\n"
+                            + texto(c.getMotivoDocumentacion())
+                        : "Documentacion enviada. La empresa esta revisando los archivos.");
+
+        btnSeleccionarDocumentos.setVisibility(pendiente ? View.VISIBLE : View.GONE);
+        tvCantidadDocumentos.setVisibility(pendiente ? View.VISIBLE : View.GONE);
+        etDescripcionDocumentacion.setVisibility(pendiente ? View.VISIBLE : View.GONE);
+        btnEnviarDocumentacion.setVisibility(pendiente ? View.VISIBLE : View.GONE);
+
+        if (presentada) {
+            tvDocumentosPresentados.setVisibility(View.VISIBLE);
+            StringBuilder detalle = new StringBuilder("Archivos presentados:");
+            if (c.getDocumentosOrigen() != null) {
+                for (ConsignacionDTO.DocumentoDTO documento : c.getDocumentosOrigen()) {
+                    detalle.append("\n- ").append(texto(documento.getNombreArchivo()));
+                }
+            }
+            tvDocumentosPresentados.setText(detalle.toString());
+        } else {
+            tvDocumentosPresentados.setVisibility(View.GONE);
+        }
+    }
+
+    private void seleccionarDocumentos() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES,
+                new String[]{"application/pdf", "image/*"});
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        startActivityForResult(
+                Intent.createChooser(intent, "Seleccionar documentacion"),
+                REQ_DOCUMENTOS);
+    }
+
+    @Override
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQ_DOCUMENTOS
+                || resultCode != RESULT_OK
+                || data == null) return;
+
+        if (data.getClipData() != null) {
+            for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                agregarDocumento(data.getClipData().getItemAt(i).getUri());
+            }
+        } else if (data.getData() != null) {
+            agregarDocumento(data.getData());
+        }
+        tvCantidadDocumentos.setText(
+                documentosSeleccionados.size() + " archivos seleccionados");
+    }
+
+    private void agregarDocumento(Uri uri) {
+        if (uri == null || documentosSeleccionados.contains(uri)) return;
+        try {
+            getContentResolver().takePersistableUriPermission(
+                    uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } catch (Exception ignored) {
+        }
+        documentosSeleccionados.add(uri);
+    }
+
+    private void enviarDocumentacion() {
+        if (documentosSeleccionados.isEmpty()) {
+            Toast.makeText(this,
+                    "Selecciona al menos un PDF o imagen.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        List<MultipartBody.Part> partes = new ArrayList<>();
+        try {
+            for (Uri uri : documentosSeleccionados) {
+                String nombre = nombreArchivo(uri);
+                String tipo = tipoArchivo(uri, nombre);
+                RequestBody body = RequestBody.create(
+                        MediaType.parse(tipo), leerBytes(uri));
+                partes.add(MultipartBody.Part.createFormData(
+                        "archivos", nombre, body));
+            }
+        } catch (Exception e) {
+            Log.e("DOC_CONSIGNACION", "No se pudieron leer los archivos", e);
+            Toast.makeText(this,
+                    "No se pudieron leer todos los archivos.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        btnEnviarDocumentacion.setEnabled(false);
+        RequestBody descripcion = RequestBody.create(
+                MediaType.parse("text/plain"),
+                etDescripcionDocumentacion.getText().toString().trim());
+        api.registrarDocumentacionOrigen(
+                "Bearer " + tokenManager.getToken(),
+                consignacionId,
+                partes,
+                descripcion
+        ).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(
+                    Call<ResponseBody> call,
+                    Response<ResponseBody> response) {
+                btnEnviarDocumentacion.setEnabled(true);
+                if (response.isSuccessful()) {
+                    documentosSeleccionados.clear();
+                    Toast.makeText(
+                            DetalleConsignacionActivity.this,
+                            "Documentacion enviada correctamente.",
+                            Toast.LENGTH_LONG).show();
+                    cargarDetalle();
+                } else {
+                    Toast.makeText(
+                            DetalleConsignacionActivity.this,
+                            leerError(response),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                btnEnviarDocumentacion.setEnabled(true);
+                Toast.makeText(
+                        DetalleConsignacionActivity.this,
+                        "Error de conexion al enviar la documentacion.",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private byte[] leerBytes(Uri uri) throws Exception {
+        try (InputStream input = getContentResolver().openInputStream(uri);
+             ByteArrayOutputStream salida = new ByteArrayOutputStream()) {
+            if (input == null) throw new IllegalArgumentException("Archivo invalido");
+            byte[] buffer = new byte[8192];
+            int leidos;
+            while ((leidos = input.read(buffer)) != -1) {
+                salida.write(buffer, 0, leidos);
+            }
+            return salida.toByteArray();
+        }
+    }
+
+    private String nombreArchivo(Uri uri) {
+        try (Cursor cursor = getContentResolver().query(
+                uri, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int indice = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                if (indice >= 0) {
+                    String nombre = cursor.getString(indice);
+                    if (nombre != null && !nombre.isBlank()) return nombre;
+                }
+            }
+        }
+        return "documento";
+    }
+
+    private String tipoArchivo(Uri uri, String nombre) {
+        String tipo = getContentResolver().getType(uri);
+        if (tipo != null) return tipo;
+        String minuscula = nombre.toLowerCase(Locale.ROOT);
+        if (minuscula.endsWith(".pdf")) return "application/pdf";
+        if (minuscula.endsWith(".png")) return "image/png";
+        return "image/jpeg";
+    }
+
+    private String leerError(Response<?> response) {
+        try {
+            if (response.errorBody() != null) {
+                return response.errorBody().string().replaceFirst("^\\d{3}:\\s*", "");
+            }
+        } catch (Exception ignored) {
+        }
+        return "No se pudo enviar la documentacion.";
     }
 
     private void responder(boolean acepta) {

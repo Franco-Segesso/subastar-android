@@ -44,6 +44,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvDetalleIconoEstado"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
@@ -61,6 +62,33 @@
                 android:gravity="center"
                 android:textColor="@color/texto_sec"
                 android:textSize="13sp" />
+
+            <LinearLayout
+                android:id="@+id/layoutConsignacionRechazada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_multa_pendiente"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CONSIGNACION RECHAZADA"
+                    android:textColor="@color/error"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMotivoRechazoConsignacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/texto_ppal"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layoutTimeline"
@@ -81,6 +109,82 @@
 
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Condiciones propuestas" android:textColor="@color/texto_ppal" android:textSize="18sp" />
                 <TextView android:id="@+id/tvCondicionesDetalle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:textColor="@color/texto_sec" android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutDocumentacionOrigen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_caja_lista"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Documentacion de origen"
+                    android:textColor="@color/texto_ppal"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMotivoDocumentacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnSeleccionarDocumentos"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="14dp"
+                    android:backgroundTint="@color/fondo_sec_b"
+                    android:text="SELECCIONAR ARCHIVOS"
+                    android:textColor="@color/texto_ppal" />
+
+                <TextView
+                    android:id="@+id/tvCantidadDocumentos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="0 archivos seleccionados"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="13sp" />
+
+                <EditText
+                    android:id="@+id/etDescripcionDocumentacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_input"
+                    android:hint="Descripcion adicional (opcional)"
+                    android:minHeight="56dp"
+                    android:padding="12dp"
+                    android:textColor="@color/texto_ppal"
+                    android:textColorHint="@color/texto_sec" />
+
+                <Button
+                    android:id="@+id/btnEnviarDocumentacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/secundario"
+                    android:text="ENVIAR DOCUMENTACION"
+                    android:textColor="@color/primario"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDocumentosPresentados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <TextView

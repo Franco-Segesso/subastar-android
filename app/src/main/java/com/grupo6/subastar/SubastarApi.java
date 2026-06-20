@@ -178,6 +178,15 @@ public interface SubastarApi {
             @Body CuentaDestinoRequest request
     );
 
+    @Multipart
+    @POST("/v1/consignaciones/{id}/documentacion-origen")
+    Call<ResponseBody> registrarDocumentacionOrigen(
+            @Header("Authorization") String token,
+            @Path("id") Integer id,
+            @Part List<MultipartBody.Part> archivos,
+            @Part("descripcion") RequestBody descripcion
+    );
+
     @GET("/v1/clientes/me/subastas")
     Call<List<SubastaParticipacionDTO>> obtenerMisPujas(
             @Header("Authorization") String token,
