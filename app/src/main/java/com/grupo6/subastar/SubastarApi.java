@@ -13,6 +13,8 @@ import com.grupo6.subastar.dto.SubastaParticipacionDTO;
 import com.grupo6.subastar.dto.CompraDTO;
 import com.grupo6.subastar.dto.ModalidadEntregaRequest;
 import com.grupo6.subastar.dto.PagarCompraRequest;
+import com.grupo6.subastar.dto.MultaDTO;
+import com.grupo6.subastar.dto.PagarMultaRequest;
 import com.grupo6.subastar.model.ItemCatalogo;
 import com.grupo6.subastar.model.Subasta;
 
@@ -211,6 +213,23 @@ public interface SubastarApi {
             @Header("Authorization") String token,
             @Path("compraId") Integer compraId,
             @Body PagarCompraRequest request
+    );
+
+    @GET("/v1/clientes/me/multas")
+    Call<List<MultaDTO>> obtenerMultas(
+            @Header("Authorization") String token
+    );
+
+    @POST("/v1/clientes/me/multas/{id}/pagar")
+    Call<ResponseBody> pagarMulta(
+            @Header("Authorization") String token,
+            @Path("id") Integer id,
+            @Body PagarMultaRequest request
+    );
+
+    @GET("/v1/medios-pago")
+    Call<List<MedioPagoDTO>> obtenerMediosPagoAutenticado(
+            @Header("Authorization") String token
     );
 
 
