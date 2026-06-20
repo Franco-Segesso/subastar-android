@@ -48,10 +48,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/bg_success_icon"
                 android:gravity="center"
-                android:text="✓"
-                android:textColor="@color/secundario"
                 android:textSize="48sp" />
 
             <TextView

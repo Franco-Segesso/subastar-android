@@ -128,12 +128,14 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
         if (rechazada) {
             tvIconoEstado.setText("X");
             tvIconoEstado.setTextColor(getResources().getColor(R.color.error));
+            tvIconoEstado.setBackgroundResource(R.drawable.bg_circulo_error);
             layoutRechazada.setVisibility(View.VISIBLE);
             tvMotivoRechazo.setText(
                     "Motivo:\n" + texto(c.getMotivoRechazo()));
         } else {
-            tvIconoEstado.setText("✓");
-            tvIconoEstado.setTextColor(getResources().getColor(R.color.secundario));
+            // Dejamos el texto vacío para que no se superponga y se vea solo el tilde del fondo
+            tvIconoEstado.setText("");
+            tvIconoEstado.setBackgroundResource(R.drawable.bg_success_icon);
             layoutRechazada.setVisibility(View.GONE);
         }
         layoutTimeline.removeAllViews();

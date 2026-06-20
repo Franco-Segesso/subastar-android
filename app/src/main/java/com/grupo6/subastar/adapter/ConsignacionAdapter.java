@@ -82,6 +82,10 @@ public class ConsignacionAdapter extends RecyclerView.Adapter<ConsignacionAdapte
     private void pintarEstado(ViewHolder holder, String estado) {
         int fondo = R.drawable.bg_chip_inactivo;
         int texto = R.color.texto_sec;
+
+        // Limpiamos cualquier ícono (tilde o cruz) que haya quedado pegado por el reciclaje de vistas de Android
+        holder.tvEstado.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
         if ("ACTIVA".equals(estado)
                 || "ACEPTADA".equals(estado)
                 || "EN SUBASTA".equals(estado)
@@ -91,8 +95,17 @@ public class ConsignacionAdapter extends RecyclerView.Adapter<ConsignacionAdapte
             texto = R.color.secundario;
         } else if ("RECHAZADA".equals(estado)) {
             texto = R.color.error;
+            // Anulamos el fondo para evitar que traiga el diseño del chip inactivo y su icono
+            fondo = 0;
         }
-        holder.tvEstado.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), fondo));
+
+        if (fondo != 0) {
+            holder.tvEstado.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), fondo));
+        } else {
+            // Se le quita el fondo por completo a la rechazada
+            holder.tvEstado.setBackground(null);
+        }
+
         holder.tvEstado.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), texto));
     }
 
