@@ -165,7 +165,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
 
         boolean pagada = "pagada".equalsIgnoreCase(compra.getEstadoPago());
 
-        // --- LOGICA MODIFICADA PARA EL PDF ---
+        // --- LOGICA PARA EL PDF ---
         if (pagada) {
             btnFinalizar.setText("DESCARGAR FACTURA (PDF)");
             btnFinalizar.setEnabled(true);
@@ -351,15 +351,51 @@ public class FacturaCompraActivity extends AppCompatActivity {
             return;
         }
 
-        String aviso = "retiro".equals(modalidadSeleccionada)
-                ? "La cobertura permanecerá vigente hasta que retires el artículo y finalizará al recibirlo."
-                : "La cobertura permanecerá vigente durante el traslado y finalizará al entregarse en tu domicilio. El envío está a cargo del comprador.";
-        new AlertDialog.Builder(this)
-                .setTitle("Confirmar compra")
-                .setMessage(aviso)
-                .setNegativeButton("Cancelar", null)
-                .setPositiveButton("Finalizar", (dialog, which) -> procesarCompra())
-                .show();
+        String titulo = "Confirmar compra";
+        String mensaje;
+        boolean esAdvertencia = false;
+
+        // FASE 1: Requisito del TP - Advertencia de pérdida de seguro
+        if ("retiro".equals(modalidadSeleccionada)) {
+            titulo = "¡Atención!";
+            mensaje = "Al retirar personalmente el bien, perderá la cobertura del seguro. ¿Desea continuar?";
+            esAdvertencia = true;
+        } else {
+            mensaje = "La cobertura permanecerá vigente durante el traslado. El envío está a cargo del comprador.";
+        }
+
+        mostrarModalConfirmacionPersonalizado(titulo, mensaje, esAdvertencia);
+    }
+
+    private void mostrarModalConfirmacionPersonalizado(String titulo, String mensaje, boolean esAdvertencia) {
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_confirmacion_compra);
+        dialog.setCancelable(false);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        TextView tvTitulo = dialog.findViewById(R.id.tvTituloConfirmacion);
+        TextView tvMensaje = dialog.findViewById(R.id.tvMensajeConfirmacion);
+        android.widget.Button btnCancelar = dialog.findViewById(R.id.btnCancelarConfirmacion);
+        android.widget.Button btnAceptar = dialog.findViewById(R.id.btnAceptarConfirmacion);
+
+        tvTitulo.setText(titulo);
+        tvMensaje.setText(mensaje);
+
+        // Si es el aviso de retiro, pintamos el título de rojo para que el usuario preste atención
+        if (esAdvertencia) {
+            tvTitulo.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.error));
+        }
+
+        btnCancelar.setOnClickListener(v -> dialog.dismiss());
+        btnAceptar.setOnClickListener(v -> {
+            dialog.dismiss();
+            procesarCompra();
+        });
+
+        dialog.show();
     }
 
     private void procesarCompra() {
@@ -447,13 +483,17 @@ public class FacturaCompraActivity extends AppCompatActivity {
         TextView detalle = dialog.findViewById(R.id.tvCompraExitosaDetalle);
         String moneda = compraActual != null && compraActual.getSubasta() != null
                 ? compraActual.getSubasta().getMoneda() : "";
+
+        // FASE 1: Mensaje dinámico según retiro o envío
+        String mensajeModalidad = "retiro".equals(modalidadSeleccionada)
+                ? "El ítem está esperándote en nuestra sucursal central."
+                : "El ítem estará llegando a tu casa en los siguientes días.";
+
         detalle.setText(
                 "El pago fue confirmado por "
-                        + FormatoPujas.moneda(
-                                moneda,
-                                compraActual == null
-                                        ? null : compraActual.getTotal())
-                        + ". Ya podes consultar y descargar tu factura.");
+                        + FormatoPujas.moneda(moneda, compraActual == null ? null : compraActual.getTotal())
+                        + ".\n\n" + mensajeModalidad + "\n\nYa podés consultar y descargar tu factura."
+        );
 
         dialog.findViewById(R.id.btnCompraExitosaFactura)
                 .setOnClickListener(v -> {

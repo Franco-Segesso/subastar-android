@@ -88,7 +88,7 @@ public interface SubastarApi {
     Call<ResponseBody> activarCuenta(@Body com.grupo6.subastar.dto.ActivarRequest request);
 
     @POST("v1/subastas/{id}/ingresar")
-    Call<Void> ingresarSubasta(@Header("Authorization") String token, @Path("id") Integer id);
+    Call<Void> ingresarSubasta(@Header("Authorization") String token, @Path("id") Integer id, @Query("soloObservar") boolean soloObservar);
 
     @POST("v1/subastas/{id}/salir")
     Call<Void> salirSubasta(@Header("Authorization") String token, @Path("id") Integer id);

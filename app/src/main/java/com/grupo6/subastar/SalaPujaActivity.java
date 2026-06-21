@@ -27,6 +27,7 @@ import com.grupo6.subastar.dto.EstadoPujaDTO;
 import com.grupo6.subastar.dto.PujaMensajeDTO;
 import com.grupo6.subastar.dto.PujaRequest;
 import com.grupo6.subastar.dto.MedioPagoDTO;
+import com.grupo6.subastar.dto.SubastaParticipacionDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -239,13 +240,15 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void ingresarSalaBackend() {
-        api.ingresarSubasta(tokenJwt, subastaId).enqueue(new Callback<Void>() {
+        api.ingresarSubasta(tokenJwt, subastaId, false).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     cargarHistorialPujas();
                     conectarWebSocket();
-                } else {
+                } else if (response.code() == 403){
+                    mostrarModalObservador();
+                } else{
                     mostrarErrorIngreso(response.code(), leerError(response));
                 }
             }
@@ -255,6 +258,43 @@ public class SalaPujaActivity extends AppCompatActivity {
                 mostrarErrorIngreso(0, "Fallo de conexion.");
             }
         });
+    }
+
+    private void ingresarComoObservador() {
+        // Le pasamos 'true' al final para indicarle a Spring Boot que venimos a mirar
+        api.ingresarSubasta(tokenJwt, subastaId, true).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    // Como nosotros mismos pedimos entrar a observar, ya sabemos que el backend nos dio el ok.
+                    // Apagamos la UI de pujas y conectamos los WebSockets normalmente.
+                    activarModoObservadorUI();
+                    cargarHistorialPujas();
+                    conectarWebSocket();
+                } else {
+                    mostrarErrorIngreso(response.code(), "No se pudo ingresar como observador.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                mostrarErrorIngreso(0, "Fallo de conexion.");
+            }
+        });
+    }
+
+    private void activarModoObservadorUI() {
+        View panelInferior = findViewById(R.id.layoutInputPuja);
+        if (panelInferior != null) {
+            panelInferior.setVisibility(View.GONE);
+        }
+
+        // Actualizamos el subtítulo
+        if (tvHeaderSubtitle != null) {
+            tvHeaderSubtitle.setText("Subasta - MODO OBSERVADOR");
+        }
+
+        Toast.makeText(this, "Estás en modo observador. Solo lectura.", Toast.LENGTH_LONG).show();
     }
 
     private void cargarHistorialPujas() {
@@ -844,6 +884,8 @@ public class SalaPujaActivity extends AppCompatActivity {
         dialog.show();
     }
 
+
+
     private void prepararSalaModoLectura() {
         etMontoPuja.setVisibility(View.GONE);
         btnPujar.setVisibility(View.GONE);
@@ -857,5 +899,40 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         tvBannerEstado.setText("Subasta Finalizada - Historial de Pujas");
         tvBannerEstado.setVisibility(View.VISIBLE);
+    }
+
+    private void mostrarModalObservador() {
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        // Usamos tu layout personalizado
+        dialog.setContentView(R.layout.dialog_confirmacion_compra);
+        dialog.setCancelable(false); // Obliga a elegir una opción
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        TextView tvTitulo = dialog.findViewById(R.id.tvTituloConfirmacion);
+        TextView tvMensaje = dialog.findViewById(R.id.tvMensajeConfirmacion);
+        Button btnCancelar = dialog.findViewById(R.id.btnCancelarConfirmacion);
+        Button btnAceptar = dialog.findViewById(R.id.btnAceptarConfirmacion);
+
+        tvTitulo.setText("Requisitos insuficientes");
+        tvMensaje.setText("Tu categoría no es suficiente o no tenés un medio de pago verificado.\n\n¿Querés entrar en Modo Observador para ver la subasta en vivo?");
+
+        btnCancelar.setText("Salir");
+        btnAceptar.setText("Observar");
+
+        btnCancelar.setOnClickListener(v -> {
+            dialog.dismiss();
+            finish(); // Lo saca de la pantalla
+        });
+
+        btnAceptar.setOnClickListener(v -> {
+            dialog.dismiss();
+            ingresarComoObservador(); // Llama al método que ya tenías
+        });
+
+        dialog.show();
     }
 }

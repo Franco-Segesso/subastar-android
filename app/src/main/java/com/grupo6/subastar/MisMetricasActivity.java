@@ -80,10 +80,7 @@ public class MisMetricasActivity extends AppCompatActivity {
                 ? "COMÚN" : metricas.getCategoriaActual().toUpperCase(Locale.ROOT);
         ((TextView) findViewById(R.id.tvMetricaCategoriaActual)).setText(
                 "Categoría actual\n" + categoria);
-        int progreso = progresoCategoria(metricas.getCategoriaActual());
-        ((ProgressBar) findViewById(R.id.progresoCategoria)).setProgress(progreso);
-        ((TextView) findViewById(R.id.tvMetricaProgreso)).setText(
-                progreso + "% del recorrido de categorías completado");
+        configurarBarraDeProgreso(metricas.getCategoriaActual(), metricas.getSubastaGanadas());
     }
 
     private String categoriaMasPujada(
@@ -96,15 +93,47 @@ public class MisMetricasActivity extends AppCompatActivity {
                 .orElse("SIN ACTIVIDAD");
     }
 
-    private int progresoCategoria(String categoria) {
-        if (categoria == null) return 20;
-        switch (categoria.toLowerCase(Locale.ROOT)) {
-            case "platino": return 100;
-            case "oro": return 80;
-            case "plata": return 60;
-            case "especial": return 40;
-            default: return 20;
+    private void configurarBarraDeProgreso(String categoriaActual, Integer subastasGanadas) {
+        int compras = (subastasGanadas == null) ? 0 : subastasGanadas;
+        String cat = (categoriaActual == null) ? "comun" : categoriaActual.toLowerCase(Locale.ROOT);
+
+        int progreso = 0;
+        String mensaje = "";
+
+        switch (cat) {
+            case "comun":
+                progreso = 15; // Un mínimo visual para que la barra no se vea rota
+                mensaje = "Agregá 1 medio de pago para subir a ESPECIAL";
+                break;
+            case "especial":
+                // Necesita 2 compras para ser PLATA
+                progreso = (int) ((compras / 2.0) * 100);
+                int faltanPlata = 2 - compras;
+                mensaje = faltanPlata > 0 ? "Te faltan " + faltanPlata + " compras para ser PLATA" : "¡Evaluando tu ascenso a PLATA!";
+                break;
+            case "plata":
+                // Necesita 5 compras para ser ORO
+                progreso = (int) ((compras / 5.0) * 100);
+                int faltanOro = 5 - compras;
+                mensaje = faltanOro > 0 ? "Te faltan " + faltanOro + " compras para ser ORO" : "¡Evaluando tu ascenso a ORO!";
+                break;
+            case "oro":
+                // Necesita 10 compras para ser PLATINO
+                progreso = (int) ((compras / 10.0) * 100);
+                int faltanPlatino = 10 - compras;
+                mensaje = faltanPlatino > 0 ? "Te faltan " + faltanPlatino + " compras para ser PLATINO" : "¡Evaluando tu ascenso a PLATINO!";
+                break;
+            case "platino":
+                progreso = 100;
+                mensaje = "¡Alcanzaste la categoría máxima del sistema!";
+                break;
         }
+
+        // Evitamos que la barra se pase de largo visualmente
+        if (progreso > 100) progreso = 100;
+
+        ((ProgressBar) findViewById(R.id.progresoCategoria)).setProgress(progreso);
+        ((TextView) findViewById(R.id.tvMetricaProgreso)).setText(mensaje);
     }
 
     private int numero(Integer valor) {
