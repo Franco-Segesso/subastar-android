@@ -115,25 +115,25 @@ public class ConsignarBienActivity extends AppCompatActivity {
     private void enviarSolicitud(Button btnEnviar) {
         String token = tokenManager.getToken();
         if (token == null) {
-            Toast.makeText(this, "Necesitas iniciar sesion.", Toast.LENGTH_LONG).show();
+            com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Necesitas iniciar sesión para realizar esta acción.");
             return;
         }
         if (texto(etTipoBien).isEmpty() || texto(etDescripcion).isEmpty()) {
-            Toast.makeText(this, "Completa tipo de bien y descripcion.", Toast.LENGTH_LONG).show();
+            com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Por favor, completa el tipo de bien y su descripción.");
             return;
         }
         if (!chkPropiedad.isChecked()) {
-            Toast.makeText(this, "Debes declarar la propiedad del bien.", Toast.LENGTH_LONG).show();
+            com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Debes declarar la propiedad del bien para continuar.");
             return;
         }
         if (fotosSeleccionadas.size() < 6) {
-            Toast.makeText(this, "Debes cargar al menos 6 fotos.", Toast.LENGTH_LONG).show();
+            com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Debes cargar al menos 6 fotos del bien.");
             return;
         }
 
         List<MultipartBody.Part> fotos = partesFotos();
         if (fotos.size() != fotosSeleccionadas.size()) {
-            Toast.makeText(this, "No se pudieron leer todas las fotos. Volve a seleccionarlas.", Toast.LENGTH_LONG).show();
+            com.grupo6.subastar.util.DialogUtils.mostrarError(this, "No se pudieron leer todas las fotos. Volvé a seleccionarlas.");
             return;
         }
 
@@ -157,13 +157,8 @@ public class ConsignarBienActivity extends AppCompatActivity {
                 } else {
                     String detalle = leerError(response);
                     Log.e("CONSIGNACION", "HTTP " + response.code() + ": " + detalle);
-                    Toast.makeText(
-                            ConsignarBienActivity.this,
-                            detalle.isEmpty()
-                                    ? "No se pudo enviar la solicitud (" + response.code() + ")."
-                                    : detalle,
-                            Toast.LENGTH_LONG
-                    ).show();
+                    com.grupo6.subastar.util.DialogUtils.mostrarError(ConsignarBienActivity.this,
+                            detalle.isEmpty() ? "No se pudo enviar la solicitud (" + response.code() + ")." : detalle);
                 }
             }
 
@@ -171,7 +166,7 @@ public class ConsignarBienActivity extends AppCompatActivity {
             public void onFailure(Call<ConsignacionDTO> call, Throwable t) {
                 btnEnviar.setEnabled(true);
                 Log.e("CONSIGNACION", "Error enviando solicitud", t);
-                Toast.makeText(ConsignarBienActivity.this, "Error de conexion.", Toast.LENGTH_LONG).show();
+                com.grupo6.subastar.util.DialogUtils.mostrarError(ConsignarBienActivity.this, "Error de conexión. Revisa tu internet.");
             }
         });
     }

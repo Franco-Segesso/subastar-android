@@ -12,6 +12,8 @@ public class ClienteDTO {
     private String direccion;
     private String pais;
 
+    private String foto;
+
     public Integer getIdentificador() { return identificador; }
     public String getNombre() { return nombre; }
     public String getApellido() { return apellido; }
@@ -22,4 +24,6 @@ public class ClienteDTO {
     public String getDocumento() { return documento; }
     public String getDireccion() { return direccion; }
     public String getPais() { return pais; }
+
+    public String getFoto() { return foto; }
 }

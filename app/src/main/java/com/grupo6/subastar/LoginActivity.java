@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.grupo6.subastar.dto.LoginRequest;
 import com.grupo6.subastar.dto.LoginResponse;
+import com.grupo6.subastar.util.DialogUtils;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -82,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         String clave = etClave.getText().toString().trim();
 
         if (email.isEmpty() || clave.isEmpty()) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+            DialogUtils.mostrarError(this, "Por favor, completá todos los campos.");
             return;
         }
 
@@ -101,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                     String token = response.body().getToken();
                     tokenManager.saveToken(token);
                     if (response.body().getCliente() == null) {
-                        Toast.makeText(LoginActivity.this, "Login incompleto: falta informacion del cliente", Toast.LENGTH_LONG).show();
+                        DialogUtils.mostrarError(LoginActivity.this, "Login incompleto: falta información del cliente.");
                         return;
                     }
 
@@ -122,18 +123,21 @@ public class LoginActivity extends AppCompatActivity {
                             .putString("USER_DOCUMENTO", clienteLogueado.getDocumento())
                             .putString("USER_DIRECCION", clienteLogueado.getDireccion())
                             .putString("USER_PAIS", clienteLogueado.getPais())
+                            .putString("USER_FOTO", clienteLogueado.getFoto())
                             .apply();
 
-                    Toast.makeText(LoginActivity.this, "¡Éxito! Bienvenido, " + clienteLogueado.getNombre(), Toast.LENGTH_LONG).show();
+
 
                     //viajamos al home
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
+                    com.grupo6.subastar.util.DialogUtils.mostrarExito(LoginActivity.this, "¡Éxito! Bienvenido, " + clienteLogueado.getNombre(), () -> {
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    });
 
                 } else {
-                    Toast.makeText(LoginActivity.this, "Credenciales incorrectas o usuario bloqueado", Toast.LENGTH_LONG).show();
+                    DialogUtils.mostrarError(LoginActivity.this, "Credenciales incorrectas o usuario bloqueado.");
                 }
             }
 
@@ -141,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 btnLogin.setEnabled(true);
                 btnLogin.setText("Iniciar Sesión");
-                Toast.makeText(LoginActivity.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                DialogUtils.mostrarError(LoginActivity.this, "Error de conexión: " + t.getMessage());
             }
         });
     }

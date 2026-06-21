@@ -49,7 +49,7 @@ public class CuentaDestinoConsignacionActivity extends AppCompatActivity {
     private void agregarCbu() {
         String cbu = etCbu.getText().toString().trim();
         if (cbu.length() < 8) {
-            etCbu.setError("Ingresa un CBU valido");
+            etCbu.setError("Ingresa un CBU válido");
             return;
         }
         btnAgregar.setEnabled(false);
@@ -61,15 +61,17 @@ public class CuentaDestinoConsignacionActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     btnAgregar.setText("CBU agregado ✓");
                     btnVolverMis.setVisibility(android.view.View.VISIBLE);
+                    // Acá metemos un dialogito de éxito
+                    com.grupo6.subastar.util.DialogUtils.mostrarExito(CuentaDestinoConsignacionActivity.this, "Cuenta destino guardada exitosamente.", null);
                 } else {
-                    Toast.makeText(CuentaDestinoConsignacionActivity.this, "No se pudo agregar el CBU.", Toast.LENGTH_LONG).show();
+                    com.grupo6.subastar.util.DialogUtils.mostrarError(CuentaDestinoConsignacionActivity.this, "No se pudo agregar el CBU.");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 btnAgregar.setEnabled(true);
-                Toast.makeText(CuentaDestinoConsignacionActivity.this, "Error de conexion.", Toast.LENGTH_LONG).show();
+                com.grupo6.subastar.util.DialogUtils.mostrarError(CuentaDestinoConsignacionActivity.this, "Error de conexión. Revisa tu internet.");
             }
         });
     }

@@ -33,6 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.Calendar;
 import android.app.DatePickerDialog;
 
+import com.grupo6.subastar.util.DialogUtils;
 
 
 public class RegistroActivity extends AppCompatActivity {
@@ -130,7 +131,7 @@ public class RegistroActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Pais>> call, Throwable t) {
-                Toast.makeText(RegistroActivity.this, "Error al cargar países", Toast.LENGTH_SHORT).show();
+                DialogUtils.mostrarError(RegistroActivity.this, "Error al cargar la lista de países.");
             }
         });
 
@@ -147,11 +148,11 @@ public class RegistroActivity extends AppCompatActivity {
         btnRegistrar.setOnClickListener(v -> {
             // Validaciones básicas
             if (bytesFrente == null || bytesDorso == null) {
-                Toast.makeText(this, "Debe cargar foto del frente y dorso del DNI", Toast.LENGTH_SHORT).show();
+                com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Debe cargar foto del frente y dorso del DNI");
                 return;
             }
             if (listaPaises == null || listaPaises.isEmpty()) {
-                Toast.makeText(this, "Esperando países del servidor...", Toast.LENGTH_SHORT).show();
+                com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Esperando países del servidor. Intente en unos segundos.");
                 return;
             }
 
@@ -163,10 +164,7 @@ public class RegistroActivity extends AppCompatActivity {
             RequestBody reqDoc = RequestBody.create(MediaType.parse("text/plain"), etDoc.getText().toString());
             RequestBody reqDir = RequestBody.create(MediaType.parse("text/plain"), etDireccion.getText().toString());
             RequestBody reqPais = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(idPaisSeleccionado));
-
             RequestBody reqFecha = RequestBody.create(MediaType.parse("text/plain"), etFecha.getText().toString());
-
-
 
             RequestBody bodyFrente = RequestBody.create(MediaType.parse("image/*"), bytesFrente);
             MultipartBody.Part partFrente = MultipartBody.Part.createFormData("fotoDniFrente", "frente.jpg", bodyFrente);
@@ -177,21 +175,19 @@ public class RegistroActivity extends AppCompatActivity {
             btnRegistrar.setEnabled(false);
             btnRegistrar.setText("Enviando...");
 
-
             api.registrar(reqNombre, reqApellido, reqEmail, reqDoc, reqDir, reqFecha, reqPais, partFrente, partDorso)
                     .enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
-
                                 Intent intent = new Intent(RegistroActivity.this, RegistroExitosoActivity.class);
                                 startActivity(intent);
-                                finish(); // Cerramos RegistroActivity
+                                finish();
                             } else {
                                 btnRegistrar.setEnabled(true);
                                 btnRegistrar.setText("Registrarme");
                                 try {
-                                    Toast.makeText(RegistroActivity.this, "Error: " + response.errorBody().string(), Toast.LENGTH_LONG).show();
+                                    com.grupo6.subastar.util.DialogUtils.mostrarError(RegistroActivity.this, "Error: " + response.errorBody().string());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -202,10 +198,10 @@ public class RegistroActivity extends AppCompatActivity {
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                             btnRegistrar.setEnabled(true);
                             btnRegistrar.setText("Registrarme");
-                            Toast.makeText(RegistroActivity.this, "Falla de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                            com.grupo6.subastar.util.DialogUtils.mostrarError(RegistroActivity.this, "Falla de red: " + t.getMessage());
                         }
                     });
-        });
+        });;
     }
 
     private void procesarImagenSeleccionada(Uri uri) {
@@ -229,7 +225,7 @@ public class RegistroActivity extends AppCompatActivity {
                 tvEstadoDorso.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Error al leer la imagen", Toast.LENGTH_SHORT).show();
+            com.grupo6.subastar.util.DialogUtils.mostrarError(this, "Error al leer la imagen seleccionada.");
         }
     }
 }
