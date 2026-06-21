@@ -420,7 +420,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
                 });
     }
 
-    private void mostrarExito() {
+    private void mostrarExitoAnterior() {
         new AlertDialog.Builder(this)
                 .setTitle("La compra se realizó con éxito")
                 .setMessage("El pago fue confirmado y la compra quedó registrada.")
@@ -432,6 +432,48 @@ public class FacturaCompraActivity extends AppCompatActivity {
                     finish();
                 })
                 .show();
+    }
+
+    private void mostrarExito() {
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(R.layout.dialog_compra_exitosa);
+        dialog.setCancelable(false);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(
+                            android.graphics.Color.TRANSPARENT));
+        }
+
+        TextView detalle = dialog.findViewById(R.id.tvCompraExitosaDetalle);
+        String moneda = compraActual != null && compraActual.getSubasta() != null
+                ? compraActual.getSubasta().getMoneda() : "";
+        detalle.setText(
+                "El pago fue confirmado por "
+                        + FormatoPujas.moneda(
+                                moneda,
+                                compraActual == null
+                                        ? null : compraActual.getTotal())
+                        + ". Ya podes consultar y descargar tu factura.");
+
+        dialog.findViewById(R.id.btnCompraExitosaFactura)
+                .setOnClickListener(v -> {
+                    dialog.dismiss();
+                    cargarCompra();
+                });
+        dialog.findViewById(R.id.btnCompraExitosaSubastas)
+                .setOnClickListener(v -> {
+                    Intent intent = new Intent(this, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                    dialog.dismiss();
+                });
+        dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
     }
 
     private void finalizarConError(String mensaje) {

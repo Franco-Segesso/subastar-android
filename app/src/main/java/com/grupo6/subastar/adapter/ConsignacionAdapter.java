@@ -71,6 +71,7 @@ public class ConsignacionAdapter extends RecyclerView.Adapter<ConsignacionAdapte
 
     private String estadoVisible(ConsignacionDTO item) {
         String estado = item.getEstado() == null ? "" : item.getEstado().toLowerCase();
+        if ("vendida".equals(estado)) return "VENDIDA";
         if ("rechazado".equals(estado)) return "RECHAZADA";
         if ("documentacion_pendiente".equals(estado)) return "DOCUMENTACION REQUERIDA";
         if ("documentacion_presentada".equals(estado)) return "EN REVISION";
@@ -93,6 +94,9 @@ public class ConsignacionAdapter extends RecyclerView.Adapter<ConsignacionAdapte
                 || "EN REVISION".equals(estado)) {
             fondo = R.drawable.bg_chip_activo;
             texto = R.color.secundario;
+        } else if ("VENDIDA".equals(estado)) {
+            fondo = R.drawable.bg_chip_inactivo;
+            texto = R.color.exito;
         } else if ("RECHAZADA".equals(estado)) {
             texto = R.color.error;
             // Anulamos el fondo para evitar que traiga el diseño del chip inactivo y su icono

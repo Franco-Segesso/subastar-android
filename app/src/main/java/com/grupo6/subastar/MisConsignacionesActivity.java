@@ -113,7 +113,7 @@ public class MisConsignacionesActivity extends AppCompatActivity {
         String estado = c.getEstado() == null ? "" : c.getEstado().toLowerCase();
         if ("activas".equals(filtro)) return esActiva(estado);
         if ("subasta".equals(filtro)) return "aceptado".equals(estado) && Boolean.TRUE.equals(c.getCondicionesAceptadas());
-        if ("vendidas".equals(filtro)) return false;
+        if ("vendidas".equals(filtro)) return "vendida".equals(estado);
         return true;
     }
 
