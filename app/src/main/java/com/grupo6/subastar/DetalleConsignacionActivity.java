@@ -23,8 +23,8 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
     private Integer consignacionId;
     private TokenManager tokenManager;
     private SubastarApi api;
-    private TextView tvTitulo, tvCondiciones, tvUbicacionTitulo, tvUbicacion;
-    private LinearLayout layoutTimeline, layoutCondiciones, layoutAcciones;
+    private TextView tvTitulo, tvCondiciones, tvUbicacionTitulo, tvUbicacion, tvImporteFinal;
+    private LinearLayout layoutTimeline, layoutCondiciones, layoutAcciones, layoutVendida;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +46,11 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
         tvCondiciones = findViewById(R.id.tvCondicionesDetalle);
         tvUbicacionTitulo = findViewById(R.id.tvUbicacionTitulo);
         tvUbicacion = findViewById(R.id.tvUbicacionDetalle);
+        tvImporteFinal = findViewById(R.id.tvImporteFinalObtenido);
         layoutTimeline = findViewById(R.id.layoutTimeline);
         layoutCondiciones = findViewById(R.id.layoutCondiciones);
         layoutAcciones = findViewById(R.id.layoutAccionesCondiciones);
+        layoutVendida = findViewById(R.id.layoutVendida);
 
         btnVolver.setOnClickListener(v -> finish());
         btnAceptar.setOnClickListener(v -> responder(true));
@@ -96,6 +98,7 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
             }
         }
 
+        boolean esVendida = "vendida".equalsIgnoreCase(c.getEstado());
         boolean condicionesPendientes = "aceptado".equalsIgnoreCase(c.getEstado()) && !Boolean.TRUE.equals(c.getCondicionesAceptadas());
         if (c.getCondicionesEmpresa() != null) {
             layoutCondiciones.setVisibility(View.VISIBLE);
@@ -113,6 +116,21 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
             tvUbicacion.setText(c.getUbicacionDeposito().getNombre() + "\n" + c.getUbicacionDeposito().getDireccion());
         }
         layoutAcciones.setVisibility(condicionesPendientes ? View.VISIBLE : View.GONE);
+
+        if (esVendida && layoutVendida != null) {
+            layoutVendida.setVisibility(View.VISIBLE);
+            if (tvImporteFinal != null) {
+                if (c.getImporteFinalObtenido() != null) {
+                    tvImporteFinal.setText(String.format(java.util.Locale.US,
+                            "Importe recibido: $ %.2f\n(precio venta menos 10%% de comisión de la empresa)",
+                            c.getImporteFinalObtenido()));
+                } else {
+                    tvImporteFinal.setText("El pago del comprador está pendiente.");
+                }
+            }
+        } else if (layoutVendida != null) {
+            layoutVendida.setVisibility(View.GONE);
+        }
     }
 
     private void responder(boolean acepta) {

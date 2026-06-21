@@ -13,6 +13,7 @@ public class ConsignacionDTO {
     private UbicacionDepositoDTO ubicacionDeposito;
     private SeguroDTO seguro;
     private List<InstanciaDTO> instancias;
+    private Double importeFinalObtenido;
 
     public Integer getIdentificador() { return identificador; }
     public String getEstado() { return estado; }
@@ -24,6 +25,7 @@ public class ConsignacionDTO {
     public UbicacionDepositoDTO getUbicacionDeposito() { return ubicacionDeposito; }
     public SeguroDTO getSeguro() { return seguro; }
     public List<InstanciaDTO> getInstancias() { return instancias; }
+    public Double getImporteFinalObtenido() { return importeFinalObtenido; }
 
     public static class ProductoConsignadoDTO {
         private Integer identificador;

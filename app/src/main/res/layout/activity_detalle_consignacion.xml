@@ -103,6 +103,32 @@
                 android:textColor="@color/texto_ppal"
                 android:textSize="14sp"
                 android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/layoutVendida"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_caja_lista"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Bien vendido exitosamente"
+                    android:textColor="@color/secundario"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvImporteFinalObtenido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/texto_ppal"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
