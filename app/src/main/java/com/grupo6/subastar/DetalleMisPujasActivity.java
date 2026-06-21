@@ -63,29 +63,18 @@ public class DetalleMisPujasActivity extends AppCompatActivity {
 
         RecyclerView recycler = findViewById(R.id.recyclerDetalleMisPujas);
         recycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new HistorialMisPujasAdapter();
+        adapter = new HistorialMisPujasAdapter(this::abrirCompra);
         recycler.setAdapter(adapter);
 
         findViewById(R.id.btnVolverDetallePujas).setOnClickListener(v -> finish());
         TextView btnFactura = findViewById(R.id.btnVerFacturaCompra);
-        if (compraId > 0) {
-            btnFactura.setVisibility(View.VISIBLE);
-            String estadoPago = getIntent().getStringExtra("ESTADO_PAGO");
-            btnFactura.setText("pagada".equalsIgnoreCase(estadoPago)
-                    ? "VER FACTURA DE COMPRA"
-                    : "PAGAR");
-            btnFactura.setOnClickListener(v -> {
-                Intent intent = new Intent(this, FacturaCompraActivity.class);
-                intent.putExtra("COMPRA_ID", compraId);
-                startActivity(intent);
-            });
-        }
+        btnFactura.setVisibility(View.GONE);
         subtitulo.setText(FormatoPujas.fechaHoraSubasta(
                 getIntent().getStringExtra("SUBASTA_FECHA"),
                 getIntent().getStringExtra("SUBASTA_HORA")));
 
         cargarHistorial();
-        if (loteGanado > 0) cargarDetalleSubasta();
+        itemGanado.setVisibility(View.GONE);
     }
 
     private void cargarHistorial() {
@@ -169,6 +158,13 @@ public class DetalleMisPujasActivity extends AppCompatActivity {
         }
         itemGanado.setText("ÍTEM GANADO\n" + descripcion);
         itemGanado.setVisibility(View.VISIBLE);
+    }
+
+    private void abrirCompra(HistorialPujasClienteDTO.PujaDTO puja) {
+        if (puja == null || puja.getCompraId() == null) return;
+        Intent intent = new Intent(this, FacturaCompraActivity.class);
+        intent.putExtra("COMPRA_ID", puja.getCompraId());
+        startActivity(intent);
     }
 
     private void mostrarError(String mensaje) {

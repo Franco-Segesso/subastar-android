@@ -35,15 +35,23 @@ public class HistorialPujasClienteDTO {
 
     public static class PujaDTO {
         private Integer orden;
+        private Integer itemId;
+        private String descripcionItem;
         private Double importe;
         private String fechaHora;
         private Boolean esGanadora;
+        private Integer compraId;
+        private String estadoPago;
         private SuperadaPorDTO superadaPor;
 
         public Integer getOrden() { return orden; }
+        public Integer getItemId() { return itemId; }
+        public String getDescripcionItem() { return descripcionItem; }
         public Double getImporte() { return importe; }
         public String getFechaHora() { return fechaHora; }
         public Boolean getEsGanadora() { return esGanadora; }
+        public Integer getCompraId() { return compraId; }
+        public String getEstadoPago() { return estadoPago; }
         public SuperadaPorDTO getSuperadaPor() { return superadaPor; }
     }
 

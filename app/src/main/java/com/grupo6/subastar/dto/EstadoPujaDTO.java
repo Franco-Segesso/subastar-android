@@ -15,6 +15,12 @@ public class EstadoPujaDTO {
     @SerializedName("importeActual")
     private Double importeActual;
 
+    @SerializedName("importeMinimo")
+    private Double importeMinimo;
+
+    @SerializedName("importeMaximo")
+    private Double importeMaximo;
+
     @SerializedName("cerrado")
     private boolean cerrado;
 
@@ -22,5 +28,7 @@ public class EstadoPujaDTO {
     public Integer getItemId() { return itemId; }
     public Integer getTiempoRestanteSegundos() { return tiempoRestanteSegundos; }
     public Double getImporteActual() { return importeActual; }
+    public Double getImporteMinimo() { return importeMinimo; }
+    public Double getImporteMaximo() { return importeMaximo; }
     public boolean isCerrado() { return cerrado; }
 }

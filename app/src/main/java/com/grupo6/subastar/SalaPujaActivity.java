@@ -46,7 +46,8 @@ import ua.naiksoftware.stomp.dto.StompHeader;
 public class SalaPujaActivity extends AppCompatActivity {
 
     private ImageView btnVolver, ivItemImagen;
-    private TextView tvHeaderTitle, tvHeaderSubtitle, tvBase, tvOfertaActual, tvTemporizador, tvBannerEstado;
+    private TextView tvHeaderTitle, tvHeaderSubtitle, tvBase, tvOfertaActual,
+            tvTemporizador, tvBannerEstado, tvLimitesPuja;
     private EditText etMontoPuja;
     private Button btnPujar;
     private RecyclerView rvHistorialPujas;
@@ -64,6 +65,9 @@ public class SalaPujaActivity extends AppCompatActivity {
     private String monedaSubasta;
     private String tokenJwt;
     private SubastarApi api;
+    private double precioBaseItem;
+    private Double importeMinimoActual;
+    private Double importeMaximoActual;
 
     private final Handler timerHandler = new Handler(Looper.getMainLooper());
     private int segundosReferencia = 0;
@@ -149,6 +153,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         tvOfertaActual = findViewById(R.id.tvOfertaActual);
         tvTemporizador = findViewById(R.id.tvTemporizador);
         tvBannerEstado = findViewById(R.id.tvBannerEstado);
+        tvLimitesPuja = findViewById(R.id.tvLimitesPuja);
         etMontoPuja = findViewById(R.id.etMontoPuja);
         btnPujar = findViewById(R.id.btnPujar);
         rvHistorialPujas = findViewById(R.id.rvHistorialPujas);
@@ -162,6 +167,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     private void cargarDatosUI() {
         String titulo = getIntent().getStringExtra("ITEM_TITULO");
         double precioBase = getIntent().getDoubleExtra("ITEM_BASE", 0);
+        precioBaseItem = precioBase;
         String urlImagen = getIntent().getStringExtra("ITEM_IMAGEN");
         String fechaSubasta = getIntent().getStringExtra("SUBASTA_FECHA");
 
@@ -169,6 +175,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         if (precioBase > 0) {
             tvBase.setText(String.format("Base: %s %.2f", monedaSubasta, precioBase));
             tvOfertaActual.setText(String.format("%s %.2f", monedaSubasta, precioBase));
+            actualizarLimitesDesdeOferta(precioBase, null, null);
         }
         if (urlImagen != null && !urlImagen.isEmpty()) {
             Glide.with(this).load(urlImagen).centerCrop().into(ivItemImagen);
@@ -209,7 +216,22 @@ public class SalaPujaActivity extends AppCompatActivity {
             }
 
             try {
-                realizarPujaBackend(Double.parseDouble(montoStr));
+                double monto = Double.parseDouble(montoStr);
+                if (importeMinimoActual != null && monto < importeMinimoActual) {
+                    mostrarDialogoError(String.format(
+                            java.util.Locale.US,
+                            "La puja mínima actual es %s %.2f.",
+                            monedaSubasta, importeMinimoActual));
+                    return;
+                }
+                if (importeMaximoActual != null && monto > importeMaximoActual) {
+                    mostrarDialogoError(String.format(
+                            java.util.Locale.US,
+                            "La puja máxima actual es %s %.2f.",
+                            monedaSubasta, importeMaximoActual));
+                    return;
+                }
+                realizarPujaBackend(monto);
             } catch (NumberFormatException e) {
                 etMontoPuja.setError("Monto invalido");
             }
@@ -297,7 +319,8 @@ public class SalaPujaActivity extends AppCompatActivity {
                         mediosPago.clear();
                         if (response.isSuccessful() && response.body() != null) {
                             for (MedioPagoDTO medio : response.body()) {
-                                if ("si".equalsIgnoreCase(medio.getActivo())) {
+                                if ("si".equalsIgnoreCase(medio.getActivo())
+                                        && esCompatibleConMoneda(medio)) {
                                     mediosPago.add(medio);
                                 }
                             }
@@ -336,6 +359,25 @@ public class SalaPujaActivity extends AppCompatActivity {
         btnSeleccionarMedioPuja.setTextColor(
                 androidx.core.content.ContextCompat.getColor(this, R.color.secundario));
         btnSeleccionarMedioPuja.setBackgroundResource(R.drawable.bg_chip_activo);
+    }
+
+    private boolean esCompatibleConMoneda(MedioPagoDTO medio) {
+        if (medio == null || medio.getTipo() == null) return false;
+        if ("USD".equalsIgnoreCase(monedaSubasta)) {
+            return "tarjeta".equalsIgnoreCase(medio.getTipo())
+                    && "si".equalsIgnoreCase(medio.getEsExtranjera());
+        }
+        if ("tarjeta".equalsIgnoreCase(medio.getTipo())) return true;
+        if ("cuenta".equalsIgnoreCase(medio.getTipo())) {
+            return "ARS".equalsIgnoreCase(medio.getMoneda())
+                    && medio.getFondosReservados() != null
+                    && medio.getFondosReservados() > 0;
+        }
+        return "cheque".equalsIgnoreCase(medio.getTipo())
+                && "ARS".equalsIgnoreCase(medio.getMoneda())
+                && "si".equalsIgnoreCase(medio.getVerificado())
+                && medio.getMontoGarantia() != null
+                && medio.getMontoGarantia() > 0;
     }
 
     private String descripcionMedio(MedioPagoDTO medio) {
@@ -430,6 +472,10 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         if (estado.getImporteActual() != null && esEsteItem) {
             tvOfertaActual.setText(String.format("%s %.2f", monedaSubasta, estado.getImporteActual()));
+            actualizarLimitesDesdeOferta(
+                    estado.getImporteActual(),
+                    estado.getImporteMinimo(),
+                    estado.getImporteMaximo());
         }
 
         int segundos = estado.getTiempoRestanteSegundos() != null ? estado.getTiempoRestanteSegundos() : 0;
@@ -456,6 +502,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     private void actualizarResumenConPuja(PujaMensajeDTO puja) {
         if (puja == null) return;
         tvOfertaActual.setText(String.format("%s %.2f", monedaSubasta, puja.getImporte()));
+        actualizarLimitesDesdeOferta(puja.getImporte(), null, null);
         if (esMiPuja(puja)) {
             soyMayorPostor = true;
             tvBannerEstado.setText("Actualmente eres el mayor postor de esta subasta!");
@@ -470,6 +517,30 @@ public class SalaPujaActivity extends AppCompatActivity {
         if (puja == null || puja.getAsistente() == null || puja.getAsistente().getCliente() == null) return false;
         Integer clienteId = puja.getAsistente().getCliente().getIdentificador();
         return clienteId != null && clienteId.equals(miClienteId);
+    }
+
+    private void actualizarLimitesDesdeOferta(
+            Double ofertaActual,
+            Double minimoBackend,
+            Double maximoBackend) {
+        if (ofertaActual == null || precioBaseItem <= 0) return;
+        importeMinimoActual = minimoBackend != null
+                ? minimoBackend : ofertaActual + precioBaseItem * 0.01;
+        importeMaximoActual = maximoBackend;
+        if (minimoBackend == null && maximoBackend == null) {
+            importeMaximoActual = ofertaActual + precioBaseItem * 0.20;
+        }
+        String maximo = importeMaximoActual == null
+                ? "sin máximo"
+                : String.format(
+                        java.util.Locale.US,
+                        "%s %.2f", monedaSubasta, importeMaximoActual);
+        tvLimitesPuja.setText(String.format(
+                java.util.Locale.US,
+                "Puja permitida: mínimo %s %.2f · máximo %s",
+                monedaSubasta, importeMinimoActual, maximo));
+        etMontoPuja.setHint(String.format(
+                java.util.Locale.US, "Mínimo %.2f", importeMinimoActual));
     }
 
     private void iniciarTickerVisual(int segundosBackend) {
@@ -541,8 +612,11 @@ public class SalaPujaActivity extends AppCompatActivity {
 
         if (!cierre.isHayGanador()) {
             ivIcono.setImageResource(android.R.drawable.ic_dialog_info);
-            tvTitulo.setText("Subasta Desierta");
-            tvMensaje.setText("Nadie pujó por este ítem. El mismo será devuelto a su dueño.");
+            tvTitulo.setText("Comprado por SubastAR");
+            tvMensaje.setText(
+                    "Nadie pujó por este ítem. La casa de subastas lo compró "
+                            + "por el valor base de " + monedaSubasta + " "
+                            + cierre.getImporteFinal() + ".");
             btnPrincipal.setText("Volver al Catálogo");
             btnPrincipal.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
 
@@ -581,7 +655,9 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void mostrarErrorIngreso(int codigo, String detalle) {
-        String titulo = codigo == 403 ? "Categoría insuficiente\n" : "No se pudo ingresar\n";
+        String titulo = codigo == 403
+                ? "No podés ingresar a esta subasta\n"
+                : "No se pudo ingresar\n";
         String mensaje = detalle != null && !detalle.isEmpty() ? detalle : "Intenta nuevamente más tarde.";
 
         final android.app.Dialog dialog = new android.app.Dialog(this);
@@ -763,6 +839,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         etMontoPuja.setVisibility(View.GONE);
         btnPujar.setVisibility(View.GONE);
         btnSeleccionarMedioPuja.setVisibility(View.GONE);
+        tvLimitesPuja.setVisibility(View.GONE);
         tvTemporizador.setVisibility(View.GONE);
         layoutEnVivo.setVisibility(View.GONE);
 

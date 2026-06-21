@@ -1,8 +1,11 @@
 package com.grupo6.subastar.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 public class MedioPagoDTO {
     private Integer identificador;
     private String tipo;
+    @SerializedName(value = "verificado", alternate = {"verificadoCheque"})
     private String verificado;
     private String activo;
     private String fechaAlta;

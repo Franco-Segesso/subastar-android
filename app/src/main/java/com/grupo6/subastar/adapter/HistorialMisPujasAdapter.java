@@ -16,8 +16,17 @@ import java.util.List;
 public class HistorialMisPujasAdapter
         extends RecyclerView.Adapter<HistorialMisPujasAdapter.ViewHolder> {
 
+    public interface OnPujaClick {
+        void onClick(HistorialPujasClienteDTO.PujaDTO puja);
+    }
+
     private List<HistorialPujasClienteDTO.PujaDTO> items = new ArrayList<>();
     private String moneda = "";
+    private final OnPujaClick listener;
+
+    public HistorialMisPujasAdapter(OnPujaClick listener) {
+        this.listener = listener;
+    }
 
     public void setItems(List<HistorialPujasClienteDTO.PujaDTO> nuevosItems, String moneda) {
         items = nuevosItems == null ? new ArrayList<>() : nuevosItems;
@@ -37,7 +46,11 @@ public class HistorialMisPujasAdapter
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         HistorialPujasClienteDTO.PujaDTO item = items.get(position);
         boolean ganadora = Boolean.TRUE.equals(item.getEsGanadora());
-        holder.estado.setText(ganadora ? "GANADORA" : "PUJA #" + item.getOrden());
+        String itemLabel = item.getItemId() == null
+                ? "" : " · ÍTEM #" + item.getItemId();
+        holder.estado.setText(ganadora
+                ? "GANADORA" + itemLabel
+                : "PUJA #" + item.getOrden() + itemLabel);
         holder.estado.setTextColor(ContextCompat.getColor(
                 holder.itemView.getContext(),
                 ganadora ? R.color.secundario : R.color.texto_sec));
@@ -52,6 +65,22 @@ public class HistorialMisPujasAdapter
                     + " · " + FormatoPujas.moneda(
                     moneda, item.getSuperadaPor().getImporte()));
         }
+
+        if (ganadora && item.getCompraId() != null) {
+            holder.accion.setVisibility(View.VISIBLE);
+            String descripcion = item.getDescripcionItem() == null
+                    || item.getDescripcionItem().isBlank()
+                    ? "Ítem #" + item.getItemId()
+                    : item.getDescripcionItem();
+            holder.accion.setText(descripcion + "\n"
+                    + ("pagada".equalsIgnoreCase(item.getEstadoPago())
+                    ? "TOCAR PARA VER FACTURA"
+                    : "TOCAR PARA PAGAR ESTE ÍTEM"));
+            holder.itemView.setOnClickListener(v -> listener.onClick(item));
+        } else {
+            holder.accion.setVisibility(View.GONE);
+            holder.itemView.setOnClickListener(null);
+        }
     }
 
     @Override
@@ -64,6 +93,7 @@ public class HistorialMisPujasAdapter
         final TextView fecha;
         final TextView superada;
         final TextView importe;
+        final TextView accion;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +101,7 @@ public class HistorialMisPujasAdapter
             fecha = itemView.findViewById(R.id.tvHistorialFecha);
             superada = itemView.findViewById(R.id.tvHistorialSuperada);
             importe = itemView.findViewById(R.id.tvHistorialImporte);
+            accion = itemView.findViewById(R.id.tvHistorialAccion);
         }
     }
 }
