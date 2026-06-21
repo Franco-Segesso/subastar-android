@@ -41,6 +41,7 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
     private TokenManager tokenManager;
     private SubastarApi api;
     private TextView tvTitulo, tvCondiciones, tvUbicacionTitulo, tvUbicacion;
+    private TextView tvCuentaDestinoTitulo, tvCuentaDestinoDetalle;
     private TextView tvSeguroTitulo, tvSeguro;
     private TextView tvIconoEstado, tvMotivoRechazo;
     private TextView tvCostoDevolucion, tvInstruccionDevolucion;
@@ -78,8 +79,11 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
         tvCondiciones = findViewById(R.id.tvCondicionesDetalle);
         tvUbicacionTitulo = findViewById(R.id.tvUbicacionTitulo);
         tvUbicacion = findViewById(R.id.tvUbicacionDetalle);
+
         tvSeguroTitulo = findViewById(R.id.tvSeguroTitulo);
         tvSeguro = findViewById(R.id.tvSeguroDetalle);
+        tvCuentaDestinoTitulo = findViewById(R.id.tvCuentaDestinoTitulo);
+        tvCuentaDestinoDetalle = findViewById(R.id.tvCuentaDestinoDetalle);
         btnContactarAseguradora = findViewById(R.id.btnContactarAseguradora);
         layoutDocumentacion = findViewById(R.id.layoutDocumentacionOrigen);
         layoutRechazada = findViewById(R.id.layoutConsignacionRechazada);
@@ -198,6 +202,22 @@ public class DetalleConsignacionActivity extends AppCompatActivity {
                 btnContactarAseguradora.setOnClickListener(v ->
                         abrirContactoAseguradora(seguro.getCompania()));
             }
+        }
+        if (c.getCuentaDestino() != null) {
+            tvCuentaDestinoTitulo.setVisibility(View.VISIBLE);
+            tvCuentaDestinoDetalle.setVisibility(View.VISIBLE);
+
+            ConsignacionDTO.CuentaDestinoDTO cuenta = c.getCuentaDestino();
+
+            tvCuentaDestinoDetalle.setText(
+                    "Banco\n" + texto(cuenta.getBanco()) + "\n\n" +
+                            "CBU / IBAN\n" + texto(cuenta.getCbu_iban()) + "\n\n" +
+                            "País\n" + texto(cuenta.getPais()) + "\n\n" +
+                            "Moneda\n" + texto(cuenta.getMoneda())
+            );
+        } else {
+            tvCuentaDestinoTitulo.setVisibility(View.GONE);
+            tvCuentaDestinoDetalle.setVisibility(View.GONE);
         }
         layoutAcciones.setVisibility(condicionesPendientes ? View.VISIBLE : View.GONE);
     }

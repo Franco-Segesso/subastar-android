@@ -16,6 +16,8 @@ public class ConsignacionDTO {
     private CondicionesEmpresaDTO condicionesEmpresa;
     private UbicacionDepositoDTO ubicacionDeposito;
     private SeguroDTO seguro;
+
+    private CuentaDestinoDTO cuentaDestino;
     private List<DocumentoDTO> documentosOrigen;
     private List<InstanciaDTO> instancias;
 
@@ -32,6 +34,8 @@ public class ConsignacionDTO {
     public CondicionesEmpresaDTO getCondicionesEmpresa() { return condicionesEmpresa; }
     public UbicacionDepositoDTO getUbicacionDeposito() { return ubicacionDeposito; }
     public SeguroDTO getSeguro() { return seguro; }
+
+    public CuentaDestinoDTO getCuentaDestino() { return cuentaDestino; }
     public List<DocumentoDTO> getDocumentosOrigen() { return documentosOrigen; }
     public List<InstanciaDTO> getInstancias() { return instancias; }
 
@@ -86,6 +90,20 @@ public class ConsignacionDTO {
         public String getCompania() { return compania; }
         public Double getImporte() { return importe; }
         public String getPolizaCombinada() { return polizaCombinada; }
+        public String getMoneda() { return moneda; }
+    }
+
+    public static class CuentaDestinoDTO {
+        private Integer identificador;
+        private String banco;
+        private String cbu_iban;
+        private String pais;
+        private String moneda;
+
+        public Integer getIdentificador() { return identificador; }
+        public String getBanco() { return banco; }
+        public String getCbu_iban() { return cbu_iban; }
+        public String getPais() { return pais; }
         public String getMoneda() { return moneda; }
     }
 
