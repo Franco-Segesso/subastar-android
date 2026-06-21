@@ -2,6 +2,8 @@ package com.grupo6.subastar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -48,6 +50,9 @@ public class HomeActivity extends AppCompatActivity {
     private TextView tvProximas;
     private StompClient stompClient;
     private CompositeDisposable compositeDisposable;
+    private final Handler websocketHandler = new Handler(Looper.getMainLooper());
+    private boolean conectandoWebSocket = false;
+    private boolean pantallaDestruida = false;
     private EditText etBuscador;
     private List<Subasta> subastasDelDia = new ArrayList<>();
 
@@ -204,8 +209,11 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
     private void conectarWebSocketHome() {
-        if (stompClient != null && stompClient.isConnected()) return;
+        if (pantallaDestruida || conectandoWebSocket
+                || (stompClient != null && stompClient.isConnected())) return;
 
+        conectandoWebSocket = true;
+        if (compositeDisposable != null) compositeDisposable.dispose();
         compositeDisposable = new CompositeDisposable();
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.WS_URL);
 
@@ -215,18 +223,30 @@ public class HomeActivity extends AppCompatActivity {
                 .subscribe(lifecycleEvent -> {
                     switch (lifecycleEvent.getType()) {
                         case OPENED:
+                            conectandoWebSocket = false;
                             suscribirseAEstadosSubastas();
                             break;
                         case ERROR:
+                            conectandoWebSocket = false;
                             Log.e("HOME_STOMP", "Error WebSocket", lifecycleEvent.getException());
+                            programarReconexionWebSocket();
                             break;
                         case CLOSED:
+                            conectandoWebSocket = false;
                             Log.d("HOME_STOMP", "Conexion cerrada");
+                            programarReconexionWebSocket();
                             break;
                     }
                 }));
 
         stompClient.connect();
+    }
+
+    private void programarReconexionWebSocket() {
+        websocketHandler.removeCallbacksAndMessages(null);
+        if (!pantallaDestruida) {
+            websocketHandler.postDelayed(this::conectarWebSocketHome, 2000);
+        }
     }
 
     private void suscribirseAEstadosSubastas() {
@@ -427,6 +447,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        conectarWebSocketHome();
 
         if (btnPerfil != null) {
             mostrarFotoPerfilHome(btnPerfil);
@@ -556,6 +577,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        pantallaDestruida = true;
+        websocketHandler.removeCallbacksAndMessages(null);
         if (compositeDisposable != null) compositeDisposable.dispose();
         if (stompClient != null && stompClient.isConnected()) stompClient.disconnect();
     }

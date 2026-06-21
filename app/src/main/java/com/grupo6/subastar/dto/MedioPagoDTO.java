@@ -24,6 +24,7 @@ public class MedioPagoDTO {
     private String paisBanco;
     private String moneda;
     private Double fondosReservados;
+    private Double fondosDisponibles;
 
     // Campos de ChequeCertificado
     private String nroCheque;
@@ -46,6 +47,7 @@ public class MedioPagoDTO {
     public String getPaisBanco() { return paisBanco; }
     public String getMoneda() { return moneda; }
     public Double getFondosReservados() { return fondosReservados; }
+    public Double getFondosDisponibles() { return fondosDisponibles; }
     public String getNroCheque() { return nroCheque; }
     public Double getMontoGarantia() { return montoGarantia; }
     public String getFechaEntrega() { return fechaEntrega; }

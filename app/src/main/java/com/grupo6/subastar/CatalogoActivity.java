@@ -1,6 +1,8 @@
 package com.grupo6.subastar;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.grupo6.subastar.adapter.ItemProductoAdapter;
 import com.grupo6.subastar.dto.EstadoPujaDTO;
 import com.grupo6.subastar.model.Subasta;
@@ -40,6 +43,9 @@ public class CatalogoActivity extends AppCompatActivity {
     private Gson gson;
     private LinearLayout layoutEnVivoCatalogo;
     private boolean refrescandoPorCierre = false;
+    private final Handler websocketHandler = new Handler(Looper.getMainLooper());
+    private boolean conectandoWebSocket = false;
+    private boolean pantallaDestruida = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +87,7 @@ public class CatalogoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        conectarWebSocketCatalogo();
         // Cada vez que el usuario vuelve a esta pantalla (por ejemplo, saliendo de la sala de puja)
         // recargamos los datos desde el backend usando el ID capturado.
         if (subastaId != null && subastaId != -1) {
@@ -90,8 +97,11 @@ public class CatalogoActivity extends AppCompatActivity {
 
     private void conectarWebSocketCatalogo() {
         if (subastaId == null || subastaId <= 0) return;
-        if (stompClient != null && stompClient.isConnected()) return;
+        if (pantallaDestruida || conectandoWebSocket
+                || (stompClient != null && stompClient.isConnected())) return;
 
+        conectandoWebSocket = true;
+        if (compositeDisposable != null) compositeDisposable.dispose();
         compositeDisposable = new CompositeDisposable();
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.WS_URL);
 
@@ -101,13 +111,18 @@ public class CatalogoActivity extends AppCompatActivity {
                 .subscribe(lifecycleEvent -> {
                     switch (lifecycleEvent.getType()) {
                         case OPENED:
+                            conectandoWebSocket = false;
                             suscribirseATopicosCatalogo();
                             break;
                         case ERROR:
+                            conectandoWebSocket = false;
                             Log.e("CATALOGO_STOMP", "Error WebSocket", lifecycleEvent.getException());
+                            programarReconexionWebSocket();
                             break;
                         case CLOSED:
+                            conectandoWebSocket = false;
                             Log.d("CATALOGO_STOMP", "Conexion cerrada");
+                            programarReconexionWebSocket();
                             break;
                     }
                 }));
@@ -115,7 +130,36 @@ public class CatalogoActivity extends AppCompatActivity {
         stompClient.connect();
     }
 
+    private void programarReconexionWebSocket() {
+        websocketHandler.removeCallbacksAndMessages(null);
+        if (!pantallaDestruida) {
+            websocketHandler.postDelayed(this::conectarWebSocketCatalogo, 2000);
+        }
+    }
+
     private void suscribirseATopicosCatalogo() {
+        compositeDisposable.add(stompClient.topic("/topic/subastas/estado-general")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(stompMessage -> {
+                    JsonObject evento = gson.fromJson(
+                            stompMessage.getPayload(), JsonObject.class);
+                    if (evento == null
+                            || !evento.has("subastaId")
+                            || evento.get("subastaId").getAsInt() != subastaId) {
+                        return;
+                    }
+                    String estado = evento.has("estado")
+                            ? evento.get("estado").getAsString() : "";
+                    tvEstado.setText(estado.toUpperCase());
+                    boolean abierta = "abierta".equalsIgnoreCase(estado);
+                    layoutTransmisionVivo.setVisibility(
+                            abierta ? View.VISIBLE : View.GONE);
+                    layoutEnVivoCatalogo.setVisibility(
+                            abierta ? View.VISIBLE : View.GONE);
+                }, error -> Log.e(
+                        "CATALOGO_STOMP", "Error en topic estado-general", error)));
+
         compositeDisposable.add(stompClient.topic("/topic/subastas/" + subastaId + "/estado")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -124,6 +168,8 @@ public class CatalogoActivity extends AppCompatActivity {
                     EstadoPujaDTO estado = gson.fromJson(stompMessage.getPayload(), EstadoPujaDTO.class);
                     if (estado != null && estado.getItemId() != null && adapter != null && !estado.isCerrado()) {
                         layoutTransmisionVivo.setVisibility(View.VISIBLE);
+                        layoutEnVivoCatalogo.setVisibility(View.VISIBLE);
+                        tvEstado.setText("ABIERTA");
                         adapter.actualizarItemActivo(estado.getItemId());
                     }
                 }, error -> Log.e("CATALOGO_STOMP", "Error en topic estado", error)));
@@ -214,6 +260,8 @@ public class CatalogoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        pantallaDestruida = true;
+        websocketHandler.removeCallbacksAndMessages(null);
         if (compositeDisposable != null) compositeDisposable.dispose();
         if (stompClient != null && stompClient.isConnected()) stompClient.disconnect();
     }

@@ -388,11 +388,11 @@ public class SalaPujaActivity extends AppCompatActivity {
         if ("cuenta".equalsIgnoreCase(medio.getTipo())) {
             return "Cuenta " + valorTexto(medio.getBanco())
                     + " - " + valorTexto(medio.getMoneda())
-                    + " " + valorNumero(medio.getFondosReservados());
+                    + " disponible " + valorNumero(saldoDisponible(medio));
         }
         return "Cheque " + valorTexto(medio.getNroCheque())
                 + " - " + valorTexto(medio.getMoneda())
-                + " " + valorNumero(medio.getMontoGarantia());
+                + " disponible " + valorNumero(saldoDisponible(medio));
     }
 
     private String valorTexto(String valor) {
@@ -401,6 +401,15 @@ public class SalaPujaActivity extends AppCompatActivity {
 
     private String valorNumero(Double valor) {
         return String.format(java.util.Locale.US, "%.2f", valor == null ? 0.0 : valor);
+    }
+
+    private Double saldoDisponible(MedioPagoDTO medio) {
+        if (medio.getFondosDisponibles() != null) {
+            return medio.getFondosDisponibles();
+        }
+        return "cuenta".equalsIgnoreCase(medio.getTipo())
+                ? medio.getFondosReservados()
+                : medio.getMontoGarantia();
     }
 
     private void conectarWebSocket() {
