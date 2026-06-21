@@ -44,13 +44,11 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvDetalleIconoEstado"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/bg_success_icon"
                 android:gravity="center"
-                android:text="✓"
-                android:textColor="@color/secundario"
                 android:textSize="48sp" />
 
             <TextView
@@ -61,6 +59,50 @@
                 android:gravity="center"
                 android:textColor="@color/texto_sec"
                 android:textSize="13sp" />
+
+            <LinearLayout
+                android:id="@+id/layoutConsignacionRechazada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_multa_pendiente"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CONSIGNACION RECHAZADA"
+                    android:textColor="@color/error"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMotivoRechazoConsignacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/texto_ppal"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvCostoDevolucionConsignacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/secundario"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvInstruccionDevolucionConsignacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layoutTimeline"
@@ -81,6 +123,82 @@
 
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Condiciones propuestas" android:textColor="@color/texto_ppal" android:textSize="18sp" />
                 <TextView android:id="@+id/tvCondicionesDetalle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:textColor="@color/texto_sec" android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutDocumentacionOrigen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_caja_lista"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Documentacion de origen"
+                    android:textColor="@color/texto_ppal"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMotivoDocumentacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnSeleccionarDocumentos"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="14dp"
+                    android:backgroundTint="@color/fondo_sec_b"
+                    android:text="SELECCIONAR ARCHIVOS"
+                    android:textColor="@color/texto_ppal" />
+
+                <TextView
+                    android:id="@+id/tvCantidadDocumentos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="0 archivos seleccionados"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="13sp" />
+
+                <EditText
+                    android:id="@+id/etDescripcionDocumentacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_input"
+                    android:hint="Descripcion adicional (opcional)"
+                    android:minHeight="56dp"
+                    android:padding="12dp"
+                    android:textColor="@color/texto_ppal"
+                    android:textColorHint="@color/black" />
+
+                <Button
+                    android:id="@+id/btnEnviarDocumentacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/secundario"
+                    android:text="ENVIAR DOCUMENTACION"
+                    android:textColor="@color/primario"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDocumentosPresentados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/texto_sec"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <TextView
@@ -104,6 +222,62 @@
                 android:textSize="14sp"
                 android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/tvSeguroTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Poliza de seguro"
+                android:textColor="@color/texto_sec"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvSeguroDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_caja_lista"
+                android:padding="16dp"
+                android:textColor="@color/texto_ppal"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvCuentaDestinoTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Cuenta destino registrada"
+                android:textColor="@color/secundario"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvCuentaDestinoDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_caja_lista"
+                android:padding="14dp"
+                android:textColor="@color/texto_ppal"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnContactarAseguradora"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/secundario"
+                android:text="CONTACTAR ASEGURADORA"
+                android:textColor="@color/primario"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:id="@+id/layoutVendida"
                 android:layout_width="match_parent"
@@ -119,7 +293,8 @@
                     android:layout_height="wrap_content"
                     android:text="Bien vendido exitosamente"
                     android:textColor="@color/secundario"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvImporteFinalObtenido"

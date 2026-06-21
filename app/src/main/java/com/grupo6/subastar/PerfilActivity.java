@@ -22,6 +22,22 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import android.net.Uri;
+import android.widget.ImageView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
+import com.bumptech.glide.Glide;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class PerfilActivity extends AppCompatActivity {
 
@@ -35,12 +51,24 @@ public class PerfilActivity extends AppCompatActivity {
     private Integer clienteId;
     private SubastarApi api;
 
+    private ImageView ivFotoPerfil;
+    private ActivityResultLauncher<String> seleccionarFotoLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
         tokenManager = new TokenManager(this);
+
+        seleccionarFotoLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        subirFotoPerfil(uri);
+                    }
+                }
+        );
 
 
         tvNombreCompleto = findViewById(R.id.tvNombreCompleto);
@@ -52,6 +80,7 @@ public class PerfilActivity extends AppCompatActivity {
         tvMultasPendientes = findViewById(R.id.tvMultasPendientesPerfil);
         tvBadgeMultas = findViewById(R.id.tvBadgeMultasPerfil);
         recyclerMediosPago = findViewById(R.id.recyclerMediosPago);
+        ivFotoPerfil = findViewById(R.id.ivFotoPerfil);
 
         recyclerMediosPago.setLayoutManager(new LinearLayoutManager(this));
 
@@ -86,7 +115,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         // Construir Retrofit
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         api = retrofit.create(SubastarApi.class);
@@ -98,6 +127,7 @@ public class PerfilActivity extends AppCompatActivity {
         String direccion = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_DIRECCION", "-");
         String pais      = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_PAIS", "-");
         String documento = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_DOCUMENTO", "-");
+        String fotoPerfil = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getString("USER_FOTO", null);
         clienteId        = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getInt("USER_ID", -1);
 
 
@@ -107,6 +137,10 @@ public class PerfilActivity extends AppCompatActivity {
         tvDireccion.setText(direccion);
         tvPais.setText(pais);
         tvDocumento.setText(documento);
+
+        mostrarFotoPerfil(fotoPerfil);
+
+        ivFotoPerfil.setOnClickListener(v -> seleccionarFotoLauncher.launch("image/*"));
 
         cargarMediosPago();
         cargarMultasPendientes();
@@ -176,6 +210,102 @@ public class PerfilActivity extends AppCompatActivity {
                     public void onFailure(Call<List<MultaDTO>> call, Throwable t) {
                     }
                 });
+    }
+
+    private void mostrarFotoPerfil(String fotoUrl) {
+        if (fotoUrl != null && !fotoUrl.trim().isEmpty()) {
+            ivFotoPerfil.setPadding(0, 0, 0, 0);
+
+            Glide.with(this)
+                    .load(fotoUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_person)
+                    .error(R.drawable.ic_person)
+                    .into(ivFotoPerfil);
+        } else {
+            ivFotoPerfil.setPadding(16, 16, 16, 16);
+            ivFotoPerfil.setImageResource(R.drawable.ic_person);
+        }
+    }
+
+    private void subirFotoPerfil(Uri uri) {
+        try {
+            File archivo = crearArchivoTemporalDesdeUri(uri);
+
+            String mimeType = getContentResolver().getType(uri);
+            if (mimeType == null) {
+                mimeType = "image/jpeg";
+            }
+
+            RequestBody requestFile = RequestBody.create(MediaType.parse(mimeType), archivo);
+            MultipartBody.Part fotoPart = MultipartBody.Part.createFormData(
+                    "foto",
+                    archivo.getName(),
+                    requestFile
+            );
+
+            String token = "Bearer " + tokenManager.getToken();
+
+            api.actualizarFotoPerfil(token, fotoPart).enqueue(new Callback<com.grupo6.subastar.dto.ClienteDTO>() {
+                @Override
+                public void onResponse(Call<com.grupo6.subastar.dto.ClienteDTO> call, Response<com.grupo6.subastar.dto.ClienteDTO> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String nuevaFoto = response.body().getFoto();
+
+                        getSharedPreferences("SubastarPrefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("USER_FOTO", nuevaFoto)
+                                .apply();
+
+                        mostrarFotoPerfil(nuevaFoto);
+                        Toast.makeText(PerfilActivity.this, "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(PerfilActivity.this, "No se pudo actualizar la foto", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<com.grupo6.subastar.dto.ClienteDTO> call, Throwable t) {
+                    Toast.makeText(PerfilActivity.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } catch (Exception e) {
+            Toast.makeText(this, "No se pudo leer la imagen", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private File crearArchivoTemporalDesdeUri(Uri uri) throws Exception {
+        String mimeType = getContentResolver().getType(uri);
+        String extension = ".jpg";
+
+        if ("image/png".equalsIgnoreCase(mimeType)) {
+            extension = ".png";
+        } else if ("image/webp".equalsIgnoreCase(mimeType)) {
+            extension = ".webp";
+        }
+
+        File archivoTemporal = File.createTempFile("foto_perfil_", extension, getCacheDir());
+
+        InputStream inputStream = getContentResolver().openInputStream(uri);
+        if (inputStream == null) {
+            throw new Exception("No se pudo abrir la imagen.");
+        }
+
+        OutputStream outputStream = new FileOutputStream(archivoTemporal);
+
+        byte[] buffer = new byte[4096];
+        int bytesLeidos;
+
+        while ((bytesLeidos = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesLeidos);
+        }
+
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
+
+        return archivoTemporal;
     }
 
     private void confirmarEliminar(MedioPagoDTO item) {

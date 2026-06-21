@@ -20,7 +20,9 @@ public class CompraDTO {
     public Double getImportePujado() { return importePujado; }
     public Double getComision() { return comision; }
     public Double getCostoEnvio() { return costoEnvio; }
+    public void setCostoEnvio(Double costoEnvio) { this.costoEnvio = costoEnvio; }
     public Double getTotal() { return total; }
+    public void setTotal(Double total) { this.total = total; }
     public String getModalidadEntrega() { return modalidadEntrega; }
     public void setModalidadEntrega(String modalidadEntrega) { this.modalidadEntrega = modalidadEntrega; }
     public String getDireccionEnvio() { return direccionEnvio; }

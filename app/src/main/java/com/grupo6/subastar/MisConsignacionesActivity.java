@@ -36,7 +36,7 @@ public class MisConsignacionesActivity extends AppCompatActivity {
 
         tokenManager = new TokenManager(this);
         api = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(SubastarApi.class);
@@ -111,7 +111,7 @@ public class MisConsignacionesActivity extends AppCompatActivity {
 
     private boolean coincide(ConsignacionDTO c) {
         String estado = c.getEstado() == null ? "" : c.getEstado().toLowerCase();
-        if ("activas".equals(filtro)) return "pendiente".equals(estado);
+        if ("activas".equals(filtro)) return esActiva(estado);
         if ("subasta".equals(filtro)) return "aceptado".equals(estado) && Boolean.TRUE.equals(c.getCondicionesAceptadas());
         if ("vendidas".equals(filtro)) return false;
         return true;
@@ -121,9 +121,16 @@ public class MisConsignacionesActivity extends AppCompatActivity {
         int total = 0;
         for (ConsignacionDTO c : todas) {
             String estado = c.getEstado() == null ? "" : c.getEstado().toLowerCase();
-            if ("pendiente".equals(estado)) total++;
+            if (esActiva(estado)) total++;
         }
         return total;
+    }
+
+    private boolean esActiva(String estado) {
+        return "pendiente".equals(estado)
+                || "documentacion_pendiente".equals(estado)
+                || "documentacion_presentada".equals(estado)
+                || "aceptado".equals(estado);
     }
 
     private void actualizarChips() {

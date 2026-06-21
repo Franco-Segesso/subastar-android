@@ -34,7 +34,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
-
+import com.bumptech.glide.Glide;
 public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -50,6 +50,8 @@ public class HomeActivity extends AppCompatActivity {
     private CompositeDisposable compositeDisposable;
     private EditText etBuscador;
     private List<Subasta> subastasDelDia = new ArrayList<>();
+
+    private ImageView btnPerfil;
 
     // Componente visual para el punto rojo
     private View badgeNotificacion;
@@ -73,8 +75,10 @@ public class HomeActivity extends AppCompatActivity {
 
         tvNombreUsuario.setText(nombreGuardado);
 
-        ImageView btnPerfil = findViewById(R.id.btnPerfil);
+        btnPerfil = findViewById(R.id.btnPerfil);
         ImageView btnNotificaciones = findViewById(R.id.btnNotificaciones);
+        mostrarFotoPerfilHome(btnPerfil);
+
         TextView navMisPujas = findViewById(R.id.navMisPujas);
         TextView navConsignacion = findViewById(R.id.navConsignacion);
 
@@ -176,13 +180,34 @@ public class HomeActivity extends AppCompatActivity {
 
         ejecutarConsultaBackend(null, null);
         conectarWebSocketHome();
+
+
     }
 
+
+    private void mostrarFotoPerfilHome(ImageView btnPerfil) {
+        String fotoPerfil = getSharedPreferences("SubastarPrefs", MODE_PRIVATE)
+                .getString("USER_FOTO", null);
+
+        if (fotoPerfil != null && !fotoPerfil.trim().isEmpty()) {
+            btnPerfil.setPadding(0, 0, 0, 0);
+
+            Glide.with(this)
+                    .load(fotoPerfil)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_person)
+                    .error(R.drawable.ic_person)
+                    .into(btnPerfil);
+        } else {
+            btnPerfil.setPadding(8, 8, 8, 8);
+            btnPerfil.setImageResource(R.drawable.ic_person);
+        }
+    }
     private void conectarWebSocketHome() {
         if (stompClient != null && stompClient.isConnected()) return;
 
         compositeDisposable = new CompositeDisposable();
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/v1/subastar-ws/websocket");
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.WS_URL);
 
         compositeDisposable.add(stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())
@@ -304,7 +329,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void ejecutarConsultaBackend(String estado, String categoria, boolean preservarScroll) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -326,41 +351,44 @@ public class HomeActivity extends AppCompatActivity {
                     List<Subasta> listaOriginal = response.body();
 
                     boolean isInvitado = tokenManager.getToken() == null;
+                    String mensajeVacio = "No hay subastas programadas para este día.";
 
                     if (isInvitado) {
-                        List<Subasta> listaFiltrada = new ArrayList<>();
-                        for (Subasta subasta : listaOriginal) {
-                            if (!"abierta".equalsIgnoreCase(subasta.getEstado())) {
-                                listaFiltrada.add(subasta);
+                        // NUEVA REGLA: Si es invitado y la fecha es HOY o PASADO, no ve nada.
+                        if (fechaVisualizada.isEqual(LocalDate.now()) || fechaVisualizada.isBefore(LocalDate.now())) {
+                            listaOriginal = new ArrayList<>(); // Vaciamos la lista a la fuerza
+                            mensajeVacio = "Debes iniciar sesión para ver las subastas actuales o pasadas.";
+                        } else {
+                            // Si está mirando el FUTURO, aplicamos el filtro original de ocultar las "abiertas"
+                            List<Subasta> listaFiltrada = new ArrayList<>();
+                            for (Subasta subasta : listaOriginal) {
+                                if (!"abierta".equalsIgnoreCase(subasta.getEstado())) {
+                                    listaFiltrada.add(subasta);
+                                }
                             }
-                        }
-                        listaOriginal = listaFiltrada;
-                    }
-
-                    subastasDelDia.clear();
-                    subastasDelDia.addAll(listaOriginal);
-
-                    if (subastasDelDia.isEmpty()) {
-                        recyclerView.setVisibility(View.GONE);
-                        tvMensajeVacio.setText("No hay subastas programadas para este día.");
-                        tvMensajeVacio.setVisibility(View.VISIBLE);
-                    } else {
-                        if (etBuscador != null) {
-                            filtrarBuscador(etBuscador.getText().toString());
+                            listaOriginal = listaFiltrada;
                         }
                     }
 
+                    // Actualizamos la lista local para el buscador
                     subastasDelDia.clear();
                     subastasDelDia.addAll(listaOriginal);
 
                     if (listaOriginal.isEmpty()) {
                         recyclerView.setVisibility(View.GONE);
-                        tvMensajeVacio.setText("No hay subastas programadas para este día.");
+                        tvMensajeVacio.setText(mensajeVacio);
                         tvMensajeVacio.setVisibility(View.VISIBLE);
                     } else {
                         recyclerView.setVisibility(View.VISIBLE);
                         tvMensajeVacio.setVisibility(View.GONE);
 
+                        // Si hay texto en el buscador, que filtre y corte acá
+                        if (etBuscador != null && !etBuscador.getText().toString().trim().isEmpty()) {
+                            filtrarBuscador(etBuscador.getText().toString());
+                            return;
+                        }
+
+                        // Lógica para preservar el scroll al actualizar
                         int posicionScroll = RecyclerView.NO_POSITION;
                         int offsetScroll = 0;
                         if (preservarScroll && recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
@@ -399,6 +427,11 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (btnPerfil != null) {
+            mostrarFotoPerfilHome(btnPerfil);
+        }
+
         if (tokenManager != null && tokenManager.getToken() != null) {
             verificarMediosPagoObligatorio();
             chequearNotificacionesPendientes();
@@ -414,7 +447,7 @@ public class HomeActivity extends AppCompatActivity {
         String tokenHeader = "Bearer " + tokenGuardado;
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         SubastarApi api = retrofit.create(SubastarApi.class);
@@ -442,7 +475,7 @@ public class HomeActivity extends AppCompatActivity {
         String token = "Bearer " + tokenManager.getToken();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
                 .build();
         SubastarApi api = retrofit.create(SubastarApi.class);
@@ -526,4 +559,6 @@ public class HomeActivity extends AppCompatActivity {
         if (compositeDisposable != null) compositeDisposable.dispose();
         if (stompClient != null && stompClient.isConnected()) stompClient.disconnect();
     }
+
+
 }

@@ -25,7 +25,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tu nuevo medio de pago se registró correctamente.\n\nYa lo tenés disponible en tu perfil para usarlo como garantía y participar en las pujas del catálogo."
+        android:text="Tu nuevo medio de pago se registró correctamente.\n\nLas cuentas y tarjetas ya pueden utilizarse. Si registraste un cheque certificado, quedará pendiente hasta que la empresa confirme su recepción y verificación."
         android:textColor="@color/texto_sec"
         android:textSize="16sp"
         android:gravity="center"

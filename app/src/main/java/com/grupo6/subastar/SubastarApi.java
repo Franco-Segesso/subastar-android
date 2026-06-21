@@ -178,10 +178,26 @@ public interface SubastarApi {
             @Body CuentaDestinoRequest request
     );
 
+    @Multipart
+    @POST("/v1/consignaciones/{id}/documentacion-origen")
+    Call<ResponseBody> registrarDocumentacionOrigen(
+            @Header("Authorization") String token,
+            @Path("id") Integer id,
+            @Part List<MultipartBody.Part> archivos,
+            @Part("descripcion") RequestBody descripcion
+    );
+
     @GET("/v1/clientes/me/subastas")
     Call<List<SubastaParticipacionDTO>> obtenerMisPujas(
             @Header("Authorization") String token,
             @Query("resultado") String resultado
+    );
+
+    @Multipart
+    @PATCH("/v1/clientes/me/foto")
+    Call<com.grupo6.subastar.dto.ClienteDTO> actualizarFotoPerfil(
+            @Header("Authorization") String token,
+            @Part MultipartBody.Part foto
     );
 
     @GET("/v1/clientes/me/subastas/{subastaId}/pujas")
@@ -253,5 +269,7 @@ public interface SubastarApi {
             @Header("Authorization") String token,
             @Path("id") Integer id
     );
+
+
 }
 

@@ -138,45 +138,45 @@
         android:clipToPadding="false"
         android:paddingBottom="8dp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/bordes" />
-
     <LinearLayout
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        android:orientation="horizontal"
+        android:paddingVertical="16dp"
+        android:background="@color/primario">
 
         <TextView
             android:id="@+id/navPujasSubastas"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:text="SUBASTAS"
             android:textColor="@color/texto_sec"
-            android:textSize="12sp" />
+            android:gravity="center"
+            android:textSize="12sp"/>
 
         <TextView
+            android:id="@+id/navMisPujas"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:text="MIS PUJAS"
-            android:textColor="@color/secundario"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textColor="@color/texto_ppal"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/navPujasConsignacion"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:text="CONSIGNACIÓN"
             android:textColor="@color/texto_sec"
-            android:textSize="12sp" />
+            android:gravity="center"
+            android:textSize="12sp"/>
     </LinearLayout>
 </LinearLayout>

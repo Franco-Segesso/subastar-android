@@ -10,7 +10,12 @@ import androidx.core.app.NotificationCompat;
 
 public class GeneradorNotificacionesLocales {
 
-    public static void lanzarNotificacion(Context context, String titulo, String mensaje) {
+    public static void lanzarNotificacion(
+            Context context,
+            String titulo,
+            String mensaje,
+            String tipo,
+            Integer referenciaId) {
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "subastar_alertas_urgentes";
 
@@ -22,8 +27,16 @@ public class GeneradorNotificacionesLocales {
         }
 
         // Si el usuario toca la notificación del celular, que lo lleve a la Activity de Notificaciones
-        Intent intent = new Intent(context, NotificacionesActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        Intent intent = NotificacionDestino.crearIntent(
+                context, tipo, referenciaId);
+        int requestCode = referenciaId == null
+                ? (int) System.currentTimeMillis()
+                : 31 * (tipo == null ? 0 : tipo.hashCode()) + referenciaId;
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_notifications) // Icono que aparece en la barra superior
