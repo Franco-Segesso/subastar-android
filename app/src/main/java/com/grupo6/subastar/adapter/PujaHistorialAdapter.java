@@ -18,9 +18,11 @@ public class PujaHistorialAdapter extends RecyclerView.Adapter<PujaHistorialAdap
 
     private final List<PujaMensajeDTO> pujas = new ArrayList<>();
     private final String moneda;
+    private final boolean modoLectura;
 
-    public PujaHistorialAdapter(Integer miClienteId, String moneda) {
+    public PujaHistorialAdapter(Integer miClienteId, String moneda, boolean modoLectura) {
         this.moneda = moneda;
+        this.modoLectura = modoLectura;
     }
 
     public void setPujas(List<PujaMensajeDTO> nuevasPujas) {
@@ -56,7 +58,7 @@ public class PujaHistorialAdapter extends RecyclerView.Adapter<PujaHistorialAdap
 
         holder.tvEstadoPuja.setVisibility(View.VISIBLE);
         if (position == 0) {
-            holder.tvEstadoPuja.setText("Mayor");
+            holder.tvEstadoPuja.setText(modoLectura ? "Ganador" : "Mayor");
             holder.tvEstadoPuja.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.exito));
         } else {
             holder.tvEstadoPuja.setText("Superado");

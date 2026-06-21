@@ -28,6 +28,7 @@ public class DetalleItemActivity extends AppCompatActivity {
     private MaterialButton btnPujar;
 
     private TokenManager tokenManager;
+    private boolean isItemVendido = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,30 +57,22 @@ public class DetalleItemActivity extends AppCompatActivity {
         Double baseItem = getIntent().getDoubleExtra("ITEM_BASE", 0);
         String fechaSubasta = getIntent().getStringExtra("SUBASTA_FECHA");
         String monedaSubasta = getIntent().getStringExtra("SUBASTA_MONEDA");
+
         btnPujar.setVisibility(View.VISIBLE);
+
+        btnPujar.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(DetalleItemActivity.this, SalaPujaActivity.class);
+            intent.putExtra("SUBASTA_ID", subastaId);
+            intent.putExtra("ITEM_ID", itemId);
+            intent.putExtra("ITEM_TITULO", nombreItem);
+            intent.putExtra("ITEM_BASE", baseItem);
+            intent.putExtra("SUBASTA_FECHA", fechaSubasta);
+            intent.putExtra("SUBASTA_MONEDA", monedaSubasta);
+            intent.putExtra("ITEM_VENDIDO", isItemVendido); // Enviamos la bandera
+            startActivity(intent);
+        });
+
         configurarBotonPujaPorEstado(estado, false);
-
-        // Solo mostramos el botón si la subasta está abierta
-        if ("abierta".equalsIgnoreCase(estado)) {
-            btnPujar.setVisibility(View.VISIBLE);
-
-            btnPujar.setOnClickListener(v -> {
-
-                android.content.Intent intent = new android.content.Intent(DetalleItemActivity.this, SalaPujaActivity.class);
-
-                // Le pasamos los datos exactos que espera recibir el onCreate() de SalaPujaActivity
-                intent.putExtra("SUBASTA_ID", subastaId);
-                intent.putExtra("ITEM_ID", itemId);
-
-
-                intent.putExtra("ITEM_TITULO", nombreItem);
-                intent.putExtra("ITEM_BASE", baseItem);
-                intent.putExtra("SUBASTA_FECHA", fechaSubasta);
-                intent.putExtra("SUBASTA_MONEDA", monedaSubasta);
-
-                startActivity(intent);
-            });
-        }
 
         cargarDatosBackend(subastaId, itemId, estado);
     }
@@ -87,7 +80,7 @@ public class DetalleItemActivity extends AppCompatActivity {
 
     private void cargarDatosBackend(int subastaId, int itemId, String estadoSubasta) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -153,16 +146,8 @@ public class DetalleItemActivity extends AppCompatActivity {
                         // Le clavamos el logo de fondo al contenedor para que no quede en blanco
                         vpImagenes.setBackgroundResource(R.drawable.logo_subastar);
                     }
-                    if ("si".equalsIgnoreCase(item.getSubastado())) {
-                        btnPujar.setEnabled(false);
-                        btnPujar.setText("Subasta Finalizada");
-                        btnPujar.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.GRAY));
-                    }else {
-                        // Nos aseguramos de que el botón esté habilitado para los pendientes
-                        btnPujar.setEnabled(true);
-                        btnPujar.setText("Participar en la puja");
-                    }
-                    configurarBotonPujaPorEstado(estadoSubasta, "si".equalsIgnoreCase(item.getSubastado()));
+                    isItemVendido = "si".equalsIgnoreCase(item.getSubastado());
+                    configurarBotonPujaPorEstado(estadoSubasta, isItemVendido);
                 }
             }
 
@@ -175,9 +160,10 @@ public class DetalleItemActivity extends AppCompatActivity {
 
     private void configurarBotonPujaPorEstado(String estadoSubasta, boolean itemSubastado) {
         if (itemSubastado) {
-            btnPujar.setEnabled(false);
-            btnPujar.setText("Subasta finalizada");
-            btnPujar.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.GRAY));
+            btnPujar.setEnabled(true);
+            btnPujar.setText("Ver historial de pujas");
+            btnPujar.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.secundario)));
         } else if (!"abierta".equalsIgnoreCase(estadoSubasta)) {
             btnPujar.setEnabled(false);
             btnPujar.setText("La puja no empezo");

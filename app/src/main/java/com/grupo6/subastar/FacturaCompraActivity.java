@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -56,7 +57,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
 
         tokenManager = new TokenManager(this);
         api = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(SubastarApi.class);
@@ -73,7 +74,6 @@ public class FacturaCompraActivity extends AppCompatActivity {
         selectorMedio.setOnClickListener(v -> mostrarSelectorMedios());
         btnEnvio.setOnClickListener(v -> seleccionarModalidad("envio"));
         btnRetiro.setOnClickListener(v -> seleccionarModalidad("retiro"));
-        btnFinalizar.setOnClickListener(v -> finalizarCompra());
 
         cargarMedios();
         cargarCompra();
@@ -131,38 +131,27 @@ public class FacturaCompraActivity extends AppCompatActivity {
     }
 
     private void mostrarCompra(CompraDTO compra) {
-        String moneda = compra.getSubasta() == null
-                ? "" : compra.getSubasta().getMoneda();
-        String nombreSubasta = compra.getSubasta() == null
-                ? "Subasta" : compra.getSubasta().getNombre();
+        String moneda = compra.getSubasta() == null ? "" : compra.getSubasta().getMoneda();
+        String nombreSubasta = compra.getSubasta() == null ? "Subasta" : compra.getSubasta().getNombre();
         String item = "Ítem";
         if (compra.getItem() != null) {
-            item = "Ítem #" + compra.getItem().getNumeroPieza()
-                    + " · " + compra.getItem().getDescripcionCatalogo();
+            item = "Ítem #" + compra.getItem().getNumeroPieza() + " · " + compra.getItem().getDescripcionCatalogo();
         }
 
         ((TextView) findViewById(R.id.tvFacturaSubasta)).setText(nombreSubasta);
         ((TextView) findViewById(R.id.tvFacturaItem)).setText(item);
-        ((TextView) findViewById(R.id.tvFacturaImporte)).setText(
-                "Precio pujado\n" + FormatoPujas.moneda(
-                        moneda, compra.getImportePujado()));
-        ((TextView) findViewById(R.id.tvFacturaComision)).setText(
-                "Comisión\n" + FormatoPujas.moneda(moneda, compra.getComision()));
-        ((TextView) findViewById(R.id.tvFacturaEnvio)).setText(
-                compra.getCostoEnvio() == null
-                        ? "Costo de envío\nSe define según la modalidad"
-                        : "Costo de envío\n" + FormatoPujas.moneda(
-                        moneda, compra.getCostoEnvio()));
-        ((TextView) findViewById(R.id.tvFacturaTotal)).setText(
-                "TOTAL A PAGAR\n" + FormatoPujas.moneda(moneda, compra.getTotal()));
+        ((TextView) findViewById(R.id.tvFacturaImporte)).setText("Precio pujado\n" + FormatoPujas.moneda(moneda, compra.getImportePujado()));
+        ((TextView) findViewById(R.id.tvFacturaComision)).setText("Comisión\n" + FormatoPujas.moneda(moneda, compra.getComision()));
+        ((TextView) findViewById(R.id.tvFacturaEnvio)).setText(compra.getCostoEnvio() == null
+                ? "Costo de envío\nSe define según la modalidad"
+                : "Costo de envío\n" + FormatoPujas.moneda(moneda, compra.getCostoEnvio()));
+        ((TextView) findViewById(R.id.tvFacturaTotal)).setText("TOTAL A PAGAR\n" + FormatoPujas.moneda(moneda, compra.getTotal()));
         tvSeguro.setText(compra.getAvisoSeguro() == null
                 ? "El bien permanece asegurado mientras esta bajo custodia de la empresa."
                 : compra.getAvisoSeguro());
 
-        String modalidad = compra.getModalidadEntrega() == null
-                ? "pendiente" : compra.getModalidadEntrega();
-        modalidadSeleccionada = "pendiente".equalsIgnoreCase(modalidad)
-                ? null : modalidad.toLowerCase(Locale.ROOT);
+        String modalidad = compra.getModalidadEntrega() == null ? "pendiente" : compra.getModalidadEntrega();
+        modalidadSeleccionada = "pendiente".equalsIgnoreCase(modalidad) ? null : modalidad.toLowerCase(Locale.ROOT);
         entregaRegistrada = modalidadSeleccionada != null;
         actualizarModalidadVisual();
 
@@ -175,11 +164,98 @@ public class FacturaCompraActivity extends AppCompatActivity {
         }
 
         boolean pagada = "pagada".equalsIgnoreCase(compra.getEstadoPago());
-        btnFinalizar.setText(pagada ? "COMPRA PAGADA" : "FINALIZAR COMPRA");
-        btnFinalizar.setEnabled(!pagada);
-        selectorMedio.setEnabled(!pagada);
-        contenedorModalidad.setVisibility(pagada ? View.GONE : View.VISIBLE);
+
+        // --- LOGICA MODIFICADA PARA EL PDF ---
+        if (pagada) {
+            btnFinalizar.setText("DESCARGAR FACTURA (PDF)");
+            btnFinalizar.setEnabled(true);
+            btnFinalizar.setOnClickListener(v -> generarYDescargarPDF());
+            selectorMedio.setEnabled(false);
+            contenedorModalidad.setVisibility(View.GONE);
+        } else {
+            btnFinalizar.setText("FINALIZAR COMPRA");
+            btnFinalizar.setEnabled(true);
+            btnFinalizar.setOnClickListener(v -> finalizarCompra());
+            selectorMedio.setEnabled(true);
+            contenedorModalidad.setVisibility(View.VISIBLE);
+        }
     }
+
+    // =================================================================================
+    // GENERACIÓN NATIVA DE PDF EN ANDROID
+    // =================================================================================
+    private void generarYDescargarPDF() {
+        if (compraActual == null) return;
+
+        android.graphics.pdf.PdfDocument pdf = new android.graphics.pdf.PdfDocument();
+        android.graphics.pdf.PdfDocument.PageInfo pageInfo = new android.graphics.pdf.PdfDocument.PageInfo.Builder(595, 842, 1).create(); // Tamaño A4
+        android.graphics.pdf.PdfDocument.Page page = pdf.startPage(pageInfo);
+        android.graphics.Canvas canvas = page.getCanvas();
+        android.graphics.Paint paint = new android.graphics.Paint();
+
+        // Título principal
+        paint.setTextSize(22f);
+        paint.setTypeface(android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD));
+        canvas.drawText("FACTURA DE COMPRA - subastAR", 50, 80, paint);
+
+        // Detalles
+        paint.setTextSize(16f);
+        paint.setTypeface(android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.NORMAL));
+        int y = 140;
+
+        String moneda = compraActual.getSubasta() != null ? compraActual.getSubasta().getMoneda() : "$";
+        String nombreSubasta = compraActual.getSubasta() != null ? compraActual.getSubasta().getNombre() : "";
+        String articulo = compraActual.getItem() != null ? compraActual.getItem().getDescripcionCatalogo() : "";
+
+        canvas.drawText("Nro. de Operación: #" + compraActual.getIdentificador(), 50, y, paint); y += 40;
+        canvas.drawText("Subasta: " + nombreSubasta, 50, y, paint); y += 40;
+        canvas.drawText("Artículo: " + articulo, 50, y, paint); y += 60;
+
+        // Desglose económico
+        canvas.drawText("Precio pujado: " + FormatoPujas.moneda(moneda, compraActual.getImportePujado()), 50, y, paint); y += 40;
+        canvas.drawText("Comisión de la casa: " + FormatoPujas.moneda(moneda, compraActual.getComision()), 50, y, paint); y += 40;
+        canvas.drawText("Costo de envío/retiro: " + FormatoPujas.moneda(moneda, compraActual.getCostoEnvio()), 50, y, paint); y += 60;
+
+        // Total
+        paint.setTypeface(android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD));
+        paint.setTextSize(20f);
+        canvas.drawText("TOTAL ABONADO: " + FormatoPujas.moneda(moneda, compraActual.getTotal()), 50, y, paint);
+
+        pdf.finishPage(page);
+        guardarPDF(pdf);
+    }
+
+    private void guardarPDF(android.graphics.pdf.PdfDocument pdf) {
+        String fileName = "FacturaSubastAR_" + compraId + ".pdf";
+        try {
+            java.io.OutputStream fos;
+
+            // Lógica para Android 10+ (Evita pedir permisos especiales de almacenamiento)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                android.content.ContentValues values = new android.content.ContentValues();
+                values.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                values.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
+                values.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, android.os.Environment.DIRECTORY_DOWNLOADS);
+                android.net.Uri uri = getContentResolver().insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                fos = getContentResolver().openOutputStream(uri);
+            } else {
+                // Lógica para Android 9 o inferior
+                java.io.File dir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS);
+                java.io.File file = new java.io.File(dir, fileName);
+                fos = new java.io.FileOutputStream(file);
+            }
+
+            pdf.writeTo(fos);
+            pdf.close();
+            if (fos != null) fos.close();
+            Toast.makeText(this, "Factura descargada en la carpeta de Descargas", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarModalError("Error al guardar PDF: " + e.getMessage());
+        }
+    }
+    // =================================================================================
 
     private void mostrarSelectorMedios() {
         if (medios.isEmpty()) {
@@ -216,8 +292,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
     }
 
     private void seleccionarModalidad(String modalidad) {
-        if (compraActual != null
-                && "pagada".equalsIgnoreCase(compraActual.getEstadoPago())) {
+        if (compraActual != null && "pagada".equalsIgnoreCase(compraActual.getEstadoPago())) {
             return;
         }
         modalidadSeleccionada = modalidad;
@@ -239,40 +314,27 @@ public class FacturaCompraActivity extends AppCompatActivity {
 
     private void actualizarImportesSegunModalidad() {
         if (compraActual == null) return;
-        double costoEnvio = "envio".equals(modalidadSeleccionada)
-                ? COSTO_ENVIO_FIJO : 0.0;
-        double importe = compraActual.getImportePujado() == null
-                ? 0.0 : compraActual.getImportePujado();
-        double comision = compraActual.getComision() == null
-                ? 0.0 : compraActual.getComision();
+        double costoEnvio = "envio".equals(modalidadSeleccionada) ? COSTO_ENVIO_FIJO : 0.0;
+        double importe = compraActual.getImportePujado() == null ? 0.0 : compraActual.getImportePujado();
+        double comision = compraActual.getComision() == null ? 0.0 : compraActual.getComision();
         compraActual.setCostoEnvio(costoEnvio);
         compraActual.setTotal(importe + comision + costoEnvio);
-        String moneda = compraActual.getSubasta() == null
-                ? "" : compraActual.getSubasta().getMoneda();
-        ((TextView) findViewById(R.id.tvFacturaEnvio)).setText(
-                "Costo de envio\n" + FormatoPujas.moneda(moneda, costoEnvio));
-        ((TextView) findViewById(R.id.tvFacturaTotal)).setText(
-                "TOTAL A PAGAR\n"
-                        + FormatoPujas.moneda(moneda, compraActual.getTotal()));
+        String moneda = compraActual.getSubasta() == null ? "" : compraActual.getSubasta().getMoneda();
+        ((TextView) findViewById(R.id.tvFacturaEnvio)).setText("Costo de envio\n" + FormatoPujas.moneda(moneda, costoEnvio));
+        ((TextView) findViewById(R.id.tvFacturaTotal)).setText("TOTAL A PAGAR\n" + FormatoPujas.moneda(moneda, compraActual.getTotal()));
     }
 
     private void pintarOpcion(TextView opcion, boolean seleccionada) {
-        opcion.setBackgroundResource(
-                seleccionada ? R.drawable.bg_chip_activo : R.drawable.bg_chip_inactivo);
-        opcion.setTextColor(ContextCompat.getColor(
-                this, seleccionada ? R.color.secundario : R.color.texto_ppal));
+        opcion.setBackgroundResource(seleccionada ? R.drawable.bg_chip_activo : R.drawable.bg_chip_inactivo);
+        opcion.setTextColor(ContextCompat.getColor(this, seleccionada ? R.color.secundario : R.color.texto_ppal));
     }
 
     private void actualizarAvisoSeguro() {
         if (tvSeguro == null) return;
         if ("retiro".equals(modalidadSeleccionada)) {
-            tvSeguro.setText(
-                    "COBERTURA VIGENTE HASTA EL RETIRO\n"
-                            + "Finaliza cuando la empresa te entrega el bien.");
+            tvSeguro.setText("COBERTURA VIGENTE HASTA EL RETIRO\nFinaliza cuando la empresa te entrega el bien.");
         } else if ("envio".equals(modalidadSeleccionada)) {
-            tvSeguro.setText(
-                    "COBERTURA VIGENTE DURANTE EL TRASLADO\n"
-                            + "Finaliza cuando el bien se entrega en tu domicilio.");
+            tvSeguro.setText("COBERTURA VIGENTE DURANTE EL TRASLADO\nFinaliza cuando el bien se entrega en tu domicilio.");
         } else if (compraActual != null && compraActual.getAvisoSeguro() != null) {
             tvSeguro.setText(compraActual.getAvisoSeguro());
         }
@@ -303,10 +365,8 @@ public class FacturaCompraActivity extends AppCompatActivity {
     private void procesarCompra() {
         procesando = true;
         btnFinalizar.setEnabled(false);
-        String modalidadGuardada = compraActual == null
-                ? null : compraActual.getModalidadEntrega();
-        boolean cambioModalidad = modalidadGuardada == null
-                || !modalidadSeleccionada.equalsIgnoreCase(modalidadGuardada);
+        String modalidadGuardada = compraActual == null ? null : compraActual.getModalidadEntrega();
+        boolean cambioModalidad = modalidadGuardada == null || !modalidadSeleccionada.equalsIgnoreCase(modalidadGuardada);
         if (!entregaRegistrada || cambioModalidad) {
             guardarEntregaYPagar();
         } else {
@@ -315,15 +375,10 @@ public class FacturaCompraActivity extends AppCompatActivity {
     }
 
     private void guardarEntregaYPagar() {
-        api.definirEntregaCompra(
-                token(),
-                compraId,
-                new ModalidadEntregaRequest(modalidadSeleccionada))
+        api.definirEntregaCompra(token(), compraId, new ModalidadEntregaRequest(modalidadSeleccionada))
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(
-                            Call<ResponseBody> call,
-                            Response<ResponseBody> response) {
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
                             entregaRegistrada = true;
                             if (compraActual != null) {
@@ -343,15 +398,10 @@ public class FacturaCompraActivity extends AppCompatActivity {
     }
 
     private void ejecutarPago() {
-        api.pagarCompra(
-                token(),
-                compraId,
-                new PagarCompraRequest(medioSeleccionado.getIdentificador()))
+        api.pagarCompra(token(), compraId, new PagarCompraRequest(medioSeleccionado.getIdentificador()))
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(
-                            Call<ResponseBody> call,
-                            Response<ResponseBody> response) {
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         procesando = false;
                         if (response.isSuccessful()) {
                             mostrarExito();

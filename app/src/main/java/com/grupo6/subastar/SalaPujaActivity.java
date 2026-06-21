@@ -51,6 +51,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     private Button btnPujar;
     private RecyclerView rvHistorialPujas;
     private TextView btnSeleccionarMedioPuja;
+    private View layoutEnVivo;
 
     private PujaHistorialAdapter adapter;
     private StompClient mStompClient;
@@ -82,6 +83,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     private TokenManager tokenManager;
     private final List<MedioPagoDTO> mediosPago = new ArrayList<>();
     private MedioPagoDTO medioPagoSeleccionado;
+    private boolean itemVendidoExtra = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,17 +120,24 @@ public class SalaPujaActivity extends AppCompatActivity {
         tokenJwt = "Bearer " + token;
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         api = retrofit.create(SubastarApi.class);
 
+        itemVendidoExtra = getIntent().getBooleanExtra("ITEM_VENDIDO", false);
+
         configurarRecyclerView();
         configurarBotones();
         configurarNavegacionAtras();
         cargarMediosPago();
-        ingresarSalaBackend();
+        if (itemVendidoExtra) {
+            prepararSalaModoLectura();
+            cargarHistorialPujas();
+        } else {
+            ingresarSalaBackend();
+        }
     }
 
     private void initViews() {
@@ -144,6 +153,7 @@ public class SalaPujaActivity extends AppCompatActivity {
         btnPujar = findViewById(R.id.btnPujar);
         rvHistorialPujas = findViewById(R.id.rvHistorialPujas);
         btnSeleccionarMedioPuja = findViewById(R.id.btnSeleccionarMedioPuja);
+        layoutEnVivo = findViewById(R.id.layoutEnVivo);
 
         tvBannerEstado.setVisibility(View.GONE);
         habilitarPuja(false);
@@ -172,7 +182,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void configurarRecyclerView() {
-        adapter = new PujaHistorialAdapter(miClienteId, monedaSubasta);
+        adapter = new PujaHistorialAdapter(miClienteId, monedaSubasta, itemVendidoExtra);
         rvHistorialPujas.setLayoutManager(new LinearLayoutManager(this));
         rvHistorialPujas.setAdapter(adapter);
     }
@@ -352,7 +362,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void conectarWebSocket() {
-        String wsUrl = "ws://10.0.2.2:8080/v1/subastar-ws/websocket";
+        String wsUrl = BuildConfig.WS_URL;
         mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, wsUrl);
 
         List<StompHeader> headers = new ArrayList<>();
@@ -611,7 +621,7 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void salirYFinalizar() {
-        if (soyMayorPostor) {
+        if (soyMayorPostor && !itemVendidoExtra) {
             mostrarModalMayorPostor();
             return;
         }
@@ -648,6 +658,11 @@ public class SalaPujaActivity extends AppCompatActivity {
     private void salirDeSala(boolean navegarAlCatalogo) {
         if (saliendo) return;
         saliendo = true;
+
+        if (itemVendidoExtra) {
+            finalizarSalida(navegarAlCatalogo);
+            return;
+        }
 
         if (api == null || tokenJwt == null || subastaId == null) {
             if (mStompClient != null && mStompClient.isConnected()) mStompClient.disconnect();
@@ -742,5 +757,19 @@ public class SalaPujaActivity extends AppCompatActivity {
         btnEntendido.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
+    }
+
+    private void prepararSalaModoLectura() {
+        etMontoPuja.setVisibility(View.GONE);
+        btnPujar.setVisibility(View.GONE);
+        btnSeleccionarMedioPuja.setVisibility(View.GONE);
+        tvTemporizador.setVisibility(View.GONE);
+        layoutEnVivo.setVisibility(View.GONE);
+
+        String titulo = getIntent().getStringExtra("ITEM_TITULO");
+        tvHeaderTitle.setText("Historial - " + titulo);
+
+        tvBannerEstado.setText("Subasta Finalizada - Historial de Pujas");
+        tvBannerEstado.setVisibility(View.VISIBLE);
     }
 }

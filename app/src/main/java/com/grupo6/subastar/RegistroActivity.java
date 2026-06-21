@@ -108,7 +108,7 @@ public class RegistroActivity extends AppCompatActivity {
         Button btnRegistrar = findViewById(R.id.btnRegistrar);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         SubastarApi api = retrofit.create(SubastarApi.class);

@@ -179,7 +179,7 @@
                     android:minHeight="56dp"
                     android:padding="12dp"
                     android:textColor="@color/texto_ppal"
-                    android:textColorHint="@color/texto_sec" />
+                    android:textColorHint="@color/black" />
 
                 <Button
                     android:id="@+id/btnEnviarDocumentacion"

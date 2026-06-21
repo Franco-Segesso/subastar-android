@@ -1,5 +1,6 @@
 package com.grupo6.subastar;
 
+import com.grupo6.subastar.BuildConfig;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,7 +34,7 @@ public class ActivarActivity extends AppCompatActivity {
         btnVolver.setOnClickListener(v -> finish());
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         SubastarApi api = retrofit.create(SubastarApi.class);

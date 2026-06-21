@@ -182,7 +182,7 @@ public class HomeActivity extends AppCompatActivity {
         if (stompClient != null && stompClient.isConnected()) return;
 
         compositeDisposable = new CompositeDisposable();
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/v1/subastar-ws/websocket");
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.WS_URL);
 
         compositeDisposable.add(stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())
@@ -304,7 +304,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void ejecutarConsultaBackend(String estado, String categoria, boolean preservarScroll) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -414,7 +414,7 @@ public class HomeActivity extends AppCompatActivity {
         String tokenHeader = "Bearer " + tokenGuardado;
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         SubastarApi api = retrofit.create(SubastarApi.class);
@@ -442,7 +442,7 @@ public class HomeActivity extends AppCompatActivity {
         String token = "Bearer " + tokenManager.getToken();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
                 .build();
         SubastarApi api = retrofit.create(SubastarApi.class);

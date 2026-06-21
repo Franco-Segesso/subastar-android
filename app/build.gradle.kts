@@ -29,7 +29,25 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        getByName("debug") {
+            // Versión Local: Apunta al localhost de tu PC a través del emulador
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/\"")
+            buildConfigField("String", "WS_URL", "\"ws://10.0.2.2:8080/v1/subastar-ws/websocket\"")
+        }
+
+        create("production") {
+            initWith(getByName("debug"))
+            // Versión Nube: Apunta a tu servidor dedicado en Azure (Cambia la IP por la tuya)
+            buildConfigField("String", "BASE_URL", "\"http://20.226.11.103/\"")
+            buildConfigField("String", "WS_URL", "\"ws://20.226.11.103/v1/subastar-ws/websocket\"")
+        }
     }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
