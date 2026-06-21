@@ -518,7 +518,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void suscribirAFirebase() {
+    private void suscribirAFirebaseAnterior() {
         // Recuperamos el ID del cliente de tus SharedPreferences
         int idCliente = getSharedPreferences("SubastarPrefs", MODE_PRIVATE).getInt("USER_ID", -1);
 
@@ -532,6 +532,43 @@ public class HomeActivity extends AppCompatActivity {
                             Log.e("FIREBASE", "Falló la suscripción a Firebase");
                         }
                     });
+        }
+    }
+
+    private void suscribirAFirebase() {
+        int idCliente = getSharedPreferences(
+                "SubastarPrefs", MODE_PRIVATE)
+                .getInt("USER_ID", -1);
+        if (idCliente <= 0) return;
+
+        android.content.SharedPreferences prefs =
+                getSharedPreferences("SubastarPrefs", MODE_PRIVATE);
+        int idAnterior = prefs.getInt("FIREBASE_CLIENT_ID", -1);
+        com.google.firebase.messaging.FirebaseMessaging firebase =
+                com.google.firebase.messaging.FirebaseMessaging.getInstance();
+        String topicoActual = "cliente_" + idCliente;
+
+        Runnable suscribirActual = () -> firebase
+                .subscribeToTopic(topicoActual)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        prefs.edit()
+                                .putInt("FIREBASE_CLIENT_ID", idCliente)
+                                .apply();
+                        Log.d("FIREBASE",
+                                "Suscrito al canal: " + topicoActual);
+                    } else {
+                        Log.e("FIREBASE",
+                                "Fallo la suscripcion al canal");
+                    }
+                });
+
+        if (idAnterior > 0 && idAnterior != idCliente) {
+            firebase.unsubscribeFromTopic("cliente_" + idAnterior)
+                    .addOnCompleteListener(task ->
+                            suscribirActual.run());
+        } else {
+            suscribirActual.run();
         }
     }
 

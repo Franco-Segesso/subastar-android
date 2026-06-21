@@ -105,6 +105,14 @@ public class PerfilActivity extends AppCompatActivity {
 
         ImageButton btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnCerrarSesion.setOnClickListener(v -> {
+            int firebaseClienteId = getSharedPreferences(
+                    "SubastarPrefs", MODE_PRIVATE)
+                    .getInt("FIREBASE_CLIENT_ID", -1);
+            if (firebaseClienteId > 0) {
+                com.google.firebase.messaging.FirebaseMessaging.getInstance()
+                        .unsubscribeFromTopic(
+                                "cliente_" + firebaseClienteId);
+            }
             tokenManager.clearToken();
             getSharedPreferences("SubastarPrefs", MODE_PRIVATE).edit().clear().apply();
             Intent intent = new Intent(PerfilActivity.this, WelcomeActivity.class);
