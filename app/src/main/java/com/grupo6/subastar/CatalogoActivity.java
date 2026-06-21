@@ -93,7 +93,7 @@ public class CatalogoActivity extends AppCompatActivity {
         if (stompClient != null && stompClient.isConnected()) return;
 
         compositeDisposable = new CompositeDisposable();
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/v1/subastar-ws/websocket");
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.WS_URL);
 
         compositeDisposable.add(stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())
@@ -140,7 +140,7 @@ public class CatalogoActivity extends AppCompatActivity {
 
     private void cargarDetalleSubasta(Integer id) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -161,7 +161,11 @@ public class CatalogoActivity extends AppCompatActivity {
                     Subasta subasta = response.body();
 
 
-                    tvTitulo.setText(subasta.getUbicacion());
+                    if (subasta.getCatalogo() != null && subasta.getCatalogo().getDescripcion() != null) {
+                        tvTitulo.setText(subasta.getCatalogo().getDescripcion());
+                    } else {
+                        tvTitulo.setText("Subasta sin título");
+                    }
                     tvCat.setText(subasta.getCategoria().toUpperCase());
                     tvMoneda.setText(subasta.getMoneda());
                     tvEstado.setText(subasta.getEstado().toUpperCase());

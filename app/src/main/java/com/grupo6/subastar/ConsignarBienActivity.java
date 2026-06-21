@@ -54,7 +54,7 @@ public class ConsignarBienActivity extends AppCompatActivity {
                 .build();
 
         api = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(BuildConfig.BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

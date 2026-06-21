@@ -50,7 +50,7 @@ public class DetalleMisPujasActivity extends AppCompatActivity {
 
         tokenManager = new TokenManager(this);
         api = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(SubastarApi.class);

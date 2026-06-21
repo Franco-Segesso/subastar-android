@@ -148,7 +148,7 @@ public class ItemProductoAdapter extends RecyclerView.Adapter<ItemProductoAdapte
         }
 
         // Bloqueamos el clic si ya está vendido
-        holder.itemView.setEnabled(!"si".equalsIgnoreCase(item.getSubastado()));
+        holder.itemView.setEnabled(true);
 
         holder.itemView.setOnClickListener(v -> {
             android.content.Intent intent = new android.content.Intent(context, DetalleItemActivity.class);
