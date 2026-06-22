@@ -29,6 +29,7 @@ public class DetalleItemActivity extends AppCompatActivity {
 
     private TokenManager tokenManager;
     private boolean isItemVendido = false;
+    private String imagenPrincipalUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class DetalleItemActivity extends AppCompatActivity {
             intent.putExtra("ITEM_BASE", baseItem);
             intent.putExtra("SUBASTA_FECHA", fechaSubasta);
             intent.putExtra("SUBASTA_MONEDA", monedaSubasta);
+            intent.putExtra("ITEM_IMAGEN", imagenPrincipalUrl);
             intent.putExtra("ITEM_VENDIDO", isItemVendido); // Enviamos la bandera
             startActivity(intent);
         });
@@ -119,6 +121,7 @@ public class DetalleItemActivity extends AppCompatActivity {
 
                     // CARRUSEL DE IMÁGENES
                     if (item.getProducto().getFotos() != null && !item.getProducto().getFotos().isEmpty()) {
+                        imagenPrincipalUrl = item.getProducto().getFotos().get(0).getUrlFoto();
 
                         vpImagenes.setBackgroundResource(0);
 

@@ -39,6 +39,8 @@
             android:hint="Email (ej: franco@subastar.com)"
             android:inputType="textEmailAddress"
             android:background="@drawable/bg_input"
+            android:textColor="#1A1A1A"
+            android:textColorHint="#777777"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="16dp"/>
 
@@ -49,6 +51,8 @@
             android:hint="Contraseña"
             android:inputType="textPassword"
             android:background="@drawable/bg_input"
+            android:textColor="#1A1A1A"
+            android:textColorHint="#777777"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="32dp"/>
 

@@ -13,6 +13,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:resizeableActivity="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.Subastarandroid">
 
@@ -31,14 +32,15 @@
 
 
 
-        <activity android:name=".LoginActivity" android:exported="false" />
-        <activity android:name=".RegistroActivity" android:exported="false" />
+        <activity android:name=".LoginActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".RegistroActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".RegistroExitosoActivity" android:exported="false" />
-        <activity android:name=".ActivarActivity" />
+        <activity android:name=".ActivarActivity" android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".HomeActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
             android:name=".CatalogoActivity"
@@ -49,15 +51,16 @@
         <activity
             android:name=".SalaPujaActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".PerfilActivity" />
-        <activity android:name=".AgregarMedioPagoActivity" />
-        <activity android:name=".ConsignarBienActivity" android:exported="false" />
+        <activity android:name=".AgregarMedioPagoActivity" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ConsignarBienActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ConsignacionEnviadaActivity" android:exported="false" />
         <activity android:name=".MisConsignacionesActivity" android:exported="false" />
-        <activity android:name=".DetalleConsignacionActivity" android:exported="false" />
-        <activity android:name=".CuentaDestinoConsignacionActivity" android:exported="false" />
+        <activity android:name=".DetalleConsignacionActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".CuentaDestinoConsignacionActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ResultadoConsignacionActivity" android:exported="false" />
         <activity android:name=".MisPujasActivity" android:exported="false" />
         <activity android:name=".DetalleMisPujasActivity" android:exported="false" />

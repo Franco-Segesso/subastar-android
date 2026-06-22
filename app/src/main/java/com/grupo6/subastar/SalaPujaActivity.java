@@ -209,6 +209,14 @@ public class SalaPujaActivity extends AppCompatActivity {
                 mostrarDialogoError("Selecciona un medio de pago antes de pujar.");
                 return;
             }
+            if (!esCompatibleConMoneda(medioPagoSeleccionado)) {
+                medioPagoSeleccionado = null;
+                btnSeleccionarMedioPuja.setText("Seleccionar medio de pago");
+                btnSeleccionarMedioPuja.setBackgroundResource(R.drawable.bg_chip_inactivo);
+                mostrarDialogoError("Selecciona un medio de pago compatible con la moneda "
+                        + monedaSubasta + ".");
+                return;
+            }
 
             String montoStr = etMontoPuja.getText().toString().trim();
             if (montoStr.isEmpty()) {
@@ -379,7 +387,8 @@ public class SalaPujaActivity extends AppCompatActivity {
 
     private void mostrarSelectorMediosPago() {
         if (mediosPago.isEmpty()) {
-            mostrarDialogoError("No tenes medios de pago activos disponibles.");
+            mostrarDialogoError("No tenes medios de pago compatibles con la moneda "
+                    + monedaSubasta + ".");
             return;
         }
         String[] opciones = new String[mediosPago.size()];
@@ -394,6 +403,11 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void seleccionarMedio(MedioPagoDTO medio) {
+        if (!esCompatibleConMoneda(medio)) {
+            mostrarDialogoError("Ese medio de pago no es compatible con la moneda "
+                    + monedaSubasta + ".");
+            return;
+        }
         medioPagoSeleccionado = medio;
         btnSeleccionarMedioPuja.setText(descripcionMedio(medio));
         btnSeleccionarMedioPuja.setTextColor(

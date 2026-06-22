@@ -38,6 +38,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
     private TextView tvSeguro;
     private LinearLayout contenedorModalidad;
     private CompraDTO compraActual;
+    private final List<MedioPagoDTO> mediosActivos = new ArrayList<>();
     private final List<MedioPagoDTO> medios = new ArrayList<>();
     private MedioPagoDTO medioSeleccionado;
     private String modalidadSeleccionada;
@@ -111,15 +112,14 @@ public class FacturaCompraActivity extends AppCompatActivity {
                     public void onResponse(
                             Call<List<MedioPagoDTO>> call,
                             Response<List<MedioPagoDTO>> response) {
-                        medios.clear();
+                        mediosActivos.clear();
                         if (response.isSuccessful() && response.body() != null) {
                             for (MedioPagoDTO medio : response.body()) {
                                 if ("si".equalsIgnoreCase(medio.getActivo())) {
-                                    medios.add(medio);
+                                    mediosActivos.add(medio);
                                 }
                             }
-                            if (medios.size() == 1) seleccionarMedio(medios.get(0));
-                            preseleccionarMedio();
+                            actualizarMediosCompatibles();
                         }
                     }
 
@@ -131,6 +131,7 @@ public class FacturaCompraActivity extends AppCompatActivity {
     }
 
     private void mostrarCompra(CompraDTO compra) {
+        actualizarMediosCompatibles();
         String moneda = compra.getSubasta() == null ? "" : compra.getSubasta().getMoneda();
         String nombreSubasta = compra.getSubasta() == null ? "Subasta" : compra.getSubasta().getNombre();
         String item = "Ítem";
@@ -274,6 +275,10 @@ public class FacturaCompraActivity extends AppCompatActivity {
     }
 
     private void seleccionarMedio(MedioPagoDTO medio) {
+        if (!esCompatibleConMoneda(medio)) {
+            mostrarError("Ese medio de pago no es compatible con la moneda de la subasta.");
+            return;
+        }
         medioSeleccionado = medio;
         selectorMedio.setText(descripcionMedio(medio));
         selectorMedio.setTextColor(ContextCompat.getColor(this, R.color.secundario));
@@ -344,6 +349,13 @@ public class FacturaCompraActivity extends AppCompatActivity {
         if (procesando) return;
         if (medioSeleccionado == null) {
             mostrarError("Seleccioná un medio de pago.");
+            return;
+        }
+        if (!esCompatibleConMoneda(medioSeleccionado)) {
+            medioSeleccionado = null;
+            selectorMedio.setText("Seleccionar medio de pago");
+            selectorMedio.setBackgroundResource(R.drawable.bg_chip_inactivo);
+            mostrarError("Selecciona un medio de pago compatible con la moneda de la subasta.");
             return;
         }
         if (modalidadSeleccionada == null) {
@@ -528,6 +540,56 @@ public class FacturaCompraActivity extends AppCompatActivity {
                 .setMessage(mensaje)
                 .setPositiveButton("Aceptar", null)
                 .show();
+    }
+
+    private void actualizarMediosCompatibles() {
+        if (compraActual == null) return;
+        medios.clear();
+        for (MedioPagoDTO medio : mediosActivos) {
+            if (esCompatibleConMoneda(medio)) {
+                medios.add(medio);
+            }
+        }
+        if (medioSeleccionado != null && !esCompatibleConMoneda(medioSeleccionado)) {
+            medioSeleccionado = null;
+            selectorMedio.setText("Seleccionar medio de pago");
+            selectorMedio.setTextColor(ContextCompat.getColor(this, R.color.texto_sec));
+            selectorMedio.setBackgroundResource(R.drawable.bg_chip_inactivo);
+        }
+        if (medios.size() == 1 && medioSeleccionado == null) {
+            seleccionarMedio(medios.get(0));
+        }
+        preseleccionarMedio();
+    }
+
+    private boolean esCompatibleConMoneda(MedioPagoDTO medio) {
+        if (medio == null || medio.getTipo() == null || compraActual == null
+                || compraActual.getSubasta() == null) {
+            return false;
+        }
+        String moneda = compraActual.getSubasta().getMoneda();
+        if ("USD".equalsIgnoreCase(moneda)) {
+            return "tarjeta".equalsIgnoreCase(medio.getTipo())
+                    && "si".equalsIgnoreCase(medio.getEsExtranjera());
+        }
+        if (!"ARS".equalsIgnoreCase(moneda)) return false;
+        if ("tarjeta".equalsIgnoreCase(medio.getTipo())) return true;
+        if ("cuenta".equalsIgnoreCase(medio.getTipo())) {
+            return "ARS".equalsIgnoreCase(medio.getMoneda())
+                    && saldoDisponible(medio) > 0;
+        }
+        return "cheque".equalsIgnoreCase(medio.getTipo())
+                && "ARS".equalsIgnoreCase(medio.getMoneda())
+                && "si".equalsIgnoreCase(medio.getVerificado())
+                && saldoDisponible(medio) > 0;
+    }
+
+    private double saldoDisponible(MedioPagoDTO medio) {
+        if (medio.getFondosDisponibles() != null) return medio.getFondosDisponibles();
+        if ("cuenta".equalsIgnoreCase(medio.getTipo())) {
+            return medio.getFondosReservados() == null ? 0.0 : medio.getFondosReservados();
+        }
+        return medio.getMontoGarantia() == null ? 0.0 : medio.getMontoGarantia();
     }
 
     private String descripcionMedio(MedioPagoDTO medio) {
