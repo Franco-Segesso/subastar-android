@@ -386,6 +386,10 @@ public class SalaPujaActivity extends AppCompatActivity {
     }
 
     private void mostrarSelectorMediosPago() {
+        if (medioPagoSeleccionado != null) {
+            mostrarDialogoError("Ya has asignado un medio de pago para esta subasta. No es posible cambiarlo.");
+            return;
+        }
         if (mediosPago.isEmpty()) {
             mostrarDialogoError("No tenes medios de pago compatibles con la moneda "
                     + monedaSubasta + ".");
@@ -684,6 +688,30 @@ public class SalaPujaActivity extends AppCompatActivity {
             btnPrincipal.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
 
         } else if (miClienteId.equals(cierre.getIdClienteGanador())) {
+            if (cierre.isMultaGenerada()) {
+                ivIcono.setImageResource(android.R.drawable.ic_dialog_alert);
+                ivIcono.setColorFilter(androidx.core.content.ContextCompat.getColor(this, R.color.error));
+
+                tvTitulo.setText("¡Subasta adjudicada con Multa!");
+                tvTitulo.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.error));
+
+                tvMensaje.setText("Con el medio de pago utilizado, el monto: " + monedaSubasta + " " + cierre.getImporteFinal() +
+                        " no se puede pagar ya que no tiene fondos suficientes.\n\n" +
+                        "Se ha generado una multa del 10% y tu cuenta ha sido bloqueada temporalmente.");
+
+                btnSecundario.setVisibility(android.view.View.GONE);
+
+                btnPrincipal.setText("Ir a mis multas");
+                // Fondo rojo para el botón principal
+                btnPrincipal.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.error));
+                btnPrincipal.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.white));
+
+                btnPrincipal.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    salirYNavegarAMultas();
+                });
+
+            } else {
             ivIcono.setImageResource(android.R.drawable.btn_star_big_on);
             tvTitulo.setText("¡FELICIDADES!\nGANASTE LA SUBASTA");
             tvMensaje.setText("Se registró tu compra por " + monedaSubasta + " " + cierre.getImporteFinal() + ".");
@@ -691,6 +719,7 @@ public class SalaPujaActivity extends AppCompatActivity {
             btnSecundario.setVisibility(android.view.View.VISIBLE);
             btnSecundario.setText("Ver más ítems");
             btnSecundario.setOnClickListener(v -> { dialog.dismiss(); salirYNavegarAlCatalogo(); });
+            }
 
             if (cierre.getCompraId() != null) {
                 btnPrincipal.setText("Ir al pago");
@@ -948,5 +977,24 @@ public class SalaPujaActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private void salirYNavegarAMultas() {
+        if (saliendo) return;
+        saliendo = true;
+        api.salirSubasta(tokenJwt, subastaId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Intent intent = new Intent(SalaPujaActivity.this, MultasActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                saliendo = false;
+                mostrarDialogoError("No se pudo salir de la sala para ir a las multas.");
+            }
+        });
     }
 }

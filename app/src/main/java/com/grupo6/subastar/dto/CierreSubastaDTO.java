@@ -6,6 +6,7 @@ public class CierreSubastaDTO {
     private Integer idClienteGanador;
     private Double importeFinal;
     private Integer compraId;
+    private boolean multaGenerada;
 
     // Getters
     public Integer getItemId() { return itemId; }
@@ -13,4 +14,5 @@ public class CierreSubastaDTO {
     public Integer getIdClienteGanador() { return idClienteGanador; }
     public Double getImporteFinal() { return importeFinal; }
     public Integer getCompraId() { return compraId; }
+    public boolean isMultaGenerada() { return multaGenerada; }
 }
